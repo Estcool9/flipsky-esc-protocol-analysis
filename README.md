@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 40% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 46% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
 
 ## Project status
 
@@ -15,14 +15,17 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | UART/Qt signal-slot and meta-object mapping | 85% |
 | Outer frame format and CRC reconstruction | 100% |
 | Receive-buffer and resynchronization analysis | 70% |
-| Inner command IDs and payload layouts | 8% |
+| Inner command IDs and payload layouts | 12% |
+| Public V1.6 UART protocol extraction | 100% |
+| V1.4-to-V1.6 documented comparison | 90% |
+| V1.6 Windows binary comparison | 0% |
 | Firmware-update and TEA relationship | 55% |
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **40%** |
+| **Overall estimate** | **46%** |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), and [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md).
+See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -149,3 +152,22 @@ This is currently a static-analysis and offline-testing project. No physical ESC
 - [Flipsky — Tips for compatible FSESC and VESC Tool versions](https://flipsky.net/blogs/vesc-tool/tips-for-compatible-fsesc-and-vesc_tool-version)
 - [VESC Tool source repository](https://github.com/vedderb/vesc_tool)
 - [VESC firmware source repository](https://github.com/vedderb/bldc)
+
+
+## Public V1.6 UART specification and version delta
+
+The official Flipsky V1.6 UART protocol PDF and the earlier V1.4 protocol PDF were read from the Nextcloud project folder. The supplied ECU-side example source is preserved under reference/; it is not the ESC Tool application's source code or ESC firmware.
+
+Confirmed V1.4-to-V1.6 changes:
+- CMD 00 keeps the 28-byte base telemetry response and documents a longer auto-telemetry response with 12 reserved bytes and PAS RPM.
+- CMD 02 moves the current request from DATA D0-D1 to D2-D3, with D0-D1 reserved.
+- V1.6 adds a PAS-mode semantic alias for CMD 02; only D0 (PAS gear) is used in that mode.
+- The outer AA/BB framing, INFO length definition, CRC-16/MODBUS and big-endian integer conventions remain unchanged.
+
+One V1.6 PAS-response section lists extra PAS RPM bytes but retains DLEN 0x1C. Those extra bytes would require DLEN 0x20, so this is recorded as a source-document inconsistency.
+
+See [docs/FTESC_UART_PROTOCOL_V1.6.md](docs/FTESC_UART_PROTOCOL_V1.6.md), [docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md](docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md), [docs/V1_7_BINARY_CROSS_REFERENCE.md](docs/V1_7_BINARY_CROSS_REFERENCE.md), and [docs/V1.6_MANUAL_NOTES.md](docs/V1.6_MANUAL_NOTES.md).
+
+## More offline protocol tooling
+
+scripts/ftesc_protocol.py now builds command INFO fields and complete outer frames, and parses selected V1.6 telemetry responses for CMD 00, CMD 02/CMD 20, CMD 1A and CMD 1E. The combined frame and command test suite has **26 passing tests** on REA.
