@@ -1,9 +1,9 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 33%** toward a sufficiently evidenced protocol specification and an independently testable offline client.
+**Overall estimated progress: 40%** toward an evidenced protocol specification and independently testable offline client.
 
-These percentages are milestone estimates, not measurements of certainty.
+Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
 ## Workstream progress
 
@@ -13,60 +13,58 @@ These percentages are milestone estimates, not measurements of certainty.
 | Embedded XML extraction and validation | 100% |
 | Parameter catalog generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
-| UART/Qt signal-slot and meta-object mapping | 75% |
-| UART implementation analysis | 32% |
-| Frame format, command IDs, CRC and responses | 5% |
+| UART/Qt event and meta-object mapping | 85% |
+| Outer frame format and CRC reconstruction | 100% |
+| Receive-buffer and resynchronization analysis | 70% |
+| Inner command IDs and payload layouts | 8% |
+| Firmware update and TEA relationship | 55% |
 | VESC compatibility assessment | 25% |
-| Offline parser / independent client | 0% |
+| Offline frame codec and unit tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **33%** |
+| **Overall estimate** | **40%** |
 
 ## Confirmed evidence
 
 ### Executable
-- `Flipsky_ESC_Tool_V1.7_20261029.exe`, 50,611,200 bytes.
-- SHA-256: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
-- PE32 x86 native Windows executable; no CLR/.NET header observed.
-- Unusual `.enigma1` and `.enigma2` sections; protection/packing remains a hypothesis, not an identified protector.
+- \`Flipsky_ESC_Tool_V1.7_20261029.exe\`, 50,611,200 bytes.
+- SHA-256: \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`.
+- Native PE32 x86; no CLR/.NET header observed.
+- Unusual \`.enigma1\` and \`.enigma2\` sections; protection/packing is plausible but the protector is not identified.
 
-### Embedded resources and parameter catalog
+### Embedded metadata
 - 13 embedded XML resources recovered and validated.
-- 736 catalog rows across profile variants; 222 unique parameter IDs; 13 resource/profile variants.
-- Extraction and catalog-generation scripts are present in the repository.
-- Complete catalogs, manifest and all XML files are published as gzip/base64 payloads. Run [scripts/restore_payloads.py](../scripts/restore_payloads.py) to reconstruct them and verify the printed SHA-256 values against [ARTIFACT_INVENTORY.md](ARTIFACT_INVENTORY.md).
+- 736 catalog rows, 222 unique parameter IDs and 13 profile/resource variants.
+- Complete catalogs, manifest and XML payloads are published as gzip/base64. Restore with \`python scripts/restore_payloads.py --root .\`.
 
 ### Qt architecture
-- Qt 5, C++/QML, QtSerialPort and QtBluetooth are observed.
-- VA `0x00483910` initializes a `FtescLowLevelFace` object. Its vtable and Qt meta-cast path establish class identity.
-- Static meta-object: VA `0x0051f218`; string table `0x00f215c0`; meta-data `0x00f20d60`; static meta-call `0x004b98d0`.
-- A 64-entry dispatch jump table begins at `0x00f20c58`.
-- The class meta-object includes `uartDataHandleAvailable`, `uartPackDataFromESC`, `uartCommSendToFtesc`, `lowLevelSendDataToFtesc`, BLE callbacks and `tea_encrypt`.
+- Qt 5, C++/QML, QtSerialPort and QtBluetooth.
+- \`FtescLowLevelFace\` is the high-level Qt façade.
+- The separate \`uartPackData\` meta-object includes \`sendDataToESC\`, \`uartPackDataFromESC\`, \`uartPackDataHandle\`, and \`uartPackDataTimerSl\`.
+- Receive path: \`0x00481030\` → \`0x0049CA30\` → \`0x0049C830\`.
+- Transmit wrapper: \`0x004819C0\` → \`0x0049C5C0\`.
 
-### UART and BLE wiring
-- `QSerialPort::readyRead()` is connected to `uartDataHandleAvailable()`.
-- `uartPackDataFromESC(QByteArray&)` and `uartCommSendToFtesc(QByteArray&)` are wired through byte-array signal/slot connections.
-- `lowLevelSendDataToFtesc(QByteArray&)` is connected to `sendDataToESC(QByteArray&)`.
-- Firmware-version and motor-configuration acknowledgement slots are registered.
-- BLE receive/disconnect callbacks are registered in the same high-level façade.
+### Outer frame
+- Short: \`AA | LEN8 | PAYLOAD | CRC16_BE | DD\`.
+- Extended: \`BB | LEN16_BE | PAYLOAD | CRC16_BE | DD\`.
+- CRC-16/MODBUS: reflected polynomial A001, init FFFF, xorout 0000, calculated over payload only, sent big-endian.
+- Lookup tables at \`0x005310C0\` and \`0x005311C0\` match generated CRC-16/MODBUS tables; standard check vector \`123456789\` returns \`0x4B37\`.
+- Constructor initializes max payload to \`0x2710\` (10,000 bytes).
+- Receive handler distinguishes valid, malformed and incomplete candidates; invalid candidates advance one byte, and valid consumed sizes drive the parsing loop.
+
+See [WIRE_FRAME_FORMAT.md](WIRE_FRAME_FORMAT.md) and [RECEIVE_BUFFER_STATE.md](RECEIVE_BUFFER_STATE.md).
+
+### Offline codec tests
+The standard-library-only Python codec is \`scripts/ftesc_frame.py\`; tests are in \`tests/test_ftesc_frame.py\`. They were executed on REA against the GitHub files:
+
+**13 tests passed, 0 failed** with \`python3 -m unittest discover -s tests -v\`.
 
 ## Open technical questions
+- Inner command IDs/opcodes and operation-specific payload layouts.
+- Request/acknowledgement matching and CAN forwarding payload format.
+- Firmware-update block semantics and exact TEA usage.
+- BLE's exact outer framing.
+- Whether normal UART payloads ever use TEA encryption.
+- Compatibility across physical FT ESC hardware revisions.
 
-Not yet demonstrated:
-- packet start/end markers and frame boundaries;
-- length field and encoding;
-- command IDs / opcodes;
-- payload layouts;
-- CRC/checksum algorithm;
-- integer and floating-point endianness;
-- fragmentation, escaping, retry and timeout behaviour;
-- whether `tea_encrypt` is actually invoked in the UART path;
-- exact BLE transport framing;
-- wire-level compatibility with VESC.
-
-## Tool requirements
-
-No additional REA installation is currently required for static analysis: integrated Rizin 0.9.1 and Ghidra 12.2 are available. A Windows debugger (x64dbg or WinDbg in an isolated VM) could help later if runtime observation becomes necessary. A passive UART/USB capture from a known-good read-only session would be more valuable than installing more analysis packages.
-
-## Safety boundary
-
-No physical ESC has been tested and no firmware was flashed. XML parameter defaults and limits are not safe-tuning recommendations. Unknown packets must not be sent to a controller connected to a motor.
+## Tooling and safety
+Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. No extra static-analysis package is currently needed. No physical ESC has been tested and no firmware has been flashed. XML defaults and limits are not safe-tuning recommendations; unknown payloads must not be sent to a motor-connected controller.
