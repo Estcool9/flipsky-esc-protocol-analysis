@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records the observed application architecture, parameter resources, Qt/UART wiring, hypotheses, evidence, and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 33% (estimated, as of 22 November 2026).** This is a milestone-based estimate toward a sufficiently evidenced protocol specification and offline client, not a scientific measure of completeness.
+> **Overall progress: 40% (estimated, as of 22 November 2026).** This is a milestone-based estimate toward a sufficiently evidenced protocol specification and offline client, not a scientific measure of completeness.
 
 ## Project status
 
@@ -18,7 +18,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline parser / independent client | 0% |
 | Hardware validation | 0% |
-| **Overall** | **33%** |
+| **Overall** | **40%** |
 
 Percentages describe progress by milestone. They are reviewed when new evidence is added. See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), and [docs/ARTIFACT_INVENTORY.md](docs/ARTIFACT_INVENTORY.md).
 
@@ -124,3 +124,10 @@ This project is currently a static-analysis effort. The application has not been
 - [Flipsky — Tips for compatible FSESC and VESC Tool versions (27 September 2024)](https://flipsky.net/blogs/vesc-tool/tips-for-compatible-fsesc-and-vesc_tool-version)
 - [VESC Tool source repository](https://github.com/vedderb/vesc_tool)
 - [VESC firmware source repository](https://github.com/vedderb/bldc)
+
+
+## Latest UART protocol milestone
+
+Recovered outer framing is now documented: short \`AA | LEN8 | PAYLOAD | CRC16_BE | DD\` and extended \`BB | LEN16_BE | PAYLOAD | CRC16_BE | DD\`. CRC is CRC-16/MODBUS over payload only. The offline Python codec and its 13 tests pass on REA.
+
+See [docs/WIRE_FRAME_FORMAT.md](docs/WIRE_FRAME_FORMAT.md), [docs/RECEIVE_BUFFER_STATE.md](docs/RECEIVE_BUFFER_STATE.md), and [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md). **Overall progress: 40%.**
