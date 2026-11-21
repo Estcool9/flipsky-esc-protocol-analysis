@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records the observed application architecture, parameter resources, Qt/UART wiring, hypotheses, evidence, and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 32% (estimated, as of 22 November 2026).** This is a milestone-based estimate toward a sufficiently evidenced protocol specification and offline client, not a scientific measure of completeness.
+> **Overall progress: 33% (estimated, as of 22 November 2026).** This is a milestone-based estimate toward a sufficiently evidenced protocol specification and offline client, not a scientific measure of completeness.
 
 ## Project status
 
@@ -13,14 +13,14 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Parameter catalog generation | 100% |
 | Qt/QML architecture identification | 80% |
 | UART/Qt signal-slot mapping | 65% |
-| UART implementation analysis | 30% |
+| UART implementation analysis | 32% |
 | Frame format, command IDs, CRC and replies | 5% |
 | VESC compatibility assessment | 25% |
 | Offline parser / independent client | 0% |
 | Hardware validation | 0% |
-| **Overall** | **32%** |
+| **Overall** | **33%** |
 
-Percentages describe progress by milestone. They are reviewed when new evidence is added. See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), and [docs/ROADMAP.md](docs/ROADMAP.md).
+Percentages describe progress by milestone. They are reviewed when new evidence is added. See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), and [docs/ARTIFACT_INVENTORY.md](docs/ARTIFACT_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -58,7 +58,7 @@ The Qt connection-registration code at VA `0x00483910` contains these observed s
 - Firmware-version and motor-configuration acknowledgement slots are also wired.
 - BLE receive and disconnect signals are registered in the same component.
 
-These findings show event wiring, not yet the packet encoding, CRC, command IDs or exact serial frame boundaries. See [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md).
+These findings show event wiring, not yet the packet encoding, CRC, command IDs or exact serial frame boundaries. See [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md) and [docs/QT_METAOBJECT.md](docs/QT_METAOBJECT.md).
 
 ### Parameter resources
 
@@ -112,7 +112,7 @@ No ESC firmware or passive serial capture is currently available. Static analysi
 - `docs/`: project status, evidence notes, VESC comparison and roadmap
 - `scripts/`: repeatable XML extraction and parameter-catalog generation
 - `analysis-data/`: derived parameter catalog
-- `embedded-xml/`: extracted embedded XML resources and extraction manifest
+- `embedded-xml/`: extracted embedded XML resources and extraction manifest (stored as gzip/base64 payloads; see [docs/PAYLOAD_FORMAT.md](docs/PAYLOAD_FORMAT.md))
 
 ## Safety and handling
 
