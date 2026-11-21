@@ -55,3 +55,27 @@ The complete extracted resources and catalogs are available as `.gz.b64` payload
 - These hashes establish byte identity for the files read on the analysis host at the time of measurement.
 - The executable was analyzed statically; this inventory does not claim a runtime dump or a captured hardware session.
 - The extracted XML resources are software metadata, not an ESC firmware package.
+
+
+## Additional reference sources — V1.4 and V1.6
+
+| Artifact | Original size | Source location | Repository representation |
+|---|---:|---|---|
+| V1.4 English UART protocol PDF | 510,037 bytes | Nextcloud / Flipsky ESC Tool V1.4 | Extracted findings in docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md |
+| V1.6 English UART protocol PDF | 534,546 bytes | Nextcloud / Flipsky ESC Tool V1.6 | Extracted protocol digest in docs/FTESC_UART_PROTOCOL_V1.6.md |
+| V1.6 Chinese UART protocol PDF | 520,303 bytes | Nextcloud / Flipsky ESC Tool V1.6 | Not yet transcribed separately |
+| V1.6 User Manual PDF | 7,387,878 bytes | Nextcloud / Flipsky ESC Tool V1.6 | Extracted findings in docs/V1.6_MANUAL_NOTES.md |
+| V1.6 ECU-side C example | 12,314 bytes | Nextcloud / Flipsky ESC Tool V1.6 | Preserved at reference/ftesc_v1.4_1.5_1.6_uart_handle.c |
+
+The PDFs have been text-extracted from Nextcloud; visual page layout and diagrams have not yet been reviewed.
+
+## Windows builds inventoried in Nextcloud
+
+- V1.4 20240826: 18,999,808 bytes.
+- V1.5 20250511: 97,531,904 bytes.
+- V1.6 20251014: 97,949,184 bytes.
+- V1.6 20260806: 44,867,072 bytes.
+- V1.6 20260912: 45,582,336 bytes.
+- V1.7 20261029: 50,611,200 bytes.
+
+Only V1.7 is currently staged on REA. V1.6 binaries are inventoried but not yet available for local disassembly in this workspace.
