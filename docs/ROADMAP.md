@@ -1,64 +1,55 @@
-# Feuille de route technique
+# Technical roadmap
 
-## Phase A — Cartographie statique du binaire
+## Phase A — Static application mapping
 
-- [x] Identifier le format PE, l'architecture et le runtime.
-- [x] Vérifier l'empreinte SHA-256 de l'artefact.
-- [x] Identifier la pile Qt/C++/QML et les modules chargés.
-- [x] Extraire les ressources XML compressées.
-- [x] Construire un catalogue de paramètres reproductible.
-- [x] Cartographier les principales connexions Qt UART.
-- [ ] Désassembler les fonctions UART de lecture et d'envoi.
-- [ ] Relier chaque slot de haut niveau à sa fonction de sérialisation.
-- [ ] Identifier les tables de constantes, IDs et états de protocole.
+- [x] Identify executable format, architecture and runtime.
+- [x] Verify the executable SHA-256.
+- [x] Identify Qt/C++/QML and loaded transport modules.
+- [x] Extract and validate embedded XML resources.
+- [x] Generate a reproducible parameter catalog.
+- [x] Map initial Qt UART/BLE signal-slot wiring.
+- [x] Identify the FtescLowLevelFace class and static Qt meta-object.
+- [ ] Map every meta-object dispatch index to its implementation.
+- [ ] Confirm callers and exact role of the `tea_encrypt` method.
+- [ ] Locate the low-level UART component implementation.
 
-## Phase B — Spécification du protocole
+## Phase B — Protocol reconstruction
 
-- [ ] Identifier les octets de début et de fin de trame.
-- [ ] Identifier le champ longueur et son endianess.
-- [ ] Identifier le champ commande / opcode.
-- [ ] Identifier le format du payload par famille de requête.
-- [ ] Retrouver la méthode CRC/checksum et ses paramètres.
-- [ ] Décrire fragmentation, timeout, retransmission et erreurs.
-- [ ] Documenter la séquence d'identification et d'authentification éventuelle.
-- [ ] Séparer les protocoles UART, BLE et CAN s'ils diffèrent.
+- [ ] Trace serial receive callback to byte-buffer accumulation.
+- [ ] Identify frame boundaries and start/end markers.
+- [ ] Identify length and command/opcode fields.
+- [ ] Reconstruct payload layouts for each read-only query.
+- [ ] Identify CRC/checksum algorithm and parameters.
+- [ ] Establish endianness and numeric scaling.
+- [ ] Describe fragmentation, escaping, retry, timeout and error behaviour.
+- [ ] Analyse authentication/key-check flow without disclosing secrets.
+- [ ] Determine whether BLE wraps UART packets or uses a distinct frame format.
 
-**Critère de sortie :** spécification étayée par des références au code et des tests reproductibles sur exemples synthétiques ou captures passives.
+**Exit criterion:** a protocol description backed by disassembly references and reproducible offline test vectors.
 
-## Phase C — Comparaison VESC
+## Phase C — VESC compatibility assessment
 
-- [x] Examiner les déclarations officielles Flipsky sur FT ESC vs FSESC.
-- [ ] Identifier le modèle exact du contrôleur visé.
-- [ ] Comparer les valeurs/opcodes trouvés au code VESC.
-- [ ] Marquer chaque élément comme identique, similaire ou incompatible.
-- [ ] Ne pas emprunter les valeurs de trame VESC tant qu'elles ne sont pas confirmées dans le binaire Flipsky.
+- [x] Review Flipsky's distinction between FT ESC and FSESC product families.
+- [ ] Confirm the exact ESC model and hardware revision this application targets.
+- [ ] Compare proven frame/opcode/checksum details with VESC Tool and firmware.
+- [ ] Mark each feature as identical, similar or incompatible based on code evidence.
 
-## Phase D — Outils hors matériel
+## Phase D — Offline tooling
 
-- [ ] Écrire un parseur de trames sans accès série.
-- [ ] Ajouter des tests unitaires sur trames synthétiques.
-- [ ] Construire un encodeur de requêtes seulement après validation.
-- [ ] Créer un simulateur de réponses / ESC virtuel.
-- [ ] Ajouter un journal hexadécimal qui masque les éventuels secrets.
+- [ ] Implement a parser for confirmed frame layouts.
+- [ ] Create synthetic test vectors and unit tests.
+- [ ] Implement an encoder only after command and payload semantics are validated.
+- [ ] Add an offline replay harness.
+- [ ] Add a simulator for benign, read-only responses.
 
-## Phase E — Validation sur matériel (plus tard)
+## Phase E — Hardware validation (later)
 
-- [ ] Obtenir le modèle exact et la révision hardware.
-- [ ] Obtenir, si disponible, le firmware correspondant depuis une source légitime.
-- [ ] Faire d'abord une capture passive de requêtes/réponses bénignes.
-- [ ] Tester en état sûr, sans charge mécanique et sans commande de couple.
-- [ ] N'envisager une commande d'écriture qu'après compréhension complète de son effet.
-- [ ] Ne pas commencer par le flash, l'effacement du bootloader ou les commandes moteur.
+- [ ] Obtain exact ESC model and hardware revision.
+- [ ] Obtain matching firmware through an authorized source.
+- [ ] Capture a passive session during connection and information readout.
+- [ ] Validate only benign read operations in a mechanically safe setup.
+- [ ] Do not issue unknown writes, motor commands or firmware operations.
 
-## Ce que l'on peut faire sans firmware ESC
+## Tooling needs
 
-Même sans fichier `.bin`, `.hex` ou `.fw`, il reste possible de poursuivre le désassemblage du binaire de l'application, retrouver le framing et le checksum, comprendre la séquence de lecture et les accusés de réception, développer un parseur offline, préparer des tests de trames synthétiques et comparer les signatures au protocole VESC.
-
-## Éléments qui aideraient s'ils deviennent disponibles
-
-- Modèle exact et révision du contrôleur.
-- Version de l'application et du firmware ESC.
-- Capture hexadécimale passive d'une simple connexion puis d'une lecture d'informations, avec secrets et données personnelles retirés.
-- Firmware obtenu légalement auprès du fabricant ou depuis le support de l'utilisateur.
-
-Aucun de ces éléments n'est bloquant pour continuer l'analyse statique de l'application.
+No additional REA tool is required for the next static-analysis phase: Rizin 0.9.1 and Ghidra 12.2 are already available. A Windows debugger in an isolated VM is optional for later runtime observation. A passive UART/USB capture is a higher-value input than another static-analysis package.
