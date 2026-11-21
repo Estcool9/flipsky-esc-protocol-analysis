@@ -65,3 +65,23 @@
 2. Trace outgoing \`ftescObtain*\` builders through payload construction into the outer frame builder.
 3. Inspect exact incomplete-frame carryover across separate readyRead callbacks and all buffer reset conditions.
 4. Continue TEA call-site analysis; ordinary UART encryption remains unproven.
+
+
+## 2026-11-22 — V1.6 official protocol and C reference added
+
+- Read the official V1.6 English UART protocol PDF (23 pages, issue date 2025-12-09), its Chinese counterpart, the V1.4 English UART protocol PDF and the V1.6 90-page user manual from Nextcloud.
+- Preserved the 12,314-byte ECU-side sample C source in reference/ftesc_v1.4_1.5_1.6_uart_handle.c. It is a sample ECU implementation, not Flipsky ESC Tool application source or ESC firmware source.
+- Added docs/FTESC_UART_PROTOCOL_V1.6.md with command IDs, frame format, CRC, integer endianness, telemetry layouts, CAN forwarding, keepalive and periodic telemetry.
+- Added docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md. Confirmed that CMD 02 moves the current-request field from D0-D1 to D2-D3, CMD 00 gains an automatic telemetry extension, and V1.6 adds the PAS-mode alias for CMD 02.
+- Added docs/V1_7_BINARY_CROSS_REFERENCE.md. Private V1.7 framing/CRC and endian helpers agree with the public V1.6 protocol; numeric command-to-Qt-handler mapping remains open.
+- Added docs/V1.6_MANUAL_NOTES.md and docs/NEXTCLOUD_SOURCE_INVENTORY.md.
+- Added scripts/ftesc_protocol.py and tests/test_ftesc_protocol.py. Combined REA test result: **26 passed, 0 failed**.
+- Overall project estimate updated to **46%**.
+
+### Remaining high-value tasks
+
+1. Trace V1.7 GUI/facade request builders to the outer frame builder.
+2. Recover numeric command-to-acknowledgement dispatch in V1.7.
+3. Confirm the V1.7 CMD 02 data offsets against the V1.4/V1.6 change.
+4. Stage a V1.6 Windows executable on REA and perform a binary-to-binary comparison.
+5. Inspect BLE transport separately from UART.
