@@ -68,3 +68,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - All 13 XML resources and derived catalogs are published as gzip/base64; restore with \`python scripts/restore_payloads.py --root .\`.
 - No firmware image or passive serial capture was obtained in this session.
 - No packets were sent to physical ESC hardware.
+
+
+## Receive-buffer and test update — 2026-11-22
+
+- Added [RECEIVE_BUFFER_STATE.md](RECEIVE_BUFFER_STATE.md), the outer-frame codec and unit tests.
+- The receive handler distinguishes parser results -1, -2 and positive consumed length. -1 triggers one-byte cursor advance; positive values advance by frame length and the loop continues.
+- Test command: \`python3 -m unittest discover -s tests -v\`.
+- Result on REA using the published GitHub versions: **13 passed, 0 failures**.
+- Current overall estimate: **40%**.
