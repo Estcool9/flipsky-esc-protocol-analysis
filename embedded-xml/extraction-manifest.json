@@ -1,0 +1,1601 @@
+{
+  "source": "/data/samples/Flipsky_ESC_Tool_V1.7_20261029.exe",
+  "source_sha256": "dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38",
+  "extracted_at": "2026-11-22",
+  "extraction": "bounded zlib streams at offsets identified by Binwalk; no executable run",
+  "records": [
+    {
+      "offset": "0x1e2ce8",
+      "file": "resource_01_001e2ce8.xml",
+      "status": "saved",
+      "bytes": 315367,
+      "sha256": "3bd75125f48c39a12e47184fcdcff8f143e9066ff03f06f4c5cbcd97338665f7",
+      "root": "ValueSetups",
+      "elements": 997,
+      "parameters": 67,
+      "parameter_names": [
+        "ESC ID",
+        "Multi-ESC Sync Control",
+        "Smart Switch",
+        "Throttle Response Level",
+        "Input Signal Deadband(%)",
+        "CAN Status Frequency(Hz)",
+        "CAN Bus Baud Rate",
+        "Input Signal Type",
+        "Brake Light Level(%)",
+        "Traction Control System",
+        "TC Erpm Diff Max",
+        "TC Erpm Diff Min"
+      ],
+      "parameters_preview": [
+        {
+          "id": "ftesc_id",
+          "name": "ESC ID",
+          "type": "2",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "bool_multi_esc_sync_control",
+          "name": "Multi-ESC Sync Control",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "enum_smart_switch",
+          "name": "Smart Switch",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "throttle_response_level",
+          "name": "Throttle Response Level",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "signal_deadband",
+          "name": "Input Signal Deadband(%)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "canStatusFreq",
+          "name": "CAN Status Frequency(Hz)",
+          "type": "2",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "can_baud_rate",
+          "name": "CAN Bus Baud Rate",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "input_signal_type",
+          "name": "Input Signal Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "brake_light_duty",
+          "name": "Brake Light Level(%)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "trackingControl",
+          "name": "Traction Control System",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "trackingControlMaxDiff",
+          "name": "TC Erpm Diff Max",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "trackingControlMinDiff",
+          "name": "TC Erpm Diff Min",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1e8420",
+      "file": "resource_02_001e8420.xml",
+      "status": "saved",
+      "bytes": 125765,
+      "sha256": "217ccf2b0d11c0c92032c9fc6f585b8058771a7ec870eebc63493d92e6e12edb",
+      "root": "ValueSetups",
+      "elements": 1202,
+      "parameters": 80,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1eab68",
+      "file": "resource_03_001eab68.xml",
+      "status": "saved",
+      "bytes": 162855,
+      "sha256": "a6aee37f394c14c39531301c372149d83d33c0ff1e27aecdb7bab9e566bca95d",
+      "root": "ValueSetups",
+      "elements": 1456,
+      "parameters": 94,
+      "parameter_names": [
+        "Startup Mode",
+        "Rm(mΩ)",
+        "Lq(μH)",
+        "Ld(μH)",
+        "Φ(mWb)",
+        "FOC Current Kp",
+        "FOC Current Ki",
+        "FOC Observer Gain",
+        "FOC Flux Observer Type",
+        "HFI Start Voltage",
+        "HFI Voltage Min",
+        "HFI Voltage Max"
+      ],
+      "parameters_preview": [
+        {
+          "id": "startup_mode",
+          "name": "Startup Mode",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_r",
+          "name": "Rm(mΩ)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_ld",
+          "name": "Lq(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_lq",
+          "name": "Ld(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_flux",
+          "name": "Φ(mWb)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_p",
+          "name": "FOC Current Kp",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_i",
+          "name": "FOC Current Ki",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_o_g",
+          "name": "FOC Observer Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_f_o_t",
+          "name": "FOC Flux Observer Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_s_v",
+          "name": "HFI Start Voltage",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_i",
+          "name": "HFI Voltage Min",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_m",
+          "name": "HFI Voltage Max",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1edb48",
+      "file": "resource_04_001edb48.xml",
+      "status": "saved",
+      "bytes": 139391,
+      "sha256": "729177495616b87105dbff87eb76dfff8ce06f97da3a3ef9d2d380c4effe3746",
+      "root": "ValueSetups",
+      "elements": 693,
+      "parameters": 46,
+      "parameter_names": [
+        "ESC ID",
+        "Throttle Response Level",
+        "Input Signal Deadband(%)",
+        "CAN Bus Baud Rate",
+        "Brake Light Level(%)",
+        "Input Signal Type",
+        "Control Mode",
+        "Multi-ESC Sync Control",
+        "Smart Switch",
+        "Min Pulse Width(ms)",
+        "Max Pulse Width(ms)",
+        "Mid Pulse Width(ms)"
+      ],
+      "parameters_preview": [
+        {
+          "id": "ftesc_id",
+          "name": "ESC ID",
+          "type": "2",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "throttle_response_level",
+          "name": "Throttle Response Level",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "signal_deadband",
+          "name": "Input Signal Deadband(%)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "can_baud_rate",
+          "name": "CAN Bus Baud Rate",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "brake_light_duty",
+          "name": "Brake Light Level(%)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "input_signal_type",
+          "name": "Input Signal Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_control_mode",
+          "name": "Control Mode",
+          "type": "6",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "bool_multi_esc_sync_control",
+          "name": "Multi-ESC Sync Control",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "enum_smart_switch",
+          "name": "Smart Switch",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_min",
+          "name": "Min Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_max",
+          "name": "Max Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_mid",
+          "name": "Mid Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1f0530",
+      "file": "resource_05_001f0530.xml",
+      "status": "saved",
+      "bytes": 93683,
+      "sha256": "77661c7e8c5caea40d4bc3603327f4e188eb048d0a46b3bd8508b20cae8bc0e7",
+      "root": "ValueSetups",
+      "elements": 903,
+      "parameters": 60,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1f263d",
+      "file": "resource_06_001f263d.xml",
+      "status": "saved",
+      "bytes": 93608,
+      "sha256": "a1cab3ee0f0839c13450ba5f90bc52c88bfa1a61b845cf84e946a268f531b50c",
+      "root": "ValueSetups",
+      "elements": 896,
+      "parameters": 60,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1f4767",
+      "file": "resource_07_001f4767.xml",
+      "status": "saved",
+      "bytes": 113554,
+      "sha256": "ee6844f1c8c022a2b966a41f39a0ec67ad2232e84d82eb003bb314c90919adf3",
+      "root": "ValueSetups",
+      "elements": 563,
+      "parameters": 36,
+      "parameter_names": [
+        "ESC ID",
+        "Throttle Response Level",
+        "Input Signal Deadband(%)",
+        "CAN Bus Baud Rate",
+        "Input Signal Type",
+        "Control Mode",
+        "Multi-ESC Sync Control",
+        "Smart Switch",
+        "Min Pulse Width(ms)",
+        "Max Pulse Width(ms)",
+        "Mid Pulse Width(ms)",
+        "Reverse Delay Time(s)"
+      ],
+      "parameters_preview": [
+        {
+          "id": "ftesc_id",
+          "name": "ESC ID",
+          "type": "2",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "throttle_response_level",
+          "name": "Throttle Response Level",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "signal_deadband",
+          "name": "Input Signal Deadband(%)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "can_baud_rate",
+          "name": "CAN Bus Baud Rate",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "input_signal_type",
+          "name": "Input Signal Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_control_mode",
+          "name": "Control Mode",
+          "type": "6",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "bool_multi_esc_sync_control",
+          "name": "Multi-ESC Sync Control",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "enum_smart_switch",
+          "name": "Smart Switch",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_min",
+          "name": "Min Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_max",
+          "name": "Max Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_mid",
+          "name": "Mid Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_control_start_reverse_time",
+          "name": "Reverse Delay Time(s)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1f68f3",
+      "file": "resource_08_001f68f3.xml",
+      "status": "saved",
+      "bytes": 41057,
+      "sha256": "447603096775a9cf74af27a59751dcb51f3cee9b2ba038c957da1b9b45b15fe7",
+      "root": "ValueSetups",
+      "elements": 381,
+      "parameters": 25,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1f9273",
+      "file": "resource_09_001f9273.xml",
+      "status": "saved",
+      "bytes": 38702,
+      "sha256": "f8d19ad975e44fe90da8d7408bccf1a253f99b18eb189694772a0dfee9cadff0",
+      "root": "ValueSetups",
+      "elements": 371,
+      "parameters": 24,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1fa14c",
+      "file": "resource_10_001fa14c.xml",
+      "status": "saved",
+      "bytes": 75055,
+      "sha256": "83c9b84975be63af5238163d4ae56f755e6b148d85b6a11909cbc852958368fc",
+      "root": "ValueSetups",
+      "elements": 360,
+      "parameters": 24,
+      "parameter_names": [
+        "ESC ID",
+        "Throttle Response Level",
+        "Input Signal Deadband",
+        "CAN Bus Baud Rate",
+        "Input Signal Type",
+        "Control Mode",
+        "Multi-ESC Sync Control",
+        "Smart Switch",
+        "Min Pulse Width(ms)",
+        "Max Pulse Width(ms)",
+        "Mid Pulse Width(ms)",
+        "Reverse Delay Time(s)"
+      ],
+      "parameters_preview": [
+        {
+          "id": "ftesc_id",
+          "name": "ESC ID",
+          "type": "2",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "throttle_response_level",
+          "name": "Throttle Response Level",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "signal_deadband",
+          "name": "Input Signal Deadband",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "can_baud_rate",
+          "name": "CAN Bus Baud Rate",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "input_signal_type",
+          "name": "Input Signal Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_control_mode",
+          "name": "Control Mode",
+          "type": "6",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "bool_multi_esc_sync_control",
+          "name": "Multi-ESC Sync Control",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "bool_smart_switch",
+          "name": "Smart Switch",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_min",
+          "name": "Min Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_max",
+          "name": "Max Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_pulse_mid",
+          "name": "Mid Pulse Width(ms)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "ppm_control_start_reverse_time",
+          "name": "Reverse Delay Time(s)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1fb879",
+      "file": "resource_11_001fb879.xml",
+      "status": "saved",
+      "bytes": 38632,
+      "sha256": "a20aabef0c16f5842ca2136dd686cd9c313e37251a1b402f2e9afba0d77eb69a",
+      "root": "ValueSetups",
+      "elements": 369,
+      "parameters": 24,
+      "parameter_names": [
+        "Motor Current(A)",
+        "Motor Brake Current(A)",
+        "Battery Current(A)",
+        "Battery Regen Current(A)",
+        "Negative Erpm",
+        "Positive Erpm",
+        "H-Gear Erpm",
+        "M-Gear Erpm",
+        "L-Gear Erpm",
+        "R-Gear Erpm",
+        "HFPI Voltage Gain",
+        "HFPI Saliency Gain"
+      ],
+      "parameters_preview": [
+        {
+          "id": "motor_current",
+          "name": "Motor Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_brake_current",
+          "name": "Motor Brake Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_current",
+          "name": "Battery Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "battery_regen_current",
+          "name": "Battery Regen Current(A)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_negative_erpm",
+          "name": "Negative Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_positive_erpm",
+          "name": "Positive Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "h_gear_erpm",
+          "name": "H-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "m_gear_erpm",
+          "name": "M-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "l_gear_erpm",
+          "name": "L-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "r_gear_erpm",
+          "name": "R-Gear Erpm",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_voltage_gain",
+          "name": "HFPI Voltage Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "hfpi_salient_gain",
+          "name": "HFPI Saliency Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x1fde78",
+      "status": "duplicate",
+      "duplicate_of": "0x1fb879",
+      "bytes": 38632,
+      "sha256": "a20aabef0c16f5842ca2136dd686cd9c313e37251a1b402f2e9afba0d77eb69a"
+    },
+    {
+      "offset": "0x209c88",
+      "file": "resource_13_00209c88.xml",
+      "status": "saved",
+      "bytes": 164539,
+      "sha256": "9174a70828c6145c46f01b55200a8c28d86d78020969165fee2ff987707f3e25",
+      "root": "ValueSetups",
+      "elements": 1535,
+      "parameters": 99,
+      "parameter_names": [
+        "Startup Mode",
+        "Rm(mΩ)",
+        "Lq(μH)",
+        "Ld(μH)",
+        "Φ(mWb)",
+        "FOC Current Kp",
+        "FOC Current Ki",
+        "FOC Observer Gain",
+        "FOC Flux Observer Type",
+        "HFI Start Voltage",
+        "HFI Voltage Min",
+        "HFI Voltage Max"
+      ],
+      "parameters_preview": [
+        {
+          "id": "startup_mode",
+          "name": "Startup Mode",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_r",
+          "name": "Rm(mΩ)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_ld",
+          "name": "Lq(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_lq",
+          "name": "Ld(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_flux",
+          "name": "Φ(mWb)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_p",
+          "name": "FOC Current Kp",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_i",
+          "name": "FOC Current Ki",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_o_g",
+          "name": "FOC Observer Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_f_o_t",
+          "name": "FOC Flux Observer Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_s_v",
+          "name": "HFI Start Voltage",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_i",
+          "name": "HFI Voltage Min",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_m",
+          "name": "HFI Voltage Max",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    },
+    {
+      "offset": "0x21c2bb",
+      "file": "resource_14_0021c2bb.xml",
+      "status": "saved",
+      "bytes": 163147,
+      "sha256": "71467575ef14cf0499d578b2445d9b32ec41daf6657a26f102aad5ed1fdf2be0",
+      "root": "ValueSetups",
+      "elements": 1502,
+      "parameters": 97,
+      "parameter_names": [
+        "Startup Mode",
+        "Rm(mΩ)",
+        "Lq(μH)",
+        "Ld(μH)",
+        "Φ(mWb)",
+        "FOC Current Kp",
+        "FOC Current Ki",
+        "FOC Observer Gain",
+        "FOC Flux Observer Type",
+        "HFI Start Voltage",
+        "HFI Voltage Min",
+        "HFI Voltage Max"
+      ],
+      "parameters_preview": [
+        {
+          "id": "startup_mode",
+          "name": "Startup Mode",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_r",
+          "name": "Rm(mΩ)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_ld",
+          "name": "Lq(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_lq",
+          "name": "Ld(μH)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_flux",
+          "name": "Φ(mWb)",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_p",
+          "name": "FOC Current Kp",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_c_i",
+          "name": "FOC Current Ki",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_o_g",
+          "name": "FOC Observer Gain",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_f_o_t",
+          "name": "FOC Flux Observer Type",
+          "type": "4",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_s_v",
+          "name": "HFI Start Voltage",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_i",
+          "name": "HFI Voltage Min",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        },
+        {
+          "id": "motor_foc_h_v_m",
+          "name": "HFI Voltage Max",
+          "type": "1",
+          "min": null,
+          "max": null,
+          "step": null
+        }
+      ]
+    }
+  ]
+}
