@@ -1,0 +1,3519 @@
+[
+  {
+    "xml_id": "BrakeParking_Mode",
+    "names": [
+      "Brake-Parking Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Left_Front_ESC_ID",
+    "names": [
+      "Left Front ESC ID(Slave)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Left_Rear_ESC_ID",
+    "names": [
+      "Left Rear ESC ID(Slave)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Motor_FOC_Flux_Observer_Type",
+    "names": [
+      "FOC Flux Observer Type"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Ftesc Fuse",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "Off_Road_Mode",
+    "names": [
+      "Off-Road Climbing Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Right_Front_ESC_ID",
+    "names": [
+      "Right Front ESC ID(Slave)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Right_Rear_ESC_ID",
+    "names": [
+      "Right Rear ESC ID(Master)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "Tank_Turnaround_Mode",
+    "names": [
+      "Assisted Turnaround Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Quad Drive Mode",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "adc1_voltage_max",
+    "names": [
+      "Max Throttle Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.2"
+    ]
+  },
+  {
+    "xml_id": "adc1_voltage_mid",
+    "names": [
+      "Mid Throttle Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "adc1_voltage_min",
+    "names": [
+      "Min Throttle Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "adc2_voltage_max",
+    "names": [
+      "Max Brake Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.2"
+    ]
+  },
+  {
+    "xml_id": "adc2_voltage_min",
+    "names": [
+      "Min Brake Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "adcSetup_brake_unlock_and_start",
+    "names": [
+      "Brake unlock and start"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "adcSetup_isSafeStartUsing",
+    "names": [
+      "Safety Start"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "adc_control_device_type",
+    "names": [
+      "Extra Interface"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "7"
+    ],
+    "value_candidates": [
+      "elistName=Front Light and Horn",
+      "elistName=Front,Brake Light and Horn",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "adc_control_mode",
+    "names": [
+      "Control Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "6",
+      "7"
+    ],
+    "value_candidates": [
+      "elistName=Current Reverse Brake Gear",
+      "elistName=Duty R-Gear",
+      "elistName=Speed R-Gear",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "battery_cells_s",
+    "names": [
+      "Li-ion Battery Series(S)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=3"
+    ]
+  },
+  {
+    "xml_id": "battery_cells_series",
+    "names": [
+      "Li-ion Battery Series(S)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=3"
+    ]
+  },
+  {
+    "xml_id": "battery_current",
+    "names": [
+      "Battery Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=80"
+    ]
+  },
+  {
+    "xml_id": "battery_cutoff_v",
+    "names": [
+      "Cell Cut-Off Voltage(V)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.1"
+    ]
+  },
+  {
+    "xml_id": "battery_cutoff_voltage_end",
+    "names": [
+      "Cell Cut-Off End Volt(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.1"
+    ]
+  },
+  {
+    "xml_id": "battery_cutoff_voltage_start",
+    "names": [
+      "Cell Cut-Off Start Volt(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.4"
+    ]
+  },
+  {
+    "xml_id": "battery_regen_current",
+    "names": [
+      "Battery Regen Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=-80"
+    ]
+  },
+  {
+    "xml_id": "battery_regen_cutoff_voltage_end",
+    "names": [
+      "Cell Regen End Volt(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=4.35"
+    ]
+  },
+  {
+    "xml_id": "battery_regen_cutoff_voltage_start",
+    "names": [
+      "Cell Regen Start Volt(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=4.20"
+    ]
+  },
+  {
+    "xml_id": "beeping_percent",
+    "names": [
+      "Beeping Level(%)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "bool_multi_esc_sync_control",
+    "names": [
+      "Multi-ESC Sync Control"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "bool_smart_switch",
+    "names": [
+      "Smart Switch"
+    ],
+    "variants": [
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "brake_erpm_threshold",
+    "names": [
+      "Brake Erpm Threshold"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=250"
+    ]
+  },
+  {
+    "xml_id": "brake_light_duty",
+    "names": [
+      "Brake Light Level(%)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "c_current_gain",
+    "names": [
+      "Current Gain"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=20"
+    ]
+  },
+  {
+    "xml_id": "c_shunt_resistor",
+    "names": [
+      "Current Shunt Resistor"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.0005"
+    ]
+  },
+  {
+    "xml_id": "c_shunt_series",
+    "names": [
+      "Current Shunt Number"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=3"
+    ]
+  },
+  {
+    "xml_id": "c_voltage_res",
+    "names": [
+      "Bus Voltage Resistance",
+      "Voltage Resistor"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1000"
+    ]
+  },
+  {
+    "xml_id": "canStatusFreq",
+    "names": [
+      "CAN Status Frequency(Hz)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=100"
+    ]
+  },
+  {
+    "xml_id": "can_baud_rate",
+    "names": [
+      "CAN Bus Baud Rate"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=1000K(default)",
+      "value_int=3"
+    ]
+  },
+  {
+    "xml_id": "emergency_switch",
+    "names": [
+      "Emergency Switch"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Brake ADC HIGH",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "enableCruisingControl",
+    "names": [
+      "Cruising Control Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Keep Throttle ADC for a While",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "enum_smart_switch",
+    "names": [
+      "Smart Switch"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=OFF 1hour later",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "foc_brake_mode",
+    "names": [
+      "FOC Brake Mode"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Duty Erpm Detected",
+      "value_int=2"
+    ]
+  },
+  {
+    "xml_id": "foc_curr_adc_sampletime",
+    "names": [
+      "Foc Curr ADC SampleTime"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ADC_SAMPLETIME_239_5",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "foc_curr_sample_position_offset",
+    "names": [
+      "Foc Sample Offset"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=2"
+    ]
+  },
+  {
+    "xml_id": "foc_encoder_inverted",
+    "names": [
+      "ABI Encoder Direction"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Negative",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "foc_encoder_offset",
+    "names": [
+      "Encoder Offset(°)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=60"
+    ]
+  },
+  {
+    "xml_id": "foc_encoder_ratio",
+    "names": [
+      "Motor Pole Pairs"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=7"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_current_max",
+    "names": [
+      "Flux Weakening Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_duty_start",
+    "names": [
+      "Field Weakening Duty Start"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.9"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_neg_ramp_time",
+    "names": [
+      "Negative Ramp Time"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_pos_ramp_time",
+    "names": [
+      "Positive Ramp Time"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_q_current_factor",
+    "names": [
+      "Q Axis Current Factor"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.02"
+    ]
+  },
+  {
+    "xml_id": "foc_fw_ramp_time",
+    "names": [
+      "Field Weakening Ramp Time"
+    ],
+    "variants": [
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "foc_mtpa_mode",
+    "names": [
+      "Foc Mtpa Mode"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=MODE_IQ_MEASURED",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "foc_rcc_apb2clk_div",
+    "names": [
+      "Foc Rcc Apb2clk Div"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=RCC_APB2CLK_DIV16",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "foc_sample_order",
+    "names": [
+      "Foc Sample Order"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Current-Voltage",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "foc_vol_adc_sampletime",
+    "names": [
+      "Foc Vol ADC SampleTime"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ADC_SAMPLETIME_239_5",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "ftesc_id",
+    "names": [
+      "ESC ID"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "h_gear_erpm",
+    "names": [
+      "H-Gear Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=100000"
+    ]
+  },
+  {
+    "xml_id": "hfpi_salient_gain",
+    "names": [
+      "HFPI Saliency Gain"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1.0"
+    ]
+  },
+  {
+    "xml_id": "hfpi_voltage_gain",
+    "names": [
+      "HFPI Voltage Gain"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1.0"
+    ]
+  },
+  {
+    "xml_id": "input_signal_type",
+    "names": [
+      "Input Signal Type"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ADC",
+      "elistName=PAS",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "l_gear_erpm",
+    "names": [
+      "L-Gear Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10000"
+    ]
+  },
+  {
+    "xml_id": "limitation_battery_voltage_maximum",
+    "names": [
+      "Battery High Voltage(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=84"
+    ]
+  },
+  {
+    "xml_id": "limitation_battery_voltage_minimum",
+    "names": [
+      "Battery Low Voltage(V)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=16"
+    ]
+  },
+  {
+    "xml_id": "limitation_mosfet_current_abs",
+    "names": [
+      "MOSFET Over Current(A)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=500"
+    ]
+  },
+  {
+    "xml_id": "limitation_mosfet_cutoff_temp_end",
+    "names": [
+      "MOS OverTemp End(℃)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=120"
+    ]
+  },
+  {
+    "xml_id": "limitation_mosfet_cutoff_temp_start",
+    "names": [
+      "MOS OverTemp Start(℃)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=85"
+    ]
+  },
+  {
+    "xml_id": "limitation_motor_cutoff_temp_end",
+    "names": [
+      "Motor OverTemp End(℃)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=120"
+    ]
+  },
+  {
+    "xml_id": "limitation_motor_cutoff_temp_start",
+    "names": [
+      "Motor OverTemp Start(℃)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=85"
+    ]
+  },
+  {
+    "xml_id": "m_encoder_counts",
+    "names": [
+      "ABI Encoder Counts"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=4000"
+    ]
+  },
+  {
+    "xml_id": "m_gear_erpm",
+    "names": [
+      "M-Gear Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=20000"
+    ]
+  },
+  {
+    "xml_id": "m_motor_temp_sens_type",
+    "names": [
+      "Motor Temp Sensor Type"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=KTY84-152",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "m_ptc_motor_coeff",
+    "names": [
+      "Motor Temp PTC α (%/K)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.61"
+    ]
+  },
+  {
+    "xml_id": "m_sensor_port_mode",
+    "names": [
+      "Motor Sensor Port"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=AS5047 Encoder(SPI)",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "mosfet_abs_current",
+    "names": [
+      "MOSFET Over Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=500"
+    ]
+  },
+  {
+    "xml_id": "motor_abi_encoder_counts",
+    "names": [
+      "ABI Encoder Counts"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=4000"
+    ]
+  },
+  {
+    "xml_id": "motor_abi_encoder_dir",
+    "names": [
+      "ABI Encoder Direction"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Negative",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_brake_current",
+    "names": [
+      "Motor Brake Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=-80"
+    ]
+  },
+  {
+    "xml_id": "motor_current",
+    "names": [
+      "Motor Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=80"
+    ]
+  },
+  {
+    "xml_id": "motor_dir",
+    "names": [
+      "Rotation Direction"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Negative",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_duty_mode",
+    "names": [
+      "Zero Duty Mode"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Release Motor",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_encoder_offset",
+    "names": [
+      "Encoder Offset(°)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=60"
+    ]
+  },
+  {
+    "xml_id": "motor_encoder_pole_pairs",
+    "names": [
+      "Motor Pole Pairs"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=7"
+    ]
+  },
+  {
+    "xml_id": "motor_flux",
+    "names": [
+      "Φ(mWb)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.005"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_abs_current_filter_coef",
+    "names": [
+      "Over Current Filter Coef"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_c_i",
+    "names": [
+      "FOC Current Ki"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=50"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_c_o_0",
+    "names": [
+      "Current Offset 0"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2048"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_c_o_1",
+    "names": [
+      "Current Offset 1"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2048"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_c_o_2",
+    "names": [
+      "Current Offset 2"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2048"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_c_p",
+    "names": [
+      "FOC Current Kp"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.03"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_current_ki",
+    "names": [
+      "Foc Current Ki"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=50"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_current_kp",
+    "names": [
+      "Foc Current Kp"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.03"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_d_gain_scale_max_mod",
+    "names": [
+      "Foc D Gain Scale Max Mod"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_d_gain_scale_start",
+    "names": [
+      "Foc D Gain Scale Start"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.9"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_deadtime_compensation",
+    "names": [
+      "Foc Deadtime Compensate"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.12"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_deadtime_us",
+    "names": [
+      "Foc Deadtime us"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.12"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_f_o_t",
+    "names": [
+      "FOC Flux Observer Type"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Ftesc Fuse",
+      "value_int=1"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_flux_observer_gain",
+    "names": [
+      "Foc flux observer gain"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=9e+07"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_flux_observer_gain_slow",
+    "names": [
+      "Foc flux observer gain slow"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.05"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_flux_observer_offset",
+    "names": [
+      "Foc flux observer offset"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=-1.0"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_s_v",
+    "names": [
+      "HFI Start Voltage"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=20"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_0",
+    "names": [
+      "HALL Table [0]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_1",
+    "names": [
+      "HALL Table [1]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_2",
+    "names": [
+      "HALL Table [2]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_3",
+    "names": [
+      "HALL Table [3]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_4",
+    "names": [
+      "HALL Table [4]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_5",
+    "names": [
+      "HALL Table [5]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_6",
+    "names": [
+      "HALL Table [6]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_t_7",
+    "names": [
+      "HALL Table [7]"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=255"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_v_i",
+    "names": [
+      "HFI Voltage Min"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=4"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_h_v_m",
+    "names": [
+      "HFI Voltage Max"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=5"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_loop_decouple_mode",
+    "names": [
+      "Foc Decouple Mode"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Decouple Current Voltage",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_o_g",
+    "names": [
+      "FOC Observer Gain"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=9e+07"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_observer_erpm_threshold",
+    "names": [
+      "Observer Erpm Threshold"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3000"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_p_i",
+    "names": [
+      "FOC PWM Interval(Hz)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=5000"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_pll_ki",
+    "names": [
+      "Foc PLL Ki"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=30000"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_pll_kp",
+    "names": [
+      "Foc PLL Kp"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2000"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_pwm_deadtime",
+    "names": [
+      "Foc PWM Deadtime(ns)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=80"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_sensorless_erpm",
+    "names": [
+      "Observer Erpm Threshold"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3000"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_v_o_0",
+    "names": [
+      "Voltage Offset 0"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_v_o_1",
+    "names": [
+      "Voltage Offset 1"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "motor_foc_v_o_2",
+    "names": [
+      "Voltage Offset 2"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "motor_fwc_current_max",
+    "names": [
+      "Flux Weakening Current(A)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "motor_fwc_neg_ramp_time",
+    "names": [
+      "Negative Ramp Time(ms)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1"
+    ]
+  },
+  {
+    "xml_id": "motor_fwc_pos_ramp_time",
+    "names": [
+      "Positive Ramp Time(ms)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_1",
+    "names": [
+      "Gear 1 Power(L-Gear)(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_2",
+    "names": [
+      "Gear 2 Power(M-Gear)(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=5000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_3",
+    "names": [
+      "Gear 3 Power(H-Gear)(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=25000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_4",
+    "names": [
+      "Gear 4 Power(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=25000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_5",
+    "names": [
+      "Gear 5 Power(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=25000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_power_r",
+    "names": [
+      "Gear R Power(R-Gear)(W)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=25000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_1",
+    "names": [
+      "Gear 1 Erpm(L-Gear)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_2",
+    "names": [
+      "Gear 2 Erpm(M-Gear)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=50000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_3",
+    "names": [
+      "Gear 3 Erpm(H-Gear)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=200000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_4",
+    "names": [
+      "Gear 4 Erpm"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=200000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_5",
+    "names": [
+      "Gear 5 Erpm"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=200000"
+    ]
+  },
+  {
+    "xml_id": "motor_gear_speed_r",
+    "names": [
+      "Gear R Erpm(R-Gear)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=5000"
+    ]
+  },
+  {
+    "xml_id": "motor_ld",
+    "names": [
+      "Lq(μH)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10e-06"
+    ]
+  },
+  {
+    "xml_id": "motor_limitation_negative_power",
+    "names": [
+      "Negative Power"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=-10000"
+    ]
+  },
+  {
+    "xml_id": "motor_limitation_positive_power",
+    "names": [
+      "Positive Power"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10000"
+    ]
+  },
+  {
+    "xml_id": "motor_lq",
+    "names": [
+      "Ld(μH)",
+      "Lq-Ld(μH)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10e-06"
+    ]
+  },
+  {
+    "xml_id": "motor_negative_erpm",
+    "names": [
+      "Negative Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=-120000"
+    ]
+  },
+  {
+    "xml_id": "motor_position_pid_kd",
+    "names": [
+      "Position PID Kd"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.00040"
+    ]
+  },
+  {
+    "xml_id": "motor_position_pid_ki",
+    "names": [
+      "Position PID Ki"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.004"
+    ]
+  },
+  {
+    "xml_id": "motor_position_pid_kp",
+    "names": [
+      "Position PID Kp"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.028"
+    ]
+  },
+  {
+    "xml_id": "motor_positive_erpm",
+    "names": [
+      "Positive Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=120000"
+    ]
+  },
+  {
+    "xml_id": "motor_power_on_beeping_hint",
+    "names": [
+      "Power On Beeping Hint"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_power_on_beeping_percent",
+    "names": [
+      "Beeping Level(%)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "motor_r",
+    "names": [
+      "Rm(mΩ)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.02"
+    ]
+  },
+  {
+    "xml_id": "motor_rated_current",
+    "names": [
+      "Motor Rated Current(A)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=50"
+    ]
+  },
+  {
+    "xml_id": "motor_sense_ptc_coeff",
+    "names": [
+      "Motor Temp PTC α (%/K)"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.61"
+    ]
+  },
+  {
+    "xml_id": "motor_sensor_port_mode",
+    "names": [
+      "Motor Sensor Port"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=TLE5012 Encoder(SPI)",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_accel",
+    "names": [
+      "PID Accel(r/(m^2))"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=30000"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_kd",
+    "names": [
+      "Speed PID Kd"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.0001"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_ki",
+    "names": [
+      "Speed PID Ki"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.0038"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_kp",
+    "names": [
+      "Speed PID Kp"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.0038"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_max_erpm",
+    "names": [
+      "PID Maximum Erpm"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=100000"
+    ]
+  },
+  {
+    "xml_id": "motor_speed_pid_min_erpm",
+    "names": [
+      "PID Minimum Erpm"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=500"
+    ]
+  },
+  {
+    "xml_id": "motor_temp_custom_base_temp",
+    "names": [
+      "Custom T0 (°C)"
+    ],
+    "variants": [
+      "resource_13_00209c88.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=25"
+    ]
+  },
+  {
+    "xml_id": "motor_temp_custom_res",
+    "names": [
+      "Custom R0 (Ohm)"
+    ],
+    "variants": [
+      "resource_13_00209c88.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10000"
+    ]
+  },
+  {
+    "xml_id": "motor_temp_ntc_beta",
+    "names": [
+      "Motor Temp NTC β (K)",
+      "Motor β Value(10K/25℃)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3380"
+    ]
+  },
+  {
+    "xml_id": "motor_temp_sens_type",
+    "names": [
+      "Motor Temp Sensor Type"
+    ],
+    "variants": [
+      "resource_03_001eab68.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=KTY84-152",
+      "elistName=NTC Custom",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "p_pid_ang_div",
+    "names": [
+      "Position Angle Division"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1"
+    ]
+  },
+  {
+    "xml_id": "p_pid_kd",
+    "names": [
+      "Position PID Kd"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.0004"
+    ]
+  },
+  {
+    "xml_id": "p_pid_kd_filter",
+    "names": [
+      "PID Kd Filter Coef"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.18"
+    ]
+  },
+  {
+    "xml_id": "p_pid_ki",
+    "names": [
+      "Position PID Ki"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.004"
+    ]
+  },
+  {
+    "xml_id": "p_pid_kp",
+    "names": [
+      "Position PID Kp"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.028"
+    ]
+  },
+  {
+    "xml_id": "pas_adc1voltage_max",
+    "names": [
+      "Max Throttle Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.2"
+    ]
+  },
+  {
+    "xml_id": "pas_adc1voltage_min",
+    "names": [
+      "Min Throttle Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "pas_adc2voltage_max",
+    "names": [
+      "Max Brake Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3.2"
+    ]
+  },
+  {
+    "xml_id": "pas_adc2voltage_min",
+    "names": [
+      "Min Brake Voltage(V)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.1"
+    ]
+  },
+  {
+    "xml_id": "pas_angle_sample_slap_ms",
+    "names": [
+      "Angle Sample Interval(ms)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0"
+    ]
+  },
+  {
+    "xml_id": "pas_angle_std_threshold",
+    "names": [
+      "Angle Std Threshold"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=12"
+    ]
+  },
+  {
+    "xml_id": "pas_control_mode",
+    "names": [
+      "Control Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "6"
+    ],
+    "value_candidates": [
+      "elistName=Current--Throttle ADC--Brake ADC--Brake Signal--UART Speed Gear",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "pas_current_throttle",
+    "names": [
+      "PAS Throttle(%)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.15",
+      "value_dou=1.0"
+    ]
+  },
+  {
+    "xml_id": "pas_filterd_constant",
+    "names": [
+      "Pedal Erpm Filterd Coef"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "pas_max_pedal_rpm",
+    "names": [
+      "Max Pedal RPM"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=140"
+    ]
+  },
+  {
+    "xml_id": "pas_min_pedal_rpm",
+    "names": [
+      "Min Pedal RPM"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=10"
+    ]
+  },
+  {
+    "xml_id": "pas_sensor_dierction",
+    "names": [
+      "Sensor Direction"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=Negative",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "pas_sensor_magnets",
+    "names": [
+      "Sensor Magnets"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "2"
+    ],
+    "value_candidates": [
+      "value_int=12"
+    ]
+  },
+  {
+    "xml_id": "pas_sensor_type",
+    "names": [
+      "Sensor Type"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml"
+    ],
+    "types": [
+      "6"
+    ],
+    "value_candidates": [
+      "elistName=Advanced Dual Quadrature Square Wave Signal",
+      "elistName=Dual Quadrature Square Wave Signal",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "pas_slow_dec_duty",
+    "names": [
+      "Slow-Decrease Duty(%)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.15"
+    ]
+  },
+  {
+    "xml_id": "pas_slow_dec_thro_percent",
+    "names": [
+      "Slow-Decrease Throttle(%)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.05"
+    ]
+  },
+  {
+    "xml_id": "pas_slow_dec_time",
+    "names": [
+      "Slow-Decrease Time(s)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=4.5"
+    ]
+  },
+  {
+    "xml_id": "pas_slow_release_motor",
+    "names": [
+      "Slow-Release Motor"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "pas_start_assistant_time",
+    "names": [
+      "Startup Boost Max Time(s)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=3"
+    ]
+  },
+  {
+    "xml_id": "pas_start_duty_threshold",
+    "names": [
+      "Startup Boost Max Duty"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.05"
+    ]
+  },
+  {
+    "xml_id": "pas_start_erpm_threshold",
+    "names": [
+      "Startup Boost Max Erpm"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1000"
+    ]
+  },
+  {
+    "xml_id": "pas_start_throttle_percent",
+    "names": [
+      "Startup Boost Throttle(%)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.2"
+    ]
+  },
+  {
+    "xml_id": "pas_startup_angle",
+    "names": [
+      "Startup Angle"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=90"
+    ]
+  },
+  {
+    "xml_id": "power_on_beeping_hint",
+    "names": [
+      "Power On Beeping Hint"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "ppmSetup_isSafeStartUsing",
+    "names": [
+      "Safety Start"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml"
+    ],
+    "types": [
+      "4"
+    ],
+    "value_candidates": [
+      "elistName=ON",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "ppm_control_mode",
+    "names": [
+      "Control Mode"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "6"
+    ],
+    "value_candidates": [
+      "elistName=Current Hybrid Bidirectional With Brake(reverse/brake:1.0~1.5ms,forward/brake:1.5~2.0ms)",
+      "elistName=Duty Reverse Brake(reverse/brake:1.0~1.5ms,forward:1.5~2.0ms)",
+      "elistName=Duty Reverse Slow(reverse:1.0~1.5ms,forward:1.5~2.0ms)",
+      "value_int=0"
+    ]
+  },
+  {
+    "xml_id": "ppm_control_start_reverse_time",
+    "names": [
+      "Reverse Delay Time(s)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=0.5"
+    ]
+  },
+  {
+    "xml_id": "ppm_pulse_max",
+    "names": [
+      "Max Pulse Width(ms)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=2"
+    ]
+  },
+  {
+    "xml_id": "ppm_pulse_mid",
+    "names": [
+      "Mid Pulse Width(ms)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1.5"
+    ]
+  },
+  {
+    "xml_id": "ppm_pulse_min",
+    "names": [
+      "Min Pulse Width(ms)"
+    ],
+    "variants": [
+      "resource_01_001e2ce8.xml",
+      "resource_04_001edb48.xml",
+      "resource_07_001f4767.xml",
+      "resource_10_001fa14c.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=1"
+    ]
+  },
+  {
+    "xml_id": "pwm_max_freq",
+    "names": [
+      "Max PWM Frequency(Hz)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=40000"
+    ]
+  },
+  {
+    "xml_id": "pwm_min_freq",
+    "names": [
+      "Min PWM Frequency(Hz)"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_03_001eab68.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml",
+      "resource_13_00209c88.xml",
+      "resource_14_0021c2bb.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=20000"
+    ]
+  },
+  {
+    "xml_id": "r_gear_erpm",
+    "names": [
+      "R-Gear Erpm"
+    ],
+    "variants": [
+      "resource_02_001e8420.xml",
+      "resource_05_001f0530.xml",
+      "resource_06_001f263d.xml",
+      "resource_08_001f68f3.xml",
+      "resource_09_001f9273.xml",
+      "resource_11_001fb879.xml"
+    ],
+    "types": [
+      "1"
+    ],
+    "value_candidates": [
+      "value_dou=5000"
+    ]
+  },
+  {
+    "xml_id": "s_pid_al
