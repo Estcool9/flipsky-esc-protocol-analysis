@@ -38,3 +38,16 @@ Source : [Flipsky — Differences Between FT ESC and FSESC (2026-01-09)](https:/
 - **confirmé** : démontré par une donnée observable ou une source vérifiable ;
 - **probable** : cohérent avec les indices, mais pas encore démontré ;
 - **inconnu** : aucune preuve suffisante.
+
+
+## 2026-11-22 — Réouverture REA et preuve plus précise du câblage Qt
+
+- Retrouvé le binaire original dans `/data/samples/Flipsky_ESC_Tool_V1.7_20261029.exe` sur le serveur REA.
+- Réouverture dans Ghidra 12.2 confirmée avec SHA-256 identique ; l'analyse ciblée Ghidra a toutefois dépassé le délai de réponse.
+- Bascule vers Rizin intégré à REA, sans modification du binaire (SHA-256 avant/après inchangé).
+- Recherche de références après `aaa` : les chaînes `uartPackDataFromESC` sont utilisées par la fonction d'enregistrement Qt à VA `0x00483910`.
+- Désassemblage ciblé : connexion `uartPackDataFromESC(QByteArray&)` → `uartPackDataFromESC(QByteArray&)`, puis `uartCommSendToFtesc(QByteArray&)` → `sendDataToESC(QByteArray&)`.
+- Autres connexions observées : réception de version firmware, accusé de lecture de paramètres moteur, callback de vérification de clé.
+- Rapport détaillé : [QT_CONNECTION_REGISTRATION.md](QT_CONNECTION_REGISTRATION.md).
+
+**Effet sur l'avancement :** la cartographie des connexions Qt passe de 55 % à environ 65 %. L'avancement global reste ~30 %, car le framing, les opcodes et le checksum ne sont toujours pas identifiés.
