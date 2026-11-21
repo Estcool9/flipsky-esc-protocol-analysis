@@ -74,3 +74,8 @@ Aucun firmware `.bin`, `.hex` ou `.fw` n'a été fourni. Aucun dump de communica
 ## 7. Sécurité
 
 Ne pas déduire un courant, une limite thermique ou un paramètre moteur sûr à partir d'une valeur trouvée dans un XML. Ne pas envoyer de trames inconnues à un ESC connecté à un moteur. Ne pas lancer de mise à jour firmware ni d'effacement bootloader tant que les procédures et risques ne sont pas établis.
+
+
+## 8. Dernière mise à jour — 2026-11-22
+
+La fonction d'enregistrement Qt à VA `0x00483910` a été désassemblée avec Rizin. Les connexions signal/slot de réception UART, d'envoi, de réception firmware, d'ACK de configuration et de callback de clé sont maintenant consignées dans [QT_CONNECTION_REGISTRATION.md](QT_CONNECTION_REGISTRATION.md). Cela affine le chemin de transport, mais ne révèle toujours pas le format des trames.
