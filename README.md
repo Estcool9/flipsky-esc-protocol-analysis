@@ -30,7 +30,7 @@ Projet de rétro-ingénierie **statique et documentée** d'une application Flips
 | Essais sur matériel réel | 0 % |
 | **Global estimé** | **~30 %** |
 
-Les pourcentages sont des estimations par jalons, à réviser au fil des preuves. Voir [docs/STATUS.md](docs/STATUS.md) et [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md).
+Les pourcentages sont des estimations par jalons, à réviser au fil des preuves. Voir [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md) et [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md).
 
 ## Résultats techniques
 
