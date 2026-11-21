@@ -39,3 +39,29 @@
 5. Verify whether `tea_encrypt` is called from a communication path.
 6. Compare confirmed protocol details with VESC Tool only after the Flipsky implementation is understood.
 7. Build offline parser tests before any physical ESC interaction.
+
+
+## 2026-11-22 — Outer frame, CRC and offline tests
+
+- Traced receive flow from \`uartDataHandleAvailable\` at \`0x00481030\` into \`uartPackDataHandle\` at \`0x0049CA30\`, then to outer parser \`0x0049C830\` (call site \`0x0049CC8D\`).
+- Recovered short frame \`AA + LEN8 + PAYLOAD + CRC16_BE + DD\` and extended frame \`BB + LEN16_BE + PAYLOAD + CRC16_BE + DD\`.
+- Confirmed sender selects AA for lengths 1–255 and BB above 255; receiver rejects empty short payloads and extended lengths <=254.
+- Compared both 256-byte lookup tables with generated split CRC-16/MODBUS tables. Parameters: reflected polynomial A001, init FFFF, xorout 0000; CRC covers payload only and is serialized big-endian. Check vector 123456789 → 4B37.
+- Confirmed default maximum-payload field 0x2710 (10,000) at \`0x0049C460\`.
+- Caller at \`0x0049CA30\` recognises parser result -2 (incomplete), -1 (invalid) and positive consumed length. On -1 it advances one byte; on success it advances by the frame length and repeats.
+- Added \`scripts/ftesc_frame.py\`, \`tests/test_ftesc_frame.py\`, [WIRE_FRAME_FORMAT.md](WIRE_FRAME_FORMAT.md), [RECEIVE_BUFFER_STATE.md](RECEIVE_BUFFER_STATE.md) and updated [ANALYSIS_CHECKPOINT.md](ANALYSIS_CHECKPOINT.md).
+- Ran the repository's Python unit tests on REA: **13 passed, 0 failed**.
+
+### Current estimate
+- **Overall progress: 40%**.
+- Outer frame and CRC: 100%.
+- Receive-buffer/resynchronization: 70%.
+- Offline frame codec/tests: 100%.
+- Inner command IDs and payload layouts: 8%.
+- Hardware validation: 0%.
+
+## Next work
+1. Map inner command IDs to named acknowledgement handlers without confusing generic Qt/QVariant type dispatch with ESC command IDs.
+2. Trace outgoing \`ftescObtain*\` builders through payload construction into the outer frame builder.
+3. Inspect exact incomplete-frame carryover across separate readyRead callbacks and all buffer reset conditions.
+4. Continue TEA call-site analysis; ordinary UART encryption remains unproven.
