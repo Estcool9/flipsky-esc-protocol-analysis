@@ -1,0 +1,28 @@
+# Reverse-engineering working files
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+.DS_Store
+Thumbs.db
+
+# Original executables, libraries, dumps and firmware are not committed by default
+*.exe
+*.dll
+*.sys
+*.so
+*.dylib
+*.pdb
+*.dmp
+*.bin
+*.hex
+*.elf
+*.fw
+*.img
+*.map
+*.o
+*.obj
+
+# Temporary outputs
+*.tmp
+*.restore-tmp
