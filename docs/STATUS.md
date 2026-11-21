@@ -1,81 +1,72 @@
-# État détaillé du projet
+# Project status
 
-**Date de référence : 2026-11-22**  
-**Avancement global estimé : ~30 %** du parcours vers une spécification exploitable du protocole et un client indépendant.
+**Reference date:** 2026-11-22  
+**Overall estimated progress: 33%** toward a sufficiently evidenced protocol specification and an independently testable offline client.
 
-## 1. Artefact analysé
+These percentages are milestone estimates, not measurements of certainty.
 
-| Propriété | Résultat |
-|---|---|
-| Type | PE32 / x86 |
-| Runtime | Pas de CLR/.NET détecté |
-| Taille | 50 611 200 octets |
-| SHA-256 | `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38` |
-| Sections notables | `.enigma1`, `.enigma2` |
-| Protection | Entropie élevée et sections atypiques ; protecteur exact non confirmé |
-| Outils | Ghidra pour l'analyse initiale, Rizin 0.9.1 pour le désassemblage ciblé |
+## Workstream progress
 
-L'intégrité a été vérifiée avant et après le transfert vers la machine d'analyse. L'exécutable original conservé à la source n'a pas été modifié.
+| Workstream | Progress |
+|---|---:|
+| Binary inventory and integrity | 100% |
+| Embedded XML extraction and validation | 100% |
+| Parameter catalog generation | 100% |
+| Qt/QML architecture and class ownership | 90% |
+| UART/Qt signal-slot and meta-object mapping | 75% |
+| UART implementation analysis | 32% |
+| Frame format, command IDs, CRC and responses | 5% |
+| VESC compatibility assessment | 25% |
+| Offline parser / independent client | 0% |
+| Hardware validation | 0% |
+| **Overall estimate** | **33%** |
 
-## 2. Ressources et paramètres
+## Confirmed evidence
 
-- 13 blobs XML compressés Zlib récupérés, décompressés et validés comme XML.
-- 736 lignes dans le catalogue de paramètres (les variantes de profils comptent séparément).
-- 222 IDs de paramètres distincts.
-- Scripts d'extraction et de génération testés pour reproductibilité.
-- Formats produits localement : CSV, JSON et JSON des IDs.
+### Executable
+- `Flipsky_ESC_Tool_V1.7_20261029.exe`, 50,611,200 bytes.
+- SHA-256: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- PE32 x86 native Windows executable; no CLR/.NET header observed.
+- Unusual `.enigma1` and `.enigma2` sections; protection/packing remains a hypothesis, not an identified protector.
 
-Familles de champs : CAN, UART, PPM, ADC, PAS, courants batterie/moteur, eRPM, résistance et inductance de phase, flux, gains FOC, encodeurs, PWM, mesures thermiques et seuils de coupure batterie.
+### Embedded resources and parameter catalog
+- 13 embedded XML resources recovered and validated.
+- 736 catalog rows across profile variants; 222 unique parameter IDs; 13 resource/profile variants.
+- Extraction and catalog-generation scripts are present in the repository.
+- Complete catalogs, manifest and all XML files are published as gzip/base64 payloads. Run [scripts/restore_payloads.py](../scripts/restore_payloads.py) to reconstruct them and verify the printed SHA-256 values against [ARTIFACT_INVENTORY.md](ARTIFACT_INVENTORY.md).
 
-**Limite :** le catalogue décrit les champs et valeurs trouvés dans les ressources logicielles. Il ne démontre pas leur sérialisation sur le port série et ne donne pas de réglages universellement sûrs.
+### Qt architecture
+- Qt 5, C++/QML, QtSerialPort and QtBluetooth are observed.
+- VA `0x00483910` initializes a `FtescLowLevelFace` object. Its vtable and Qt meta-cast path establish class identity.
+- Static meta-object: VA `0x0051f218`; string table `0x00f215c0`; meta-data `0x00f20d60`; static meta-call `0x004b98d0`.
+- A 64-entry dispatch jump table begins at `0x00f20c58`.
+- The class meta-object includes `uartDataHandleAvailable`, `uartPackDataFromESC`, `uartCommSendToFtesc`, `lowLevelSendDataToFtesc`, BLE callbacks and `tea_encrypt`.
 
-## 3. Architecture repérée
+### UART and BLE wiring
+- `QSerialPort::readyRead()` is connected to `uartDataHandleAvailable()`.
+- `uartPackDataFromESC(QByteArray&)` and `uartCommSendToFtesc(QByteArray&)` are wired through byte-array signal/slot connections.
+- `lowLevelSendDataToFtesc(QByteArray&)` is connected to `sendDataToESC(QByteArray&)`.
+- Firmware-version and motor-configuration acknowledgement slots are registered.
+- BLE receive/disconnect callbacks are registered in the same high-level façade.
 
-Pile Qt : QtQuick, QtQuick.Controls, QtQuick.Layouts, QtCharts, Qt5SerialPort, Qt5Bluetooth, plus les modules internes :
+## Open technical questions
 
-- `Flipsky.ftesc.FtescLowLevelFace`
-- `Flipsky.ftesc.ToolLib`
-- `Flipsky.ftesc.uartcomm`
-- `Flipsky.ftesc.valuesetups`
-- `Flipsky.ftesc.bleuart`
+Not yet demonstrated:
+- packet start/end markers and frame boundaries;
+- length field and encoding;
+- command IDs / opcodes;
+- payload layouts;
+- CRC/checksum algorithm;
+- integer and floating-point endianness;
+- fragmentation, escaping, retry and timeout behaviour;
+- whether `tea_encrypt` is actually invoked in the UART path;
+- exact BLE transport framing;
+- wire-level compatibility with VESC.
 
-Méthodes et slots nommés :
+## Tool requirements
 
-- `lowLevelSendDataToFtesc(QByteArray&)`
-- `uartPackDataFromESC(QByteArray&)`
-- `uartCommSendToFtesc(QByteArray&)`
-- `ftescMotorSignalReadAck(QString,bool)`
-- `ftescTopFlowSetupReadAck(QString,bool)`
-- `ftescMotorSignalSecretKeyCheckAck(int)`
-- `ftescGetIDResAck(QVector<int>,bool)`
-- `ftescAutoGetRealtimeDataAck()`
-- `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`
+No additional REA installation is currently required for static analysis: integrated Rizin 0.9.1 and Ghidra 12.2 are available. A Windows debugger (x64dbg or WinDbg in an isolated VM) could help later if runtime observation becomes necessary. A passive UART/USB capture from a known-good read-only session would be more valuable than installing more analysis packages.
 
-## 4. Câblage Qt établi
+## Safety boundary
 
-Une fonction de registration à l'adresse VA `0x00483b90` contient des connexions Qt importantes. Les signatures repérées établissent notamment :
-
-- `QSerialPort::readyRead()` relié à `UartComm::uartDataHandleAvailable()`.
-- `QSerialPort::error(QSerialPort::SerialPortError)` relié au slot d'erreur UART.
-- `QTimer::timeout()` relié à un slot timer low-level.
-- Des signaux de données envoyées reliés à `sendDataToESC(QByteArray&)`.
-- Une registration realtime entre `ftescGetRealtimeDataOnce(...)` et un slot de lecture / accusé réception.
-
-Cela prouve le câblage des événements, pas le format des octets transmis.
-
-## 5. Ce qui reste inconnu
-
-Aucune conclusion fiable n'a encore été établie sur les octets de début/fin, la longueur, les IDs de commande, le CRC/checksum, l'endianness, l'échappement, la fragmentation, les retransmissions, les formats de réponse/erreur ou le protocole BLE. Le partage éventuel du protocole avec VESC n'est pas démontré.
-
-## 6. Limites matérielles
-
-Aucun firmware `.bin`, `.hex` ou `.fw` n'a été fourni. Aucun dump de communication série ni capture USB/UART en fonctionnement n'est disponible. Aucun ESC physique n'a été testé pendant cette phase. L'analyse est donc principalement statique et basée sur le binaire de l'application.
-
-## 7. Sécurité
-
-Ne pas déduire un courant, une limite thermique ou un paramètre moteur sûr à partir d'une valeur trouvée dans un XML. Ne pas envoyer de trames inconnues à un ESC connecté à un moteur. Ne pas lancer de mise à jour firmware ni d'effacement bootloader tant que les procédures et risques ne sont pas établis.
-
-
-## 8. Dernière mise à jour — 2026-11-22
-
-La fonction d'enregistrement Qt à VA `0x00483910` a été désassemblée avec Rizin. Les connexions signal/slot de réception UART, d'envoi, de réception firmware, d'ACK de configuration et de callback de clé sont maintenant consignées dans [QT_CONNECTION_REGISTRATION.md](QT_CONNECTION_REGISTRATION.md). Cela affine le chemin de transport, mais ne révèle toujours pas le format des trames.
+No physical ESC has been tested and no firmware was flashed. XML parameter defaults and limits are not safe-tuning recommendations. Unknown packets must not be sent to a controller connected to a motor.
