@@ -22,7 +22,7 @@ Projet de rétro-ingénierie **statique et documentée** d'une application Flips
 | Extraction/validation des ressources XML | 100 % |
 | Catalogue des paramètres | 100 % |
 | Identification de la pile Qt/QML | 80 % |
-| Cartographie des signaux UART/Qt | 55 % |
+| Cartographie des signaux UART/Qt | 65 % |
 | Analyse des implémentations des fonctions UART | 25 % |
 | Format des trames, commandes, CRC et réponses | 5 % |
 | Compatibilité VESC documentée | 20 % |
