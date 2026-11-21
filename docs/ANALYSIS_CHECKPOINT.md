@@ -77,3 +77,15 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Test command: \`python3 -m unittest discover -s tests -v\`.
 - Result on REA using the published GitHub versions: **13 passed, 0 failures**.
 - Current overall estimate: **40%**.
+
+
+## Official V1.6 reference milestone — 2026-11-22
+
+- Added the official V1.6 UART protocol digest, V1.4/V1.6 delta, V1.7 cross-reference, manual notes and Nextcloud source inventory.
+- Preserved the ECU-side example C source under reference/.
+- Added a protocol helper module and tests. Combined test suite on REA: 26 passed, 0 failed.
+- V1.6 changes CMD 00 automatic telemetry, moves CMD 02 current request from D0-D1 to D2-D3 and adds the PAS-mode alias for CMD 02.
+- Outer frame, CRC and big-endian conventions remain unchanged from V1.4 to V1.6 and match the private V1.7 parser/builder.
+- Current overall project estimate: **46%**.
+- V1.6 Windows executables are inventoried in Nextcloud but are not staged on REA.
+- V1.7 command-ID to Qt-response mapping remains the next major reverse-engineering target.
