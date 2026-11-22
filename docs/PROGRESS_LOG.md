@@ -424,3 +424,18 @@
 - Fresh public clone: **100 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **84% to 85%**. UUID raw response is covered; firmware-version and variable-string responses remain open.
 - No UUID was requested from hardware.
+
+
+## 2026-11-22 — Native ValueSetup response decoder implemented
+
+- Decompiled `FUN_004A10C0`: reads a big-endian 32-bit marker, validates it, then iterates the ValueSetup vector in order and calls `FUN_004A0B70`.
+- Decompiled `FUN_004A0B70`: resolves metadata via `FUN_004EBE20` and decodes according to `valType`, `valueTET` and `evalScl`.
+- Mapped read types: float scaled signed16/32, IEEE float32, unsigned/signed byte, unsigned/signed16, unsigned/signed32, and signed byte for outer types 4/6/7.
+- Confirmed `Invalid SecretKey` is the fixed marker-mismatch error, separate from UUID/TEA firmware authorization.
+- Added `decode_profile_block()` and `DecodedSetupBlock` with a `next_offset` for parsing the optional second CMD 0x1B block.
+- Refined signed-byte encoding for TET2 and outer valTypes 4/6/7.
+- Added 4 tests for all supported decode types, sequential marker blocks, marker mismatch and truncation.
+- Added [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md); updated [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
+- Fresh public clone: **104 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **85% to 87%**. Motor/signal setup request/response codecs are now 95%; TopFlow schema and profile/SKU selection remain open.
+- No setup response was captured from hardware.
