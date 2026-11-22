@@ -203,3 +203,17 @@ The matching response acknowledgements are now tied to exact UartComm signal ind
 ## 8. Typed setup-value serialization
 
 The generic serializer behind the marker blocks is now documented and implemented offline. See [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md) for the `valType` / `valueTET` / `evalScl` mapping and the native helper chain. The offline script `scripts/ftesc_setup_serializer.py` emits a marker followed by typed values in supplied vector order; it deliberately does not guess missing profile-order rules.
+
+
+## 8. Native payload schema cross-reference
+
+The resolved payload layouts and offline builders are documented in [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md).
+
+Additional native method details:
+- UartComm meta-object index 32, `ftescGetAutoRealtimeData(uint8,uint16)`, dispatches to `FUN_004993F0` at `0x004993F0`.
+- It emits CMD 0x1A, one-byte enable, then 16-bit big-endian interval.
+- Motor setup setter `FUN_00498D60` emits CMD 0x07 with marker 0xD2C6EF10 and the first setup vector.
+- Motor-signal setup setter `FUN_00498540` emits CMD 0x1B with marker 0xD2C6EF10 and optionally a second marker 0x4879187D when the second vector exists.
+- TopFlow setter `FUN_00498960` emits CMD 0x3A with marker 0x54464346.
+- TopFlow reset `FUN_00497F30` emits CMD 0x1D with no DATA; motor-signal reset/reboot `FUN_00497E20` emits CMD 0x1D plus one byte.
+- IMU calibration `FUN_00499070` emits CMD 0x29 with a signed 32-bit big-endian value scaled by 1,000.
