@@ -87,3 +87,13 @@ These immediates were read directly from the wrappers and cross-checked against 
 ## 6. Safety
 
 No serial port was opened and no ESC command was transmitted. The protocol code and test suite are offline-only.
+
+
+## 7. Timer and timeout paths
+
+There are two distinct timer-related paths:
+
+- `uartPackData::uartPackDataTimerSl` (meta-object index 3) dispatches to `FUN_0049C800`. It decrements an internal countdown at object offset `+0x0C`; when the countdown reaches zero it clears the receive parser cursor, used length and incomplete-byte countdown at `+0x14`, `+0x18` and `+0x1C`.
+- `UartComm::uartCommTimerSlot` (meta-object index 53) dispatches to `FUN_00499540`. It decrements multiple request/response counters. When the counter at `+0x44` expires, it logs `TopFlow setup read timeout` and emits signal index 9 `ftescTopFlowSetupReadAck(QString,bool)` with the text `TopFlow Read Timeout`. When the counter at `+0x40` expires, it emits signal index 19 `ftescGetIDResAck(QVector<int>,bool)` with an empty vector and a flag value of 1.
+
+The remaining counter offsets are observed but not yet mapped to named request types. This is separate from the 2-second local event-loop waits in the firmware-update preflight.
