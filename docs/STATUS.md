@@ -30,7 +30,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Latest REA verification before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
 - Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; these new tests have not yet been executed by CI in this session.
-- V1.7 BLE GATT service/TX/RX UUIDs statically identified; controller/service signal flow, CCCD 0x2902 lookup, and Qt connection bleDataRx(QByteArray) to dataRx(QByteArray) mapped. Downstream parser path and live BLE remain unverified.
+- V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
 ## Source intake and tooling
@@ -38,7 +38,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Scanned /Projet Perso/Revolt-Engine/Software in Nextcloud: 92 entries, tree not truncated.
 - Found three V1.6 Windows builds (2025-10-14, 2026-08-06, 2026-09-12), a V1.6 macOS DMG, and the V1.6 Android BLE APK. These binaries are inventoried but not staged on the REA host; see [NEXTCLOUD_SOFTWARE_INVENTORY.md](NEXTCLOUD_SOFTWARE_INVENTORY.md).
 - Ghidra 12.2 is available and sufficient for the current PE32 analysis. Hopper is missing, IDA is not configured, and Kuna is not configured/does not admit PE in the current provider.
-- Android APK deep analysis needs a local APK plus JADX MCP JAR/JDK; Apktool and ADB are not configured. Other optional provider gaps are listed in [TOOLING_AUDIT.md](TOOLING_AUDIT.md).
+- REA's Apktool 3.0.3 launcher (`/usr/local/bin/apktool`) and ADB 34.0.5 launcher (`/usr/bin/adb`) were verified. No Android device was contacted. The APK is still not staged on REA; the caller-supplied JADX MCP JAR/JDK path still needs verification. Other optional provider gaps are listed in [TOOLING_AUDIT.md](TOOLING_AUDIT.md).
 
 ## Workstream progress
 
@@ -60,7 +60,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs, controller/service state and app ingress connection | 60% |
+| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress and TX chunking | 75% |
 | V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
 
@@ -312,3 +312,12 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - This proves byte-array ingress is connected to an application-level receiver. It does not yet prove how that receiver passes bytes into uartPackData or the exact stream parser.
 - BLE reverse-engineering sub-workstream: 55% to 60%; whole-product score remains 72.2% (rounded 72%).
 - Evidence: constructor assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21; signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f; slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962; exact method-name inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
+
+
+### BLE shared transport refinement — 2026-11-22
+
+- Static callback `FUN_004828D0` (Qt method `bleDataRx`) calls the shared UART receive stream handler `FUN_0049CA30`. BLE therefore reuses the same AA/BB frame parser as UART.
+- Shared send slot `FUN_00481850` routes the same framed byte array into `FUN_004050C0` when BLE is connected; `FUN_004050C0` slices at a fixed 20-byte stride and feeds an asynchronous queue.
+- This advances only the BLE static reverse-engineering sub-workstream from 60% to 75%. Whole-product score remains **72.2%**; the UI/live transport work package remains 20% and hardware validation remains 0%.
+- The mangled Qt `writeCharacteristic` symbol is present, but final dispatch, write mode, CCCD value and negotiated ATT MTU are still unresolved.
+- See [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
