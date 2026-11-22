@@ -48,7 +48,7 @@ The executable contains the mangled symbol string for `QLowEnergyService::writeC
 
 ## Progress accounting
 
-The static BLE transport sub-workstream rises from 60% to **75%**: the receive-to-common-parser route and the transmit queue's 20-byte segmentation are now statically established. The complete-product weighted score stays at **72.2%** (79.4 / 110 points). No live transport or desktop functionality has been added, and hardware validation remains 0%.
+The static BLE transport sub-workstream rises from 60% to **75%**: the receive-to-common-parser route and the transmit queue's 20-byte segmentation are now statically established. At the time of the BLE analysis the complete-product weighted score was 72.2%; after the separate CI verification later in this session, the current score is **72.6%** (79.9 / 110 points). No live transport or desktop functionality has been added, and hardware validation remains 0%.
 
 ## Acquisition and environment note
 
