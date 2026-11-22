@@ -162,9 +162,9 @@ See [Flipsky VESC V1.0 analysis](docs/FLIPSKY_VESC_PROTOCOL_V1.0.md), [protocol-
 
 Static analysis of V1.7 confirms the BLE UART service UUID (`0000fff0-0000-1000-8000-00805f9b34fb`), TX characteristic UUID (`0000fff2-0000-1000-8000-00805f9b34fb`) and RX characteristic UUID (`0000fff1-0000-1000-8000-00805f9b34fb`). Controller/service state callbacks and the CCCD descriptor lookup (`0x2902`) are mapped.
 
-The receive callback `FUN_004828D0` passes the incoming `QByteArray` to the shared AA/BB incremental frame-stream handler `FUN_0049CA30`, the same parser used by UART. On transmit, the shared lower-level send slot routes the already-framed byte array into a BLE branch which slices it into fixed 20-byte application chunks and processes them through an asynchronous queue. These are static code observations, not a live BLE capture; 20 bytes is not asserted to be the negotiated ATT MTU.
+The receive callback `FUN_004828D0` passes the incoming `QByteArray` to the shared AA/BB incremental frame-stream handler `FUN_0049CA30`, the same parser used by UART. On transmit, the shared lower-level send slot routes the already-framed byte array into a BLE branch which slices it into fixed 20-byte application chunks and processes them through an asynchronous queue. The independent V1.6 Android native implementation confirms 20-byte chunks, directly calls `QLowEnergyService::writeCharacteristic` with C++ `WriteMode=1` (`WriteWithoutResponse`), and writes CCCD bytes `01 00` to `0x2902` (notifications). Its `FtescLowLevelFace::bleDataRx` slot calls `uartPackData::uartPackDataHandle`, the same FTESC stream parser. These are static observations, not a live BLE capture; 20 bytes is not asserted to be the negotiated ATT MTU.
 
-The final `writeCharacteristic` call target, response/no-response mode, exact CCCD value, negotiated ATT MTU, retries and live BLE behavior remain unverified. See [BLE_GATT_V1_7_REVERSE_ENGINEERED](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING](docs/BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
+For Windows V1.7, the final indirect `writeCharacteristic` target and write mode remain unresolved inside the protected Enigma region. Android V1.6's exact `WriteWithoutResponse` mode and CCCD `01 00` provide strong cross-platform corroboration, not proof of the Windows call edge. Negotiated ATT MTU, retries and live BLE behavior remain unverified. See [BLE_GATT_V1_7_REVERSE_ENGINEERED](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING](docs/BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md), [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED](docs/ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
 
 ## What remains before 100%
 
@@ -172,9 +172,9 @@ The final `writeCharacteristic` call target, response/no-response mode, exact CC
 2. Locate the V1.7 native insertion point for UART CMD 0x10 and complete slave response routing/correlation.
 3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
 4. Complete function-level comparison of the three staged V1.6 Windows executables against V1.7; first-pass PE32 identity/marker comparison is now recorded.
-5. Decompile the Android V1.6 `BleUart` functions, decode its Qt `.rcc` QML resource bundle, and map the app's exact GATT write/CCCD/MTU choices.
+5. Decode the Android V1.6 Qt `.rcc` QML resource bundle, resolve the exact Qt signal/slot connection site and compare the ARMv7 native path with ARM64.
 6. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
-7. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
+7. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including negotiated ATT MTU, retransmission, UART baud selection and timing units. BLE application chunking, Android V1.6 write mode/CCCD and shared parser routing are now statically identified; Windows V1.7 call-edge proof remains open.
 
 Hardware validation is still **0%**. The 72.6% weighted estimate reflects static evidence, offline implementation and CI-verified tests; it does not mean the protocol is safe or verified on a live ESC.
 
