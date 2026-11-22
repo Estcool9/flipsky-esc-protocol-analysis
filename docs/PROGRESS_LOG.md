@@ -564,3 +564,12 @@
 - Added [TOOLING_AUDIT.md](TOOLING_AUDIT.md) with exact environment variables and the tools that are genuinely needed next.
 - Largest immediate blocker is not a different decompiler: the V1.6 EXEs and BLE APK must be materialized on the REA analysis host before they can be compared. No source files were modified in Nextcloud.
 - No software was installed and no hardware was connected.
+
+
+## 2026-11-22 — Weighted progress calculation corrected
+
+- Audited the ten work-package weights in README/STATUS instead of carrying forward the earlier displayed score.
+- Found the relative weights total **110 points**, not 100. The current weighted contributions total **79.4 points**.
+- Correct normalized score: 79.4 / 110 × 100 = **72.1818%**, shown as **72.2% unrounded / 72% rounded**.
+- The previous **72.4%** unrounded figure was incorrect because the denominator was treated as 100 despite 110 relative points. Updated README, STATUS, ROADMAP and the BLE report to correct this.
+- This correction does not change any workstream's implementation progress. BLE static reverse-engineering coverage is 55%; the desktop UI/live transport package remains 20%.
