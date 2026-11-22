@@ -1,6 +1,6 @@
 # Technical roadmap
 
-**Overall estimated progress: 54% (2026-11-22).**
+**Overall estimated progress: 58% (2026-11-22).**
 
 ## Phase A — Static application mapping
 
@@ -26,9 +26,9 @@
 - [x] Compare public V1.4 and V1.6 protocol revisions.
 - [x] Build offline frame and selected command/telemetry codecs.
 - [x] Run synthetic test vectors (36 passed).
-- [ ] Map V1.7 numeric command IDs to outbound request builders using the new Qt API string map.
-- [ ] Map all V1.7 numeric response IDs to Qt acknowledgements and parsers (0x00, 0x11, 0x1A and 0x1E are now correlated).
-- [ ] Confirm V1.7 CMD 02 offsets against the V1.6 spec.
+- [x] Map most V1.7 outbound command IDs to UartComm request builders; full payload schemas remain open.
+- [ ] Map all V1.7 numeric response IDs to Qt acknowledgements and parsers (0x00, 0x01, 0x0F, 0x11, 0x16, 0x18, 0x1A, 0x1E, 0x29 and setup-family IDs are now correlated).
+- [ ] Trace the separate CMD 0x02 one-shot request path and confirm V1.7 offsets against V1.6.
 - [ ] Trace CAN forwarding and slave response dispatch.
 - [ ] Establish exact cross-callback fragmentation/reset behaviour.
 - [ ] Determine BLE's exact frame/envelope format.
@@ -57,7 +57,7 @@
 - [x] Add offline stream-chunking, partial-frame retention and resynchronization tests (synthetic data only).
 - [ ] Add offline capture replay using authorized passive captures.
 - [ ] Add a simulator for benign, read-only responses.
-- [ ] Add command-schema validation once V1.7 request builders are mapped.
+- [ ] Add command-schema validation after remaining setup and CAN request schemas are mapped.
 
 ## Phase E — Hardware validation (later)
 
