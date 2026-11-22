@@ -552,3 +552,15 @@
 - Still open: the complete `writeData` / `sendNextPacket` caller path, `writeCharacteristic` mode, CCCD value, MTU/chunking/reassembly, and passive BLE capture.
 - No device scan, BLE connection, characteristic write, UART/CAN transmission, or firmware operation was performed.
 - Evidence IDs retained: UUID search `ev_c20b6860d554e3552d2dc6b82cebf19613220d0aa60f1a9439454420eac9ed7c`; BLE string inventory `ev_7835a85225d762c87de7b9860c87cdfb403da27dd47164414c9e8789300ff685`; Qt metadata bytes `ev_b916cb75bc14727e78b83f0b8ff0c6aba0cc33fe8e9e2d2729e558ade7a52b84`; service-state dossier `ev_3feb0512635b349f450a5ea25919bedf24032ad311879124761ef69557d31e5e`; service setup dossier `ev_a8c247ff6f88ad41db5404f895e9dac4e89b515f10c4bc39760c6635077ed985`; controller init dossier `ev_4aeaf50320792a55be39923e9659a5d8b29a4351d13bb721aae8f1806253cb12`; characteristic callback xref `ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f`; BleUart meta-call decompile `ev_7be243cc6465b5cd705b2bd3c40cdb13db0554d3d45bf7256e1f21315f27ff4f`.
+
+
+## 2026-11-22 — Full Nextcloud Software intake and REA tooling audit
+
+- Scanned /Projet Perso/Revolt-Engine/Software to depth 5: 92 entries, no tree truncation.
+- Identified Flipsky ESC Tool V1.1–V1.7 Windows builds, three separate V1.6 Windows builds dated 2025-10-14, 2026-08-06 and 2026-09-12, a V1.6 macOS DMG, the V1.6 Android BLE APK, V1.5/V1.6 UART C samples, and separate TFT V2.0/V2.1 firmware/update artifacts.
+- The V1.6 Android BLE APK is 44,167,894 bytes; it is the highest-value independent BLE cross-check candidate. It has not been staged or analyzed yet.
+- Added [NEXTCLOUD_SOFTWARE_INVENTORY.md](NEXTCLOUD_SOFTWARE_INVENTORY.md) with paths, sizes, status and intake priorities.
+- Audited current REA provider readiness: Ghidra 12.2 is available and supports this PE32 target. Hopper is missing, IDA is not configured, and Kuna is not configured and does not currently admit PE. ADB, Apktool, JADX/JEB Android tooling, sigrok, Binwalk/Unblob, pwntools, WABT, Wakaru and native macOS utilities are absent or not configured; these are optional and mapped to specific future sub-tasks.
+- Added [TOOLING_AUDIT.md](TOOLING_AUDIT.md) with exact environment variables and the tools that are genuinely needed next.
+- Largest immediate blocker is not a different decompiler: the V1.6 EXEs and BLE APK must be materialized on the REA analysis host before they can be compared. No source files were modified in Nextcloud.
+- No software was installed and no hardware was connected.
