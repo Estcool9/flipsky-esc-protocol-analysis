@@ -48,7 +48,7 @@ The file hashes and commit identities are also recorded in [`analysis-data/vesc-
 | Implementation | Native PE32 x86 application | Public C++/Qt source |
 | UI technology observed | Qt 5 / QML, QtQuick, QtCharts | Qt/C++ application with application/pages/widgets and resource collections |
 | Transport abstractions | Flipsky `FtescLowLevelFace`, `uartcomm`, `bleuart` | `Packet`, `Commands`, `BleUart` |
-| Configuration model | 13 recovered ValueSetup XML variants, ordered by `ValueSeque`, marker-prefixed blocks | VESC configuration structures and typed command serialization such as MC configuration and setup-values queries |
+| Configuration model | 19 recovered ValueSetup XML variants, ordered by `ValueSeque`, marker-prefixed blocks | VESC configuration structures and typed command serialization such as MC configuration and setup-values queries |
 | Protocol family | FTESC-specific UART and CAN | VESC COMM and VESC CAN |
 | Source availability | The analyzed Flipsky V1.7 program is a shipped binary; its source was not available in the supplied project | Official public source repository; GPL-3.0 |
 
@@ -229,3 +229,36 @@ The VESC Tool repository declares GPL-3.0. This project records protocol and arc
 5. Keep the V1.7 UART CMD 0x10 wrapper insertion point, slave reply routing, TopFlow XML and live-device behavior in the residual-unknown list.
 
 No ESC was connected and no VESC/FTESC control command was transmitted.
+
+
+## 12. Flipsky's own VESC V1.0 PDFs added to the comparison
+
+The user supplied four Flipsky documents from Nextcloud: English/Chinese VESC UART V1.0 and English/Chinese VESC CAN V1.0. Their document numbers are `VESC-CM-UART-20250331-01` and `VESC-CM-CAN-20250331-01`; both are dated 2025-04-15 and target VESC firmware V3.00 and above. The full digest is in [FLIPSKY_VESC_PROTOCOL_V1.0.md](FLIPSKY_VESC_PROTOCOL_V1.0.md).
+
+Newly corroborated details:
+
+- Flipsky's VESC UART V1.0 uses the same 02/03/04 length-dependent framing, INFO CRC coverage, 0x1021 non-reflected CRC initialized to zero, big-endian CRC trailer and ETX 03 as the pinned VESC Tool `packet.cpp`.
+- Its VESC UART enum agrees with the pinned `vedderb/vesc_tool/datatypes.h` for `COMM_FW_VERSION=0`, `COMM_GET_VALUES=4`, control commands 5–10, reboot 29, alive 30, CAN forward 34 and chuck data 35.
+- VESC UART CAN forwarding uses `0x22 | SlaveID | SlaveCMD | SlaveDATA`. VESC Tool's `Commands::emitData()` prepends `COMM_FORWARD_CAN` and `mCanId` in its normal CAN-enabled send path.
+- The Flipsky VESC CAN V1.0 C example and pinned VESC firmware `comm_can.c` agree on the extended ID construction `controller_id | (CAN_PACKET_ID << 8)`: target/controller ID is in bits 0..7; command ID is in bits 8..15.
+- The VESC CAN V1.0 basic scales (duty ×100000, current/brake ×1000, RPM raw int32, position ×1000000) agree with the pinned firmware's command builders.
+
+These details validate a separate VESC adapter; they do not make FTESC compatible with VESC. FTESC V1.7's AA/BB + DD framing and MODBUS CRC remain distinct, and multiple UART command numbers collide with different meanings.
+
+### Explicit differences in forwarding paths
+
+| Product/path | Forward command | Wrapper |
+|---|---:|---|
+| VESC Tool / VESC UART | `0x22` | target VESC ID, then inner VESC command and DATA; confirmed in `Commands::emitData()` |
+| Published FTESC V1.6 UART | `0x10` | slave ESC ID, then inner FTESC command and DATA |
+| FTESC Tool V1.7 normal UartComm path | no prepend observed | 29 request methods converge on `FUN_00495910`, which logs CAN state then forwards the unchanged INFO buffer; the standard chain encodes AA/BB UART framing but does not add the published `0x10` wrapper |
+
+This difference is important for a replacement: use separate VESC and FTESC forwarding adapters. For V1.7, do not assume the published V1.6 envelope is what the shipped desktop binary transmits on every path. See [V1_7_OUTBOUND_TRANSMIT_CHAIN.md](V1_7_OUTBOUND_TRANSMIT_CHAIN.md).
+
+### Flipsky's current product-family and Gateway statements
+
+Flipsky's [Differences Between FT ESC and FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc) article says FT ESC is NON-VESC and FSESC is VESC-based; it states that the programming tools are not interchangeable. Its 20 November 2026 [CAN Gateway explainer](https://flipsky.net/blogs/vesc-tool/what-is-a-can-gateway) describes distinct FTESC and FSESC gateways and their corresponding programming tools.
+
+### Clean-room implementation
+
+The new `scripts/vesc_uart.py` and `scripts/vesc_can.py` modules are independent offline implementations of Flipsky VESC V1.0 protocol details. They do not import FTESC code and do not include VESC Tool source. Their tests include the Flipsky VESC GET_VALUES reference frame `02 01 04 40 84 03`, 02/03/04 length boundaries and the documented direct-CAN identifier/scaling examples.
