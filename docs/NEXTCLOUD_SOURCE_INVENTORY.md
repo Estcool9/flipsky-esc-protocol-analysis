@@ -60,3 +60,21 @@ The C example is preserved in reference/ftesc_v1.4_1.5_1.6_uart_handle.c. It is 
 - Only the V1.7 Windows executable is presently staged on REA.
 - Public V1.4/V1.6 protocol documents and C sample have been text-extracted through Nextcloud and documented in this repository.
 - No V1.6 executable has yet been extracted into the REA project.
+
+
+## VESC/FSESC protocol source folder
+
+**Source directory:** `/Projet Perso/Revolt-Engine/Software/VESC Protocol`  
+**Inventory date:** 2026-11-22  
+**Observed files:** 4 readable PDF files; all were in the user's personal Nextcloud storage.
+
+| File | Size (bytes) | Modified in Nextcloud | Document number / version |
+|---|---:|---|---|
+| `VESC UART Protocol V1.0.pdf` | 466,634 | 2025-04-15 | `VESC-CM-UART-20250331-01`, V1.0 |
+| `VESC UART 协议 V1.0.pdf` | 306,249 | 2025-04-15 | `VESC-CM-UART-20250331-01`, V1.0 |
+| `VESC CAN Protocol V1.0.pdf` | 515,319 | 2025-04-26 | `VESC-CM-CAN-20250331-01`, V1.0 |
+| `VESC CAN 协议 V1.0.pdf` | 501,963 | 2025-04-26 | `VESC-CM-CAN-20250331-01`, V1.0 |
+
+The four cover pages say VESC firmware V3.00 and above and classify the protocol documents as Public. The English CAN cover says 12 pages while the Chinese CAN cover says 17; this is recorded as a document-control discrepancy. The English UART table of contents also contains stale FTESC-style command names although the body and enum use the VESC command namespace.
+
+The documents are summarized in [FLIPSKY_VESC_PROTOCOL_V1.0.md](FLIPSKY_VESC_PROTOCOL_V1.0.md). The protocol digest records baud rate, framing, CRC, UART and CAN command IDs, payload scales, forwarding and identifier composition. The original PDFs are not duplicated in this repository.
