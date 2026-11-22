@@ -619,3 +619,21 @@
 - `resolve_native_call_targets` resolves the computed call reference to `0x00B5A1D0`. This address lies inside the protected Enigma region; its decompilation warns of bad instruction data and is not semantically reliable.
 - The argument shape and the mangled `QLowEnergyService::writeCharacteristic(..., WriteMode)` string are a strong match, but the call target cannot yet be mapped conclusively to that Qt method. The observed third argument `1` is therefore not interpreted as either write mode.
 - BLE static sub-workstream: 75% → 80%. Overall score unchanged at **72.6%** (79.9 / 110). Evidence IDs: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`, `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`, `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
+
+
+## 2026-11-22 — V1.6 Android BLE native analysis and Windows marker comparison
+
+- Renewed the user's authorized temporary Nextcloud checkouts and transferred four artifacts read-only through Gateway SSH to CT 107. Verified source and destination SHA-256:
+  - Android APK: `26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e`.
+  - Windows V1.6 2026-09-12: `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`.
+  - Windows V1.6 2026-08-06: `94cfd851a5ccce38b8c42c9f154128e10fa2906ce9efc9cddfa39c4a00361a03`.
+  - Windows V1.6 2025-10-14: `1dc93bd84f4dab1a3ee7b3946fa0522c78fc870227523d8d5fe6d6e187ea2b07`.
+- APK inventory completed: 149 occurrences / 148 unique nodes, no integrity contradictions. Extracted and hash-verified Flipsky ARM64 and ARMv7 application libraries, Qt5Bluetooth libraries for both ABIs, and Android `.rcc` bundle.
+- JADX headless MCP 0.7.1 decompiled Qt Android `QtBluetoothLE` methods. `writeCharacteristic(handle, bytes, type)` maps type 1 → Android `WRITE_TYPE_DEFAULT`, type 2 → `WRITE_TYPE_NO_RESPONSE`, default → `WRITE_TYPE_SIGNED`. The backend schedules serialized I/O with a 3-second timeout, requests MTU 512 and falls back to 23, and checks CCCD first-byte notify/indicate bits. These are bridge semantics, not proof of Flipsky app-selected values.
+- Rizin native symbol inventory identifies the Flipsky Android ARM64 BLE layer: `BleUart::startScan`, `startConnect`, `writeData`, `sendNextPacket`, `updateData`, `dataRx`, `serviceStateChanged`, `confirmedDescriptorWrite`. It also identifies FTESC application methods for low-level send, UART framing, boot mode, firmware write/update/status, CAN firmware identity and setup value tables.
+- Targeted Windows PE32 marker scans found the same Flipsky/BLE markers in all three V1.6 builds and V1.7: `BleUart`, `FtescLowLevelFace`, `frameFwUpdate`, `UartComm`, `ftescValueTable`, `bleDataRx`, `uartPackDataFromESC`, and mangled Qt `writeCharacteristic`. V1.6 2025-10-14 additionally surfaced a Qt Win32 private writeCharacteristic symbol in the targeted scan; record as a string-level delta only.
+- Windows PE import inspection remains partial because Enigma/virtual-span mapping makes import descriptor ranges ambiguous; no inference of empty imports is permitted. Ghidra targeted decompilation of large ARM64 app library timed out; Rizin symbol inventory remains available.
+- BLE static sub-workstream: 80% → 85%; V1.6 EXE comparison sub-workstream: 0% → 25% (marker-level only). Whole-product score remains **72.6%** (79.9 / 110); no live transport, UI or hardware validation was added.
+- Open WebUI/Qwen recommendation recorded: Qwen3.8-27B as first planner trial, Qwen3.6-35B-A3B as alternative, Qwen3.5-9B as restricted evidence/report helper; see [LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md](LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md). No Open WebUI, Ollama, Gateway credential or MCP server configuration was changed.
+- Detailed Android report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md).
+- Safety: no APK/EXE executed, no Android device contacted, no BLE scan/pair/connect/GATT read/write, no UART/CAN transmission, no ESC command, and no firmware operation. Nextcloud originals unchanged.
