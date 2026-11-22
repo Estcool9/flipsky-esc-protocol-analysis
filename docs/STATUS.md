@@ -147,7 +147,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - Validate across actual ESC hardware revisions only when a safe, isolated test setup is available.
 
 ## Tooling and safety
-Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows executables are inventoried in Nextcloud but are not yet on REA. No physical ESC has been tested and no firmware has been flashed. Do not treat software defaults or limits as safe operating recommendations; do not transmit unknown frames to a motor-connected ESC.
+Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 executables are staged under `/data/analysis/pe/`; marker-level Ghidra comparison against V1.7 is complete, while function-level PE diffing and protected Windows BLE write-target resolution remain open. No physical ESC has been tested and no firmware has been flashed. Do not treat software defaults or limits as safe operating recommendations; do not transmit unknown frames to a motor-connected ESC.
 
 
 ### V1.7 Qt API string map
@@ -415,3 +415,13 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
 - GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed 162 tests, 0 failures; catalog/profile regeneration and Python compileall passed. Follow-on doc commit [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143) is also green.
 - No APK execution, handset, BLE/GATT, UART/CAN, ESC or bootloader operation was performed.
+
+
+## Windows V1.6/V1.7 static comparison — 2026-11-22
+
+- Ghidra 12.2 targeted string inventories now cover all three Windows V1.6 builds (2025-10-14, 2026-08-06, 2026-09-12) and V1.7 (2026-10-29); the same BLE UART, FTESC firmware erase/write/bootloader, CAN, uartPackData and Qt BLE writeCharacteristic marker families appear in all four.
+- V1.7 additionally exposes the strings `isBootloader:`, `Switch to Firmware Update: bootloader target selected:` and `Warning: Bootloader CAN ID` in the targeted search. These are UI/state labels, not yet proven state transitions.
+- Rizin cross-checks the `uartPackData` string-loading stubs at V1.6 `0x004b74bc` and V1.7 `0x004bdd7c`; each calls a six-byte Ghidra-recognized indirect thunk. The real transport function behind the global dispatch remains unresolved.
+- This is a marker-level comparison only; the V1.6-to-V1.7 function-level diff remains open. No codec changes or tests were warranted from string metadata alone.
+- Detailed evidence: [WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md](WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md).
+- Weighted project progress remains **72.6% (79.9 / 110)**; no desktop, live transport, firmware recovery or hardware-validation milestone was completed.
