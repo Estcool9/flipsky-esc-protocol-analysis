@@ -50,7 +50,7 @@ The controller setup contains a timer call with literal argument `70000`; its ex
 
 ## Transport direction and current unknowns
 
-The class metadata includes the method names `writeData` and `sendNextPacket`, plus the signal names `dataRx(QByteArray)` and `unintentionalDisconnect()`. The UI/runtime path that invokes these methods is not yet fully mapped.
+The class metadata includes the method names `writeData` and `sendNextPacket`, plus the signal names `dataRx(QByteArray)` and `unintentionalDisconnect()`. The FtescLowLevelFace constructor FUN_00483910 explicitly connects BleUart::bleDataRx(QByteArray) (string at 0x0052DF35) to dataRx(QByteArray) (string at 0x0052DF4C) around call-site 0x0048456D. This establishes the BLE byte-array ingress handoff to an application-level receiver. The receiver body and downstream handoff to the shared UART frame/stream parser are still not proven. The UI/runtime path that invokes the write methods is not yet fully mapped.
 
 Still unresolved:
 
@@ -64,7 +64,7 @@ Still unresolved:
 
 ## Progress update
 
-The BLE reverse-engineering sub-workstream is raised from **40% to 55%**: the service and both characteristic UUIDs are identified, the controller/service signal flow is mapped, and the notification descriptor lookup is located. The transmit implementation, write mode, chunk/MTU behavior and hardware capture remain unresolved.
+The BLE reverse-engineering sub-workstream is raised from **40% to 60%**: the service and both characteristic UUIDs are identified, the controller/service signal flow is mapped, and the notification descriptor lookup is located. The transmit implementation, write mode, chunk/MTU behavior and hardware capture remain unresolved.
 
 The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
@@ -82,3 +82,12 @@ All conclusions here are static observations from the named V1.7 executable. No 
 - Controller initialization dossier: `ev_4aeaf50320792a55be39923e9659a5d8b29a4351d13bb721aae8f1806253cb12`
 - `characteristicChanged` callback incoming reference: `ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f`
 - Qt `BleUart` static meta-call decompilation: `ev_7be243cc6465b5cd705b2bd3c40cdb13db0554d3d45bf7256e1f21315f27ff4f`
+
+
+## BLE ingress connection evidence update
+
+- FUN_00483910 contains a Qt connect call at 0x0048456D registering 1bleDataRx(QByteArray) to 2dataRx(QByteArray).
+- Signal string: 0x0052DF35; receiver slot string: 0x0052DF4C.
+- This closes the static byte-array ingress handoff from the BleUart object into the application receiver, but not the parser handoff or receive buffering semantics.
+- BLE sub-workstream estimate: 55% to 60%; whole-product progress unchanged at 72.2% because there is still no live transport implementation or hardware validation.
+- Additional REA evidence: constructor assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21, signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f, slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962, string inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
