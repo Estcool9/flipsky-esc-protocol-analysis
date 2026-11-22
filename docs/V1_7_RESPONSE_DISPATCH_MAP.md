@@ -14,22 +14,22 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 |---:|---|---|
 | `0x00` | Parses MCU ID, error, voltage, currents, eRPM, duty, temperatures, CPU load, encoder angle, three additional scaled angular values and PAS RPM; calls telemetry callback `0x004BC060`, which emits UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`. | **High.** Field order and lengths match V1.6's extended automatic telemetry response (45-byte INFO/DLEN, 44 DATA bytes). Extra angular-field semantics are not documented by the V1.6 PDF. |
 | `0x01` | Enters a large variable-length response path; iterates over payload bytes and calls callback/dispatch helper `0x004BC200`. | Unknown. Do not equate this with V1.6 CMD 0x02. |
-| `0x0D` | Reads a 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | Unknown response schema. |
+| `0x0D` | Reads one signed 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | PPM response; offline decoder added. |
 | `0x0E` | Reads six signed 32-bit values with scales 1,000,000; 1,000,000; 1; 1; 1; 1,000,000; calls `0x004BC120`. | Six-value ADC response; semantic channel labels remain unknown. |
 | `0x0F` | Handles a variable-length byte/string-like payload; calls `0x004BC010`. | Unknown response schema. |
 | `0x11` | Parses firmware-version-related bytes and a variable-length text/identity field; invokes `0x004BBE10` and `0x004BBDD0`. | **High semantic correlation** with V1.6 `UART_OBTAIN_FIRMWARE_VERSION`; exact V1.7 field interpretation still needs full type mapping. |
 | `0x14` | Parses a string-like payload and calls `0x004BBF50`. | Unknown. |
-| `0x16` | Reads a one-byte value, converts it to a boolean-like value and calls `0x004BBD30`. | Unknown. |
-| `0x18` | Reads a one-byte value, converts it to a boolean-like value and calls `0x004BBD80`. | Unknown. |
-| `0x1A` | Calls no-argument callback wrapper `0x004BBBF0`. | **High semantic correlation** with V1.6 `UART_SET_AUTO_OBTAIN_REALTIME_DATA` acknowledgement. This branch does not visibly parse the documented response fields. |
+| `0x16` | Reads one byte as boolean and calls `0x004BBD30`. | Firmware erase acknowledgement; offline decoder added. |
+| `0x18` | Reads one byte as boolean and calls `0x004BBD80`. | Firmware write-block acknowledgement; offline decoder added. |
+| `0x1A` | Calls no-argument callback wrapper `0x004BBBF0`. | Auto-realtime acknowledgement with no DATA; offline decoder added. |
 | `0x1B` | Calls callback wrapper `0x004BBE60` with a byte value. | Setup/acknowledgement path; exact schema unknown. |
 | `0x1C` | Reads setup-related values using helper `0x0049DDB0`, performs additional checks and calls `0x004BBF90` in one branch. | Setup response path; exact schema unknown. |
 | `0x1D` | Calls callback wrapper `0x004BBEB0` with a byte value. | Possible reset/reboot/setup acknowledgement family; not assigned to the public V1.6 command without call-site proof. |
 | `0x1E` | Iterates over remaining payload bytes into a vector-like container and calls `0x004BC200`. | **High.** Matches V1.6 `UART_OBTAIN_ALL_FTESC_ID`: master ID followed by slave IDs. |
 | `0x21` | Calls parser helper `0x0049CE00`, then callback wrapper `0x004BBCA0`. | Unknown. |
-| `0x22` | Reads a one-byte boolean-like value and calls `0x004BBCE0`. | Unknown. |
+| `0x22` | Reads one byte as boolean and calls `0x004BBCE0`. | Firmware authorization acknowledgement; offline decoder added. |
 | `0x24` | Calls callback wrapper `0x004BBC60` with a vector/container-like argument. | Unknown. |
-| `0x29` | Reads nine 32-bit values, each scaled by 1,000,000; calls `0x004BC250`. | Unknown structured response. |
+| `0x29` | Reads nine signed 32-bit values, each scaled by 1,000,000; calls `0x004BC250`. | IMU calibration response; offline decoder added, semantic labels remain unknown. |
 | `0x3A` | Calls callback wrapper `0x004BBEB0` with a byte value. | Setup-frame family; exact schema unknown. |
 | `0x3B`, `0x3C` | Share a setup-frame parsing path. The handler checks a marker `0x54464346` in one branch. | Vendor-specific setup-frame path; meaning of marker and payload unresolved. |
 | `0x3D` | Calls callback wrapper `0x004BBEB0` with a byte value. | Setup-frame family; exact schema unknown. |
