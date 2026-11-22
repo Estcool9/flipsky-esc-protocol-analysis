@@ -35,7 +35,11 @@
 - [x] Trace the standard UartComm path: it does not prepend the public V1.6 CMD 0x10 wrapper at the examined insertion points.
 - [ ] Determine how the V1.7 selected CAN ID reaches the external FTESC Gateway (side channel or alternate path).
 - [ ] Recover slave response correlation and error/time-out mapping.
-- [ ] Find BLE service and characteristic UUIDs, MTU/chunk size and write/notification mode.
+- [x] Recover the V1.7 BLE UART service, TX and RX UUIDs from the native `BleUart` constructor.
+- [x] Map BLE controller/service signal registration, service discovery, characteristic-change callback and missing-characteristic paths.
+- [x] Locate the CCCD descriptor UUID `0x2902` lookup in the service-state handler.
+- [ ] Finish the native `writeData` / `sendNextPacket` → `QLowEnergyService::writeCharacteristic` chain and identify response/no-response mode.
+- [ ] Confirm the exact CCCD value, negotiated MTU, packet chunk size and receive reassembly from native code and passive captures.
 - [ ] Implement FTESC BLE transport only after the wire path is established.
 
 ## Phase D — VESC/FSESC parallel protocol profile
@@ -70,7 +74,7 @@
 - [ ] Implement passive receive/telemetry display with raw-frame logging and replay.
 - [ ] Implement configuration views backed by FTESC ValueSetup metadata and explicit ValueSeque ordering.
 - [ ] Implement CAN topology / slave list after gateway routing is resolved.
-- [ ] Add BLE only after characteristics and packet transport are known.
+- [ ] Implement BLE only after write mode, CCCD value, MTU/chunking and notification/reassembly behavior are verified.
 - [ ] Implement firmware update UI only after the full state machine and recovery path are validated.
 - [ ] Match the essential Flipsky ESC Tool V1.7 functionality without copying proprietary UI assets or source.
 
@@ -99,7 +103,7 @@
 2. **CAN target path:** the UI stores the flag and target ID, but the standard send path inspected does not add the V1.6 `0x10` envelope. Need an authorized Gateway document, alternate path or passive trace.
 3. **Firmware update:** the authorization and block codec are partially recovered; image container/recovery state is incomplete.
 4. **Desktop application:** no serial/BLE UI or device integration has been implemented yet.
-5. **BLE:** transport UUIDs and packet chunking remain unknown.
+5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, MTU/chunking, retransmission and live behavior remain unknown.
 6. **Hardware:** no live controller validation has occurred.
 7. **V1.6 binary comparison:** binaries are inventoried in Nextcloud but not staged in the REA sample directory.
 
