@@ -29,7 +29,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; GitHub Actions run #233 now verifies the complete suite: **163 tests passed, 0 failed**, catalog/profile regeneration passed and `compileall` passed.
+- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; GitHub Actions run #252 now verifies the complete suite: **164 tests passed, 0 failed**, catalog/profile regeneration passed and `compileall` passed.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, markers, UART frame/parser and UartComm method/firmware-dispatch mapping; full PE diff pending) | 55% |
+| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm metadata, firmware/CAN command wrappers and CMD 0x0F payload) | 60% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -427,10 +427,7 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Weighted project progress remains **72.6% (79.9 / 110)**; no desktop, live transport, firmware recovery or hardware-validation milestone was completed.
 
 
-### Latest GitHub Actions verification — run #233
-- Head commit: `26d0506f52b8a34a8bffdc2d8c0ca0490913d567`.
-- Job `verify`: success; 163 tests passed, 0 failed; the native error-precedence regression test passed; research artifact restoration, parameter catalog regeneration, ordered setup profile regeneration and Python compileall all passed.
-- Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45043795801
+
 
 
 ## Windows V1.6 UART frame/parser comparison — 2026-11-22
@@ -448,3 +445,16 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Linked firmware request wrappers to the common `sendDataToESC(QByteArray&)` signal. Erase builds a four-byte big-endian argument; boot-mode sends an empty QByteArray; firmware-write passes the original QByteArray after a debug trace (observed XOR is not an in-place payload transform).
 - Mapped firmware response/ACK signal names, but numeric command IDs, full ACK layouts, retry/timeouts and the downstream bootloader state machine remain open. See [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
 - V1.6 comparison sub-workstream advances from 45% to 55%; whole-product weighted progress remains **72.6% (79.9 / 110)**.
+
+
+## V1.6 UartComm firmware/CAN request byte map — 2026-11-22
+
+- Confirmed the actual INFO command byte emitted by firmware-related methods: `0x11` firmware-version request, `0x16` erase + 4-byte BE integer, `0x18` write + supplied block bytes, `0x13` boot-mode request, `0x21` UUID request, `0x22` MCU encryption helper output (protected/unresolved).
+- Confirmed CAN discovery `ftescObtainIdOverCan` emits CMD `0x01` with no DATA after a 200-count throttle (unit unknown).
+- Reconstructed `ftescIdentifyMotorOverCan` CMD `0x0F` DATA field order/widths and native conversions. Corrected the existing offline builder to truncate its fourth float argument toward zero, while its third float argument is scaled ×100 and rounded half-away-from-zero.
+- V1.6 comparison sub-workstream advances **55% → 60%**; overall weighted project score remains **72.6% (79.9 / 110)**. Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
+
+### Latest GitHub Actions verification — run #252
+- Head commit: `3b33076edaedd867e97aadd5d9ee0defebe158e6`.
+- Job `verify`: success; **164 tests passed, 0 failed**, including native CMD 0x0F truncation/scaled-rounding coverage; artifact restore, catalog/profile regeneration and compileall passed.
+- Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45048896742
