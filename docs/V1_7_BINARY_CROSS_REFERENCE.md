@@ -66,7 +66,7 @@ The user's Nextcloud directory contains:
 - V1.6 2026-09-12 Windows executable — 45,582,336 bytes;
 - V1.7 2026-10-29 Windows executable — 50,611,200 bytes.
 
-Only the V1.7 executable is currently staged in /data/samples on REA. The V1.6 binaries have been inventoried but not transferred to the REA host, so binary-to-binary diffing remains open. The V1.6 protocol PDF and associated ECU sample C source were read from Nextcloud and documented here.
+All three V1.6 Windows executables are staged under `/data/analysis/pe/` on REA CT107, and V1.7 is staged under `/data/samples/`. A targeted Ghidra string-marker comparison across all four builds is complete; see [WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md](WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md). Full function-level PE diffing, protected BLE write-target resolution and behavioral comparison remain open. The V1.6 protocol PDF and associated ECU sample C source were read from Nextcloud and documented here.
 
 ## Next steps
 
@@ -74,7 +74,7 @@ Only the V1.7 executable is currently staged in /data/samples on REA. The V1.6 b
 2. Find V1.7 response dispatch handlers for command IDs 00, 02, 10, 11, 19, 1A and 1E.
 3. Resolve the actual command 02 byte offsets in V1.7 against the public V1.4/V1.6 delta.
 4. Trace BLE-specific framing separately; do not assume BLE sends the same raw bytes as UART.
-5. Compare the latest V1.6 Windows build with V1.7 after the V1.6 binary is staged locally.
+5. Complete function-level comparison of the staged V1.6 Windows builds against V1.7, including Qt static-metacall dispatch and the protected BLE write edge.
 6. Keep hardware interaction out of scope until payload meanings and safety conditions are understood.
 
 
