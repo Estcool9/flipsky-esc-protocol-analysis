@@ -5,6 +5,9 @@ from scripts.ftesc_responses import (
     ImuCalibrationResponse,
     SignalAdcResponse,
     parse_auto_realtime_ack,
+    parse_motor_signal_setup_response,
+    parse_setup_write_ack,
+    parse_topflow_setup_response,
     parse_firmware_version_response,
     parse_motor_identify_response,
     parse_text_response,
@@ -52,6 +55,33 @@ class V17ResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_motor_signal_setup_response_two_blocks(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        first = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        second = {"b": {"valType": 2, "valueTET": 1, "value_int": 2}}
+        data = encode_profile_block(0xD2C6EF10, ["a"], first)
+        data += encode_profile_block(0x4879187D, ["b"], second)
+        result = parse_motor_signal_setup_response(bytes((0x1C,)) + data, ["a"], first, ["b"], second)
+        self.assertTrue(result.success)
+        self.assertEqual(result.secret_key_status, 0)
+        self.assertEqual(result.first_block.values["a"]["value_int"], 1)
+        self.assertEqual(result.second_block.values["b"]["value_int"], 2)
+
+    def test_topflow_setup_response_uses_generic_metadata(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        metadata = {"x": {"valType": 2, "valueTET": 1, "value_int": 3}}
+        data = encode_profile_block(0x54464346, ["x"], metadata)
+        result = parse_topflow_setup_response(bytes((0x3B,)) + data, 0x3B, ["x"], metadata)
+        self.assertEqual(result.block.values["x"]["value_int"], 3)
+        self.assertTrue(result.success)
+
+    def test_setup_status_ack_commands(self):
+        for command in (0x1B, 0x1D, 0x3A, 0x3D):
+            result = parse_setup_write_ack(bytes((command,)), command)
+            self.assertTrue(result.acknowledged)
+        with self.assertRaises(ValueError):
+            parse_setup_write_ack(bytes((0x1B, 0x00)), 0x1B)
 
     def test_firmware_version_response_layout(self):
         info = bytes((0x11, 1, 7, 2)) + b"FTESC-1.7" + bytes((3,))
