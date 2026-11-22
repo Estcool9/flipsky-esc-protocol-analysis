@@ -1,6 +1,6 @@
 # Project status
 
-**Reference date:** 2026-11-22  
+**Reference date:** 2026-11-23  
 **Overall project progress: 72.6% unrounded (73% rounded)** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
 
 This is a weighted estimate for the complete desktop replacement, not an offline-codec-only score. The previous 90–92% figures overstated readiness because the desktop UI, serial/BLE integration and hardware validation remain incomplete.
@@ -29,7 +29,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Latest GitHub Actions run #298 verifies the complete suite: **177 tests passed, 0 failed**, including V1.6 CMD1C marker/length status cases; artifact restoration, catalog/profile regeneration and `compileall` passed.
+- Latest GitHub Actions run #299 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #299 is a docs-only follow-on to the tested #298 code head.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, profile blocks, ID vectors, numeric readers and CMD1C failure status) | 84% |
+| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, profile blocks, ID vectors, numeric readers, CMD1C failure status and three-build CMD21/CMD22 call graph) | 85% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -237,7 +237,7 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 
 
 ### UUID response
-- CMD 0x21 response is copied to a QByteArray and emitted to the firmware-update preflight.
+- CMD 0x21 enters a shared indirect helper before the result is emitted as a QByteArray to the firmware-update preflight. The helper body and any transformation remain unresolved; the raw offline decoder deliberately preserves the DATA bytes and length.
 - Added raw UUID decoder that preserves response length; TEA preflight consumes a 16-byte key, while the native response branch does not visibly enforce that length.
 - Fresh clone now has 100 passing tests.
 
@@ -509,3 +509,15 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - On a bad first/second marker or inconsistent total length, the native signal reports `secret_key_status = -1`; the offline decoder now returns this failure state, retaining the first decoded block when the second marker fails.
 - Added three regressions; GitHub Actions #298 passes **177 tests, 0 failures**.
 - V1.6 comparison sub-workstream advances **82% → 84%**; weighted whole-product score remains **72.6% (79.9 / 110)**.
+
+
+## Windows V1.6 protected UUID/MCU helper — three-build static comparison — 2026-11-23
+
+- Re-measured the SHA-256 of all three staged Windows V1.6 PE files on REA: 2025-10-14 `1dc93bd84f4dab1a3ee7b3946fa0522c78fc870227523d8d5fe6d6e187ea2b07`; 2026-08-06 `94cfd851a5ccce38b8c42c9f154128e10fa2906ce9efc9cddfa39c4a00361a03`; 2026-09-12 `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`.
+- `axt` shows exactly two references to the same indirect-call slot in each build: the `writeMcuEncrypt`/CMD22 caller and the UART `CMD21` UUID response dispatcher.
+- The slot addresses are build-specific: `0x00B7C178` (2025-10-14), `0x00BD9318` (2026-08-06), `0x00C53318` (2026-09-12). Each slot resolves to a different protected target address; none is treated as a stable cross-version code address.
+- Caller-side setup is structurally aligned: CMD22 tag, literal context values 0x10 and 1, and the original method argument pointer are placed before the indirect call. The CMD21 branch resets `this+0x28`, invokes the same slot, then forwards the output byte-array object to a Qt signal wrapper. In the 2026-09-12 binary wrapper method index 1 is `ftescGetUuidAck(QByteArray)`; the 2025 wrapper also uses index 1 but its signal name was not independently re-resolved here.
+- This establishes the same static call-graph role across three builds, not the helper algorithm. UUID length/byte order and protected transform semantics remain unknown; Windows behavior is not equated with Android V1.6 TEA.
+- Detailed evidence: [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).
+- V1.6 static comparison advances **84% → 85%**; weighted whole-product progress remains **72.6% (79.9 / 110)**.
+- Latest CI: run #299, **177 tests passed, 0 failed**, compileall and artifact/catalog/profile steps successful.

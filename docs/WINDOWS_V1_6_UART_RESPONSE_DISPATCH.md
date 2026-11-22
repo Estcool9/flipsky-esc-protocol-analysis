@@ -45,7 +45,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | `0x1B` | Parses motor-signal/setup read response, including multiple values | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Shared signal index 7 confirmed; the branch's marker and field semantics need fuller annotation |
 | `0x1C` | Checks setup/secret-key acknowledgement path and produces an integer-like result; resets motor-signal related cooldown at `this+0x24` | `FUN_004b5910`, index 8 `ftescMotorSignalSecretKeyCheckAck` | Wrapper index 8 confirmed; do not infer cryptographic algorithm or key material from the ACK handler |
 | `0x1E` | Parses the master/slave ID vector; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck(QVector<int>,bool)` | Official V1.6 spec defines D0 as master ID and D1 onward as slave IDs; offline decoder added. The secondary signal boolean is not interpreted |
-| `0x21` | Parses UUID bytes; resets UUID throttle at `this+0x28` | `FUN_004b5670`, index 1 `ftescGetUuidAck` | Wrapper index 1 confirmed; exact UUID normalization/validation not asserted here |
+| `0x21` | Resets UUID throttle at `this+0x28`, passes the prepared output QByteArray through the shared indirect helper, then emits the result | `FUN_004b5670`, index 1 `ftescGetUuidAck(QByteArray)` in the 2026-09-12 build | The helper slot is also called by CMD22/`writeMcuEncrypt`; its body and transform remain unresolved. Raw length/byte order are not proven. |
 | `0x22` | Reads an encryption/write-success status byte; resets encryption throttle at `this+0x2c` | `FUN_004b56b0`, index 2 `writeEncryptSuccess` | Wrapper index 2 confirmed; no key or challenge bytes are exposed |
 | `0x24` | Passes the complete DATA QByteArray to the sample/diagnostic output signal | `FUN_004b5630`, index 13 `ftescSamplesPrint` | Full byte-array length is preserved; unlike CMD14, no NUL scan is observed |
 | `0x29` | Parses a set of IMU calibration numeric values | `FUN_004b5b90`, index 18 `imuCalibrationReceived` | Wrapper index 18 confirmed; full units/ranges/field names not yet documented |
@@ -189,3 +189,10 @@ The CMD1C branch is now reconstructed beyond the two marker names:
 The offline `parse_motor_signal_setup_response()` now models this native result: it returns status -1 for a marker mismatch or extra/unaccounted DATA, and keeps the first decoded block if the second marker fails. Metadata/type/truncation errors remain exceptions so they are not silently relabelled as authentication failures.
 
 The three new CMD1C failure-state tests are part of GitHub Actions run #298 (177 passed, 0 failed).
+
+
+## 13. CMD21 UUID path — cross-build protected helper
+
+The CMD21 handler and the outbound CMD22 `writeMcuEncrypt` path call the same version-specific indirect slot in each of the three staged Windows V1.6 builds. The slot addresses differ by build; each has exactly two static xrefs in the corresponding executable. The handler resets `this+0x28`, prepares an output QByteArray-like object, invokes the shared helper and passes that object to a Qt signal wrapper. Method index 1 is named `ftescGetUuidAck(QByteArray)` in the 2026-09-12 build; the 2025-10-14 wrapper also uses index 1, but its signal string was not independently confirmed in this pass.
+
+Do not describe the UUID response as a verified raw copy: the protected helper lies between input DATA and the emitted QByteArray. The Python decoder still preserves the complete raw DATA because no stable transformation, fixed length or byte-order rule has been recovered. Full slot addresses, xrefs and caller contexts: [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).

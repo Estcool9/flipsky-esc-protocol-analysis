@@ -327,3 +327,17 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Continue response-payload semantics for CMD01, CMD0D/0E field names, CMD0F and CMD29; continue the firmware ACK/retry/timeout chain.
 - Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
 - V1.6 comparison sub-workstream: 82% → 84%; overall project progress remains **72.6%**.
+
+
+## 2026-11-23 — V1.6 CMD21/CMD22 shared helper compared across three PE builds
+
+- [x] Re-measure SHA-256 values for the staged V1.6 2025-10-14, 2026-08-06 and 2026-09-12 Windows PE files.
+- [x] Resolve the indirect-call slot in each binary and enumerate its typed/static references with Rizin `axt`.
+- [x] Confirm exactly two static call sites per build: outbound `writeMcuEncrypt`/CMD22 and incoming CMD21 response dispatch.
+- [x] Compare the caller-side context setup and record the build-specific slot/target addresses without reusing VAs across builds.
+- [x] Trace the CMD21 output QByteArray into the Qt signal wrapper; retain the older build's exact signal string as unresolved.
+- [x] Correct ARTIFACT_INVENTORY: all three V1.6 Windows binaries are staged on REA and now have recorded SHA-256 values.
+- [ ] Resolve the actual protected helper bodies, exact argument ABI, UUID byte order/length and whether CMD21 transforms or simply copies the payload.
+- [ ] Continue the firmware ACK/retry/timeout state machine and the Windows-versus-Android device-side differences.
+- Detailed report: [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).
+- V1.6 comparison sub-workstream: 84% → 85%; whole-product weighted score remains **72.6%**.

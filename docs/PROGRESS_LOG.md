@@ -859,3 +859,24 @@
 - Added three tests: wrong first marker; wrong second marker with first-block preservation; and trailing-data/length mismatch.
 - GitHub Actions run #298 (`45056404675`, head `11f84a486cb468dd0e68ae9d46d9d4b687e84d07`) passed **177 tests, 0 failures**. All three CMD1C regressions pass; artifact restore, catalog/profile rebuild and Python compileall pass. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056404675
 - V1.6 static comparison sub-workstream advances **82% → 84%**. Weighted whole-product progress remains **72.6% (79.9 / 110)**.
+
+
+## 2026-11-23 — Windows V1.6 UUID/MCU protected helper traced across three builds
+
+- Reconnected to the REA host through Gateway and enumerated the staged Windows V1.6 PE files. All three binaries were present under `/data/analysis/pe/`.
+- Re-ran remote `sha256sum`:
+  - V1.6 2025-10-14, 97,949,184 bytes: `1dc93bd84f4dab1a3ee7b3946fa0522c78fc870227523d8d5fe6d6e187ea2b07`.
+  - V1.6 2026-08-06, 44,867,072 bytes: `94cfd851a5ccce38b8c42c9f154128e10fa2906ce9efc9cddfa39c4a00361a03`.
+  - V1.6 2026-09-12, 45,582,336 bytes: `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`.
+- Used Rizin `axt` on the indirect-call slots. Each build has exactly two xrefs: one from the outbound `writeMcuEncrypt` method and one from its incoming CMD21 response handler.
+- Recorded the per-build slots/targets:
+  - 2025-10-14: slot `0x00B7C178` → pointer target `0x0077DA60`; xrefs `FUN_004933D0 @ 0x493423` and `FUN_004943B0 @ 0x494AF4`.
+  - 2026-08-06: slot `0x00BD9318` → pointer target `0x007DB110`; xrefs `FUN_004938F0 @ 0x493943` and `FUN_004948D0 @ 0x495014`.
+  - 2026-09-12: slot `0x00C53318` → pointer target `0x00855110`; xrefs `FUN_004938F0 @ 0x493943` and `FUN_004948D0 @ 0x495014`.
+- Disassembled caller-side setup in all three builds. CMD22 write-side call sites append `0x22`, set local context value `0x10`, pass a second literal value `1`, and retain the incoming method-argument pointer before invoking the indirect slot. These constants are recorded literally; their protected callee ABI meaning is not guessed.
+- Inspected CMD21 response branch in the 2025 build (`FUN_004943B0`) and 2026 builds (`FUN_004948D0`). Each resets the UUID throttle field at `this+0x28`, prepares an output QByteArray-like object, calls the same indirect slot and then passes the output object to a one-argument Qt signal wrapper.
+- In the 2026-09-12 build, wrapper `FUN_004B5670` is method index 1 `ftescGetUuidAck(QByteArray)`. In the 2025-10-14 build, `FUN_004B51E0` also uses method index 1; the exact signal name was not independently resolved for that older meta-object in this pass.
+- Updated `parse_uuid_response()` was intentionally not changed: the native output is passed as a QByteArray, but no stable fixed UUID length, byte order or helper transform has been proven.
+- Created `docs/WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md`; corrected the staged-binary inventory and linked the report from README, STATUS, ROADMAP, UART response-dispatch and UartComm reports.
+- Verified latest GitHub Actions run #299 (`45056653591`) is successful with **177 tests, 0 failures**; artifact restoration, catalogue/profile regeneration and `python -m compileall -q scripts tests` pass. Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591
+- V1.6 static comparison sub-workstream advances **84% → 85%**. The weighted whole-product estimate remains **72.6% (79.9 / 110)** because the protected helper, live transports, desktop UI and hardware validation are still incomplete.

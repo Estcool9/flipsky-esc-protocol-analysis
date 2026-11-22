@@ -204,3 +204,8 @@ The shared one-/two-/four-byte readers and their signed S16/S32 scale wrappers a
 ## 11. CMD1C profile-read result handling
 
 The CMD1C response path is described in [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md): it validates both profile markers, checks exact combined block length via `FUN_00497800`, and reports secret-key/profile status 0 or -1. The offline response model now exposes the native -1 failure status for marker/length mismatches.
+
+
+## 12. CMD21/CMD22 shared protected helper
+
+A three-build static comparison confirms that the UUID response branch (CMD21) and outbound MCU-encryption writer (CMD22) call the same version-specific indirect helper slot in each Windows V1.6 PE. The slot has exactly these two xrefs per build; its target body remains unresolved. The CMD21 path then forwards its output QByteArray to the one-argument Qt signal wrapper (method index 1 in the inspected builds; `ftescGetUuidAck(QByteArray)` is named in the 2026-09-12 build). See [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md) for address tables, SHA-256 values and call-site context.

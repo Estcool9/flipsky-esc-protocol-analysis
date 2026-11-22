@@ -78,4 +78,12 @@ The PDFs have been text-extracted from Nextcloud; visual page layout and diagram
 - V1.6 20260912: 45,582,336 bytes.
 - V1.7 20261029: 50,611,200 bytes.
 
-Only V1.7 is currently staged on REA. V1.6 binaries are inventoried but not yet available for local disassembly in this workspace.
+All three Windows V1.6 builds are staged read-only on the REA host under `/data/analysis/pe/v1.6_<date>/`. Their remote SHA-256 values were re-measured on 2026-11-23:
+
+| Build | Size (bytes) | SHA-256 | Staged path |
+|---|---:|---|---|
+| V1.6 20251014 | 97,949,184 | `1dc93bd84f4dab1a3ee7b3946fa0522c78fc870227523d8d5fe6d6e187ea2b07` | `/data/analysis/pe/v1.6_20251014/Flipsky_ESC_Tool_V1.6_20251014.exe` |
+| V1.6 20260806 | 44,867,072 | `94cfd851a5ccce38b8c42c9f154128e10fa2906ce9efc9cddfa39c4a00361a03` | `/data/analysis/pe/v1.6_20260806/Flipsky_ESC_Tool_V1.6_20260806.exe` |
+| V1.6 20260912 | 45,582,336 | `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968` | `/data/analysis/pe/v1.6_20260912/Flipsky_ESC_Tool_V1.6_20260912.exe` |
+
+The original Nextcloud sources were preserved; the REA staging copies are used for static disassembly only. No Windows executable was run and no hardware transport was opened. See [the three-build UUID/helper cross-build report](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).

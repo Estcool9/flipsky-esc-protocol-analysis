@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This public repository contains the evidence log, extracted application metadata, protocol documentation, offline codecs, reproducible scripts and test suite.
 
-> **Overall project progress: 72.6% unrounded (displayed as 73%, estimated, 22 November 2026).** This is a weighted estimate for a complete open-source desktop replacement, not merely the offline protocol codecs. It replaces the earlier 90–92% figures, which overstated readiness because the desktop UI, actual serial/BLE transports and hardware validation are not implemented.
+> **Overall project progress: 72.6% unrounded (displayed as 73%, estimated, 23 November 2026).** This is a weighted estimate for a complete open-source desktop replacement, not merely the offline protocol codecs. It replaces the earlier 90–92% figures, which overstated readiness because the desktop UI, actual serial/BLE transports and hardware validation are not implemented.
 
 | Work package | Relative weight (points) | Progress |
 |---|---:|---:|
@@ -18,7 +18,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Hardware validation | 5% | 0% |
 | **Weighted overall estimate** | **110 points** | **72.6%** |
 
-The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. GitHub Actions [run #298](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056404675) validates the current **177-test** offline suite; research-artifact restoration, catalog/profile regeneration and Python compilation also pass. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
+The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. GitHub Actions [run #299](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591) validates the current **177-test** offline suite; research-artifact restoration, catalog/profile regeneration and Python compilation also pass. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
 See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
 
@@ -115,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result:** GitHub Actions [run #298](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056404675) passed **177 tests, 0 failures**. The same run successfully restored research payloads, rebuilt the parameter catalog and ordered setup profiles, ran all offline tests and compiled Python sources.
+**Latest verified result:** GitHub Actions [run #299](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591) passed **177 tests, 0 failures**. The same run successfully restored research payloads, rebuilt the parameter catalog and ordered setup profiles, ran all offline tests and compiled Python sources.
 
 ## Official V1.4/V1.6 protocol references
 
@@ -137,15 +137,16 @@ Important version differences:
 
 The Windows V1.6 follow-on is a static comparison against V1.7, not a separate claim of live-device compatibility.
 
-- **Sub-workstream progress: 84%** (the whole-product weighted estimate remains **72.6%**).
+- **Sub-workstream progress: 85%** (the whole-product weighted estimate remains **72.6%**).
 - Reconstructed the V1.6 `FtescLowLevelFace` AA/BB frame builder, candidate parser and incremental receive path; matched their roles against V1.7.
 - Decoded the full `UartComm` Qt meta-object: **50 methods, 19 signals and 31 slots/invokable methods**.
 - Mapped **19 INFO response commands** to their Qt signal wrappers; field layouts are fully implemented only where supported by native readers/markers.
 - Added offline decoders for V1.6 CMD09/CMD0A single-marker setup blocks, CMD1C combined profile/status response, CMD1E master/slave ID enumeration and CMD01 raw unclassified ID vectors.
 - Verified numeric readers: signed S32/S16 and raw U8/U16/U32 byte readers use big-endian order; PPM/ADC/IMU scaling matches the existing codecs. Corrected CMD14 NUL-terminated text handling while keeping CMD24's full QByteArray.
-- Latest CI: **177 passed / 0 failed**, run [#298](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056404675).
+- Cross-build static trace: one shared indirect helper slot has exactly two callers in each of three Windows V1.6 builds — the CMD22 MCU-write path and the CMD21 UUID dispatcher. The output reaches the one-argument UUID signal wrapper; the protected transform remains unresolved.
+- Latest CI: **177 passed / 0 failed**, run [#299](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591).
 
-Detailed evidence: [V1.6 UART frame/parser](docs/WINDOWS_V1_6_UART_FRAME_PARSER.md), [UartComm method map](docs/WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md), [response dispatcher](docs/WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md) and [numeric readers](docs/WINDOWS_V1_6_NUMERIC_READERS.md).
+Detailed evidence: [V1.6 UART frame/parser](docs/WINDOWS_V1_6_UART_FRAME_PARSER.md), [UartComm method map](docs/WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md), [response dispatcher](docs/WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md), [numeric readers](docs/WINDOWS_V1_6_NUMERIC_READERS.md) and [three-build UUID/helper trace](docs/WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).
 
 ## Firmware update analysis
 
