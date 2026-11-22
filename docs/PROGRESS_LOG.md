@@ -212,3 +212,18 @@
 - Fresh public GitHub clone tested on REA: **48 tests passed, 0 failed**; `compileall` succeeded.
 - Overall estimate updated from **62% to 64%**. The main UART send/receive pipeline is now linked; BLE, CAN and full setup profile ordering remain open.
 - No hardware interaction or traffic transmitted.
+
+
+## 2026-11-22 — Firmware authorization preflight traced
+
+- Decompiled the `firmwareUpdatePro` orchestrator at `0x00486570` beyond the TEA call site.
+- Confirmed the preflight requests the device UUID using CMD 0x21, waits for UartComm signal index 1 `ftescGetUuidAck` with a 2,000 ms local timeout, then performs a TEA buffer transform over a 16-byte local buffer using the device-returned UUID pointer.
+- The transformed 16-byte result is sent with `writeMcuEncrypt`, CMD 0x22; the orchestrator then waits up to 2,000 ms for signal index 2 `writeEncryptSuccess`.
+- The local buffer is populated with the fixed ASCII sequence `0123456789abcdef` immediately before the TEA call. No UUID/key material is copied into the repository.
+- Confirmed separate firmware commands: version CMD 0x11, boot mode CMD 0x13, erase CMD 0x16, block write CMD 0x18. The CMD 0x18 path applies a separate bytewise XOR transform.
+- Decompiled firmware validator `0x00485130`: checks a leading `0xE9` byte and structured segment/length/checksum-related conditions. Exact image format not named.
+- The validator contains a `0x30F98` byte size bound; a smaller UI warning remains to be reconciled.
+- Added [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md). Full block sequence, retries, bootloader transitions and image-format specification remain open.
+- Added timer details to [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md): parser reset timer, TopFlow timeout signal and ID-list timeout signal.
+- Overall estimate updated from **64% to 66%**. Firmware authorization preflight rises to 85%; full flashing state machine remains unfinished.
+- No firmware was flashed and no ESC command was sent.
