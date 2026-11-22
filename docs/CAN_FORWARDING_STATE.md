@@ -120,3 +120,20 @@ Flipsky's official FTESC Gateway product page describes:
 Source: [Flipsky FTESC Gateway Interface Module](https://flipsky.net/collections/new-arrival/products/flipsky-ftesc-gateway-interface-module-multi-esc-networked-cooperative-control-for-ftesc-series).
 
 This confirms the product-level USB-to-CAN passthrough use case and explains why the V1.7 application stores a selected CAN ID. It does **not** reveal the exact CMD 0x10 envelope or prove that the V1.7 desktop binary emits CMD 0x10. The wire-level wrapper remains unresolved.
+
+
+## 10. V1.7 normal transmit path traced — no CMD 0x10 prepend observed
+
+The Qt meta-object and transmit path are now mapped end-to-end:
+- `UartComm` meta-object method 0 is signal `sendDataToESC(QByteArray&)`.
+- `FtescLowLevelFace` meta-object method 17 is slot `uartCommSendToFtesc(QByteArray&)`; its native body `FUN_004819C0` calls the UART frame builder `FUN_0049C5C0`.
+- The frame builder emits the `uartPackData::sendDataToESC` signal (meta-object method 0).
+- `FtescLowLevelFace` method 15 slot `lowLevelSendDataToFtesc(QByteArray&)` receives the already-framed bytes and forwards them through `FUN_004050C0` to the transport.
+- The common request logger `FUN_00495910` has 29 request-method callers. It logs the CAN flag, target ID, payload length and payload bytes, then passes the same QByteArray to `FUN_004BBC20` (UartComm signal index 0). It does not mutate the supplied QByteArray.
+- Example CMD 0x1C, 0x01 and 0x0F request builders produce only their INFO command/data fields before entering the common logger.
+
+**Static conclusion:** no generic `0x10 | SlaveID | SlaveCMD | SlaveDATA` envelope is inserted in the normal V1.7 UartComm transmit chain examined. The CAN enable/target fields are present in UartComm and used by UI/diagnostic paths, but are not present in the transmitted INFO bytes in this chain.
+
+This is a strong negative finding for the normal send route, not proof that no alternate BLE, firmware-directory, gateway-specific or hidden route exists. It is also not proof that the published V1.6 CAN-over protocol is wrong. The offline `build_can_forward_info()` remains a separate implementation of the published envelope and is not a reproduction of the V1.7 binary's normal transmit chain.
+
+See [V1_7_OUTBOUND_TRANSMIT_CHAIN.md](V1_7_OUTBOUND_TRANSMIT_CHAIN.md) for exact QMetaObject addresses, method indexes, native function addresses and REA evidence anchors.
