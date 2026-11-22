@@ -80,14 +80,54 @@ The recovered body extents are only one byte in all three sessions. The extra ps
 
 The practical conclusion remains unchanged: the cross-build call graph is established, the protected helper implementation is not. Do not translate these decompiler expressions into Python, and do not infer an encryption algorithm from the CMD22 method name alone.
 
-## 7. Next static probes
+## 7. PE section and VirtualProtect cross-build map
+
+### Static section placement
+
+For all three PE builds, the pointer slot and the address stored in it are in different sections:
+
+- The indirect-call slot is in `.idata` (static section flags `-rw-`).
+- The stored target VA is in `.rdata` (static flags `-r--`, no execute bit).
+- Ghidra recovers only a one-byte body at each stored target and fails decompilation there.
+
+This is a static-image property, not a claim about runtime page protection.
+
+### All statically recovered VirtualProtect call-site groups
+
+Rizin `axt` on the import stub produces the same six call sites in each PE:
+
+| Role | 2025-10-14 | 2026-08-06 | 2026-09-12 | Recovered arguments/behavior |
+|---|---|---|---|---|
+| Six-byte patch protection + restore | `0xB9F601`, `0xB9F62D` | `0xBFC601`, `0xBFC62D` | `0xC76601`, `0xC7662D` | First call uses `dwSize=6`, `flNewProtect=0x40` (PAGE_EXECUTE_READWRITE); second restores the saved old protection. The orchestrator in each build supplies eight addresses inside that build's `.enigma2` region. |
+| Unclassified wrapper call | `0xBA5607` | `0xC02607` | `0xC7C607` | Rizin reports no containing function at the call instruction; caller/argument semantics are not sufficiently recovered. |
+| Dynamic import resolver protection + restore | `0xBBCC7D`, `0xBBCC96` | `0xC19C7D`, `0xC19C96` | `0xC93C7D`, `0xC93C96` | Four-byte target slot is temporarily made RWX (`0x40`), then old protection is restored. The same resolver path calls `LoadLibraryA` and `GetProcAddress`, then writes the resolved function pointer into `[ESI]`. |
+| Separate data-region protection | `0xBBD708` | `0xC1A708` | `0xC94708` | `flNewProtect=0x04` (PAGE_READWRITE, **not executable**); size is read from a descriptor/object field at offset `+0x54`; the destination is resolved through the loader's descriptor table. |
+
+### Six-byte patcher details (2026-09-12 build)
+
+The orchestrator `FUN_00C7667C` passes these eight addresses to the patch helper `FUN_00C765E0`:
+
+`0x00C988A8`, `0x00C988C0`, `0x00C988CC`, `0x00C988D8`, `0x00C988B4`, `0x00C988E4`, `0x00C988F0`, `0x00C988FC`.
+
+All eight fall inside the `.enigma2` virtual range of the September build (`0x00C61000–0x00CA1000`). This is consistent with local runtime patching of the protection/loader's own region. It is **not** evidence that the helper's three target VAs (`0x0077DA60`, `0x007DB110`, `0x00855110`) are the addresses being reprotected.
+
+### Dynamic import resolver (2026-09-12 build)
+
+The unique caller of `FUN_00C93A58` is `FUN_00C93F88` at `0x00C946E8`. The resolver uses a descriptor pointer, reads its `+0x10` field as the pointer-slot destination, temporarily applies `0x40` to four bytes there, performs `LoadLibraryA`/`GetProcAddress`, writes the resolved pointer to `[ESI]`, then restores the previous protection. The caller-side descriptor calculation is table-relative; no static value equality between this destination and the UUID helper target has been found.
+
+`FUN_00C93F88` also has the separate `0x00C94708` PAGE_READWRITE call. This is not PAGE_EXECUTE_READWRITE and must not be used as evidence that the UUID target is made executable.
+
+### Conclusion
+
+The three builds clearly contain the same families of self-modifying/runtime loader operations, and these explain why a normal static PE section map may not represent all runtime behavior. However, the known six-byte patch locations are in `.enigma2`, the four-byte resolver destination is descriptor-driven, and the other well-identified call only requests PAGE_READWRITE. **No current static evidence connects these operations to the UUID helper targets in `.rdata`.** Whether a different dynamic/unpacked path makes those targets executable remains open.
+## 8. Next static probes
 
 1. Resolve each slot's relocation/protection region and the owning image section in its own PE, rather than reusing VAs across builds.
 2. Compare surrounding instruction windows and static data references at each target; keep unresolved indirect control flow explicit.
 3. Trace all callers of the output QByteArray constructors and the wrappers' argument ownership/copy boundaries.
 4. Only change `parse_uuid_response()` if a stable byte-level transform or length constraint becomes visible in a shipped artifact or official protocol evidence.
 
-## 8. Safety and provenance
+## 9. Safety and provenance
 
 - Static PE/Rizin analysis only; none of the three Windows applications was executed.
 - No UART, CAN or BLE command was transmitted.
@@ -96,3 +136,6 @@ The practical conclusion remains unchanged: the cross-build call graph is establ
 
 
 Latest repository verification: GitHub Actions run #300, **177 tests passed, 0 failed**; artifact restoration, catalog/profile rebuild and Python compileall passed. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45065537376
+
+
+Latest repository verification: GitHub Actions run #301, **177 tests passed, 0 failed**; artifact restore, catalog/profile regeneration and Python compileall passed. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45066338144

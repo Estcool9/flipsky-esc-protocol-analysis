@@ -29,7 +29,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Latest GitHub Actions run #300 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #300 is a docs-only follow-on to the tested #298 code head.
+- Latest GitHub Actions run #301 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #301 is a docs-only follow-on to the tested #298 code head.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -532,3 +532,14 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Decompiler text outside those one-byte extents is not treated as a valid native implementation. This documents an analysis/disassembly boundary failure; it does not identify Enigma or another specific protector.
 - The helper algorithm stays unresolved; reliable facts remain the two caller roles and CMD21 output QByteArray handoff.
 - CI #300: **177 tests passed, 0 failed**; compileall passed.
+
+### Windows V1.6 VirtualProtect call-site comparison — 2026-11-23
+
+- Resolved all statically identified calls to the `VirtualProtect` import stub in each of the three V1.6 builds. Each has the same six call sites and same broad roles:
+  1. a paired call/restore around a six-byte region with new protection `0x40` (PAGE_EXECUTE_READWRITE); the caller passes eight fixed addresses inside the current build's `.enigma2` section;
+  2. an unclassified indirect/wrapper call whose body boundary is not recovered;
+  3. a paired call/restore around a four-byte destination in the dynamic import resolver; the resolver subsequently writes the address returned by `GetProcAddress` into that destination;
+  4. a separate call with protection `0x04` (PAGE_READWRITE), not executable, and a size read from an object field at offset `+0x54`.
+- These are concrete runtime-protection mechanisms in the packed/runtime support code, but none of the statically traced addresses is proven to be one of the three UUID helper targets in `.rdata`. The import-resolver destination comes from a descriptor field; no equality to the UUID target has been established.
+- The helper target therefore remains unresolved. This narrows the protection hypothesis but does not resolve whether another runtime path remaps/reprotects that target.
+- V1.6 comparison stays at **85%**; the whole-product weighted score stays **72.6% (79.9 / 110)**. Latest CI #301: **177 tests passed, 0 failed**.

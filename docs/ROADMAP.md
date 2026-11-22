@@ -352,3 +352,17 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Continue the device-side UUID/TEA relationship and firmware ACK/retry/timeout reconstruction without conflating the Windows helper with Android TEA.
 - Latest CI run #300: **177 tests passed, 0 failed**; artifact restoration, catalog/profile generation and compileall passed.
 - V1.6 comparison sub-workstream remains **85%**; whole-product weighted progress remains **72.6%**.
+
+
+## 2026-11-23 — V1.6 VirtualProtect map and UUID-target hypothesis narrowed
+
+- [x] Enumerate static VirtualProtect call references in all three Windows V1.6 PE builds.
+- [x] Pair the six-byte PAGE_EXECUTE_READWRITE patcher calls with the eight explicit `.enigma2` addresses in the September build.
+- [x] Trace the four-byte RWX import resolver through LoadLibraryA/GetProcAddress and its descriptor-relative pointer slot.
+- [x] Distinguish the separate PAGE_READWRITE (`0x04`) region operation from executable permission changes.
+- [x] Document the still-unclassified wrapper call and preserve its uncertainty.
+- [x] Establish that none of the recovered protection operations is statically linked to the three UUID helper target VAs; leave runtime/unpacked behavior unresolved.
+- [ ] Find a valid instruction source or runtime mapping for the UUID helper targets without relying on their one-byte Ghidra bodies.
+- [ ] Continue firmware authorization/ACK/retry/timeout reconstruction and separate Android TEA evidence from Windows V1.6.
+- Latest CI run #301: **177 tests passed, 0 failed**; artifact restore, catalog/profile rebuild and compileall passed.
+- V1.6 comparison remains **85%**; whole-product weighted score remains **72.6%**.

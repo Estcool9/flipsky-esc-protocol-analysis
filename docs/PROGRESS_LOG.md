@@ -892,3 +892,19 @@
 - Updated the three-build report. The helper algorithm remains open; the reliable facts are its two-call-site topology and the CMD21 QByteArray-to-signal handoff.
 - Updated README/STATUS to use latest CI #300 (`45065537376`), which passed **177 tests, 0 failures** and `python -m compileall -q scripts tests`.
 - V1.6 static comparison remains at **85%**; no extra progress credit is claimed for a failed decompilation. Whole-product progress remains **72.6% (79.9 / 110)**.
+
+
+## 2026-11-23 — VirtualProtect/Enigma runtime call-site map compared across V1.6 builds
+
+- Queried Rizin xrefs to the imported `VirtualProtect` jump stub for all three V1.6 PE files. Each has the same six static call sites grouped into the same roles:
+  - 2025-10-14: `0xB9F601/0xB9F62D`, unclassified `0xBA5607`, `0xBBCC7D/0xBBCC96`, `0xBBD708`.
+  - 2026-08-06: `0xBFC601/0xBFC62D`, unclassified `0xC02607`, `0xC19C7D/0xC19C96`, `0xC1A708`.
+  - 2026-09-12: `0xC76601/0xC7662D`, unclassified `0xC7C607`, `0xC93C7D/0xC93C96`, `0xC94708`.
+- Disassembled the six-byte patcher and its orchestrator in the September build: `FUN_00C765E0` temporarily calls VirtualProtect with size 6 and PAGE_EXECUTE_READWRITE (`0x40`), then restores old protection. `FUN_00C7667C` supplies eight caller-side addresses (`0x00C988A8`, `0x00C988C0`, `0x00C988CC`, `0x00C988D8`, `0x00C988B4`, `0x00C988E4`, `0x00C988F0`, `0x00C988FC`), all inside that build's `.enigma2` range.
+- Inspected import resolver `FUN_00C93A58`: it calls VirtualProtect for a four-byte destination at the pointer slot taken from a descriptor `+0x10` field, requests `0x40`, calls LoadLibraryA/GetProcAddress and writes the resolved pointer to `[ESI]`, then restores prior protection.
+- Inspected the separate `FUN_00C93F88` call at `0x00C94708`: it requests protection `0x04` (PAGE_READWRITE, not executable) for a region whose size comes from descriptor/object offset `+0x54`.
+- One call at each build (`0xBA5607`, `0xC02607`, `0xC7C607`) remains in an unclassified code region; its call context and argument meanings are not asserted.
+- The known patch targets are local `.enigma2` addresses, while the shared CMD21/CMD22 helper targets are in `.rdata`. No static pointer/argument equality connects the recovered VirtualProtect paths to any UUID target. Dynamic/unpacked execution remains unknown; no “protector identified” claim is made.
+- Updated [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md) with per-build call-site table, function behavior and unresolved link.
+- GitHub Actions run #301 (`45066338144`, head `8d836dbc4697621542ab2f9afefc61e52c31729b`) passed **177 tests, 0 failures**, artifact restoration, catalog/profile regeneration and compileall.
+- V1.6 comparison remains at **85%**; the protected helper itself remains unresolved, so no additional completion credit is claimed. Whole-product weighted score remains **72.6% (79.9 / 110)**.
