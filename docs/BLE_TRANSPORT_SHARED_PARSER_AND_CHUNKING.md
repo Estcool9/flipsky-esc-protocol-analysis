@@ -64,3 +64,21 @@ The static BLE transport sub-workstream rises from 60% to **80%**: the receive-t
 ## Acquisition and environment note
 
 Four V1.6 source artifacts were authorized for temporary Nextcloud checkout, but they could not yet be staged on the REA host. The only registered Gateway target is a different LXC host and it cannot reach the REA MCP endpoint or workspace. No Nextcloud source file was modified. REA's configured Apktool and ADB launchers were verified; no Android device was contacted. The caller-supplied JADX MCP JAR path remains to be verified.
+
+
+## V1.6 Android cross-check — exact app-level BLE choices
+
+The extracted V1.6 Android ARM64 application library independently implements the same 20-byte BLE chunking and shared FTESC parser:
+
+- `BleUart::writeData` (`0x000FE09C`) loads `0x14` (20) and queues successive `QByteArray::mid` fragments.
+- `BleUart::sendNextPacket` (`0x000FE1A8`) passes C++ `WriteMode=1` to a direct `QLowEnergyService::writeCharacteristic` call at `0x000FE2C4`. In Qt 5.15, this is `WriteWithoutResponse`.
+- `BleUart::serviceStateChanged` (`0x000FF648`) resolves CCCD UUID `0x2902`, converts literal `0100` at `0x002851C9` to bytes and writes the descriptor. The payload `01 00` enables notifications, not indications.
+- `BleUart::updateData` (`0x000FFB8C`) reaches the `BleUart::dataRx` signal thunk via the relocation at GOT `0x00881578`; the thunk (`0x0025ACD8`) calls `QMetaObject::activate`.
+- `FtescLowLevelFace::bleDataRx` (`0x00234730`) copies its input then invokes `uartPackData::uartPackDataHandle(QByteArray)` via resolved relocation target GOT `0x0087D728`. This is the same application stream-parser entry used in the UART path. Signal/slot names are in the Qt metadata, but the precise constructor `QObject::connect` call site is still unresolved.
+
+This confirms application-level behavior for Android V1.6. It strongly corroborates, but does not conclusively prove, the corresponding Windows V1.7 write mode because the Windows indirect call still lands in protected code at `0x00B5A1D0`. Do not infer an ATT MTU of 23 from 20-byte chunks; the Qt backend merely attempts MTU 512 and falls back to 23 on failure, and the negotiated outcome was not observed.
+
+Artifact provenance:
+- APK SHA-256: `26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e`.
+- Android ARM64 application library SHA-256: `7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc`.
+- Android static reverse-engineering report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md).
