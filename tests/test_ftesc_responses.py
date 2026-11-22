@@ -90,11 +90,11 @@ class V17ResponseDecoderTests(unittest.TestCase):
             parse_setup_write_ack(bytes((0x1B, 0x00)), 0x1B)
 
     def test_firmware_version_response_layout(self):
-        info = bytes((0x11, 1, 7, 2)) + b"FTESC-1.7" + bytes((3,))
+        info = bytes((0x11, 1, 7, 0xEF)) + b"FTESC-1.7" + bytes((3,))
         result = parse_firmware_version_response(info)
-        self.assertEqual((result.major, result.minor, result.firmware_type), (1, 7, 2))
-        self.assertEqual(result.label, "FTESC-1.7")
-        self.assertEqual(result.suffix_byte, 3)
+        self.assertEqual((result.major, result.minor, result.boot_mode_flag), (1, 7, 0xEF))
+        self.assertEqual(result.hardware_name, "FTESC-1.7")
+        self.assertEqual(result.hardware_serial_number, 3)
 
     def test_motor_identify_response_string_and_bool(self):
         result = parse_motor_identify_response(bytes((0x0F,)) + b"motor ok" + bytes((1,)))
