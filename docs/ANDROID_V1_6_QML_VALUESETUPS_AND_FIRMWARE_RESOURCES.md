@@ -124,6 +124,19 @@ The 1.1→1.2 table changes the smart-switch enum and introduces additional ADC/
 
 The legacy motor tables omit `battery_cells_s`, `motor_rated_current` and `battery_cutoff_v` from `ValueSeque`; the newer official/beta tables omit `motor_rated_current`. This is deliberate metadata-vs-serialization evidence: the existence of a UI metadata field does not mean it is transmitted in the ordered setup stream. Any replacement serializer must use `ValueSeque` as the authority.
 
+### Direct compatibility check against the offline serializer
+
+The actual V1.6 control and official motor XML files were checked against the repository's existing type-encoding branches:
+
+| Profile | Observed (valType, valueTET) combinations | Missing/unsupported required type metadata |
+|---|---|---:|
+| Control V1.6 | (2,1)=7; (4,1)=19; (1,9)=33; (2,3)=1; (1,7)=3; (6,1)=3; (7,1)=3 | 0 |
+| Motor official V1.6 | (4,1)=9; (1,9)=61; (2,5)=1; (1,7)=13; (2,1)=9 | 0 |
+
+Every serialized entry has a `valType` and `valueTET` combination accepted by the existing offline encoder/decoder branches. The actual Values child order differs from `ValueSeque` in **both** V1.6 tables, so serializing by XML child order would produce a wrong byte layout even when all individual encoders are correct. The existing `encode_profile_block(..., profile_order, ...)` design correctly makes the explicit sequence authoritative.
+
+This is a static compatibility check of field/type metadata, not a validation against live ESC responses. The source XML remains on the REA analysis host; no copyrighted full profile table is copied into the repository.
+
 Each `FirmwareVersionInf.xml` has a `firmware_ver` field whose enum label tracks that resource version (1.0–1.6).
 
 **Important boundary:** these are the Android V1.6 app's embedded FTESC profiles. They do not close the separately unresolved TopFlow V1.7 XML resource or TopFlow model/SKU mapping.
