@@ -168,12 +168,12 @@ For Windows V1.7, the final indirect `writeCharacteristic` target and write mode
 
 ## What remains before 100%
 
-1. Recover the missing TopFlow ValueSetup XML and map profiles to exact hardware SKUs.
+1. Recover the missing TopFlow ValueSetup XML and map profiles to exact hardware SKUs. The separate FTESC V1.0–V1.6 Android ValueSetup XML family is now extracted and analyzed; do not substitute it for TopFlow.
 2. Locate the V1.7 native insertion point for UART CMD 0x10 and complete slave response routing/correlation.
 3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
 4. Complete function-level comparison of the three staged V1.6 Windows executables against V1.7; first-pass PE32 identity/marker comparison is now recorded.
-5. Decode the Android V1.6 Qt `.rcc` QML resource bundle, resolve the exact Qt signal/slot connection site and compare the ARMv7 native path with ARM64.
-6. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
+5. Resolve the remaining Android Qt signal/slot connection edge, dynamic QML/native method bindings and compare screen behavior with the Windows desktop version.
+6. Map the remaining dynamic UI/property behavior and implement the desktop replacement views.
 7. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including negotiated ATT MTU, retransmission, UART baud selection and timing units. BLE application chunking, Android V1.6 write mode/CCCD and shared parser routing are now statically identified; Windows V1.7 call-edge proof remains open.
 
 Hardware validation is still **0%**. The 72.6% weighted estimate reflects static evidence, offline implementation and CI-verified tests; it does not mean the protocol is safe or verified on a live ESC.
