@@ -184,3 +184,8 @@ No Python firmware command builder was changed from this metadata alone. The V1.
 - No firmware was flashed.
 - Cryptographic tables, keys and secret provisioning data are intentionally omitted.
 - Decompiled pseudocode is a Ghidra-derived representation, not original source; function classifications and argument types must be cross-checked before implementation.
+
+
+## 8. Incoming response dispatcher
+
+The V1.6 `uartPackHandle(QByteArray&)` slot at `FUN_004948d0` is mapped to the command-to-signal wrappers documented in [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md). The response branch set is `00, 01, 09, 0A, 0D, 0E, 0F, 11, 14, 16, 18, 1A, 1B, 1C, 1E, 21, 22, 24, 29`. This links the Qt API surface to the native command IDs, while the detailed payload schemas for several responses remain open.
