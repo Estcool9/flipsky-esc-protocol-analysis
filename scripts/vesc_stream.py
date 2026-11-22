@@ -30,7 +30,7 @@ class VescStreamDecoder:
     candidates remain buffered until the next feed().
     """
 
-    def __init__(self, *, max_info_length: int = 0xFFFFFF) -> None:
+    def __init__(self, *, max_info_length: int = 0x100000) -> None:
         if isinstance(max_info_length, bool) or not isinstance(max_info_length, int):
             raise ValueError("max_info_length must be an integer")
         if not 1 <= max_info_length <= 0xFFFFFF:
