@@ -36,6 +36,16 @@ class ProfileOrderTests(unittest.TestCase):
             profile = parse_profile(path)
         self.assertEqual([x["xml_id"] for x in profile["ordered_parameters"]], ["beta", "alpha"])
         self.assertEqual(profile["ordered_parameters"][0]["sequence_index"], 0)
+        self.assertFalse(profile["values_order_matches_sequence"])
+
+    def test_values_order_match_flag_is_true_for_matching_sequence(self):
+        xml = """<ValueSetups>
+          <Values><a><valName>A</valName></a><b><valName>B</valName></b></Values>
+          <ValueSeque><seque>a</seque><seque>b</seque></ValueSeque>
+        </ValueSetups>"""
+        with tempfile.TemporaryDirectory() as directory:
+            profile = parse_profile(self.write_xml(directory, xml))
+        self.assertTrue(profile["values_order_matches_sequence"])
 
     def test_values_not_in_sequence_are_recorded_as_omitted(self):
         xml = """<ValueSetups>
