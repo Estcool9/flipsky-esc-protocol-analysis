@@ -99,18 +99,37 @@ There are two distinct timer-related paths:
 The remaining counter offsets are observed but not yet mapped to named request types. This is separate from the 2-second local event-loop waits in the firmware-update preflight.
 
 
-## 8. BLE transport: same frame parser, 20-byte GATT writes
+## 8. BLE transport: shared parser and 20-byte application chunks
 
-The BLE path is now partially linked:
+The BLE path is now linked to the same application framing layer used by UART.
 
-- UartComm method index 24 is `bleDataRx(QByteArray)`, native `0x004828D0`.
-- `FUN_004828D0` forwards the received QByteArray to the same `FUN_0049CA30` stream handler used by the UART path.
-- The low-level send slot `FUN_00481850` checks the serial-port path and separately checks a BLE-connected flag through `FUN_00401680`.
-- When the BLE flag is set, it calls `FUN_004050C0`.
-- `FUN_004050C0` divides the already-framed byte array into successive 20-byte chunks (offsets 0, 20, 40, …), calls an indirect BLE-write function for each chunk, and waits for the corresponding asynchronous completion before proceeding.
-- The import table contains Qt Bluetooth APIs including `QLowEnergyService::writeCharacteristic`, characteristic-change signals, service discovery and controller connection APIs. The indirect writer is consistent with the characteristic-write path, though the exact import-thunk resolution is not yet proven.
-- The binary contains separate diagnostics for missing BLE TX and RX characteristics.
+### Receive
 
-**Conclusion:** BLE receive definitely reuses the same AA/BB frame stream parser. BLE transmit receives the same framed packet from the shared low-level send slot and fragments it into 20-byte writes. This strongly indicates the same outer framing and CRC are used over BLE, with GATT-level chunking. The TX/RX characteristic UUIDs, write mode (with/without response), and BLE service UUID remain unresolved.
+- The `FtescLowLevelFace` Qt static meta-call table maps method index 24, `bleDataRx`, to native `FUN_004828D0` at `0x004828D0`.
+- `FUN_004828D0` takes the received `QByteArray` and calls `FUN_0049CA30` directly.
+- `FUN_0049CA30` is the same incremental AA/BB stream handler used by the UART receive path. It applies the existing frame parser, retains incomplete candidates, supports concatenated frames, and advances one byte after an invalid candidate.
 
-No BLE connection was opened and no characteristic write was performed.
+**Conclusion:** V1.7 BLE receive reuses the same application-level AA/BB frame-stream parser as UART. This is established by the native callback call path, not by a live BLE capture.
+
+### Transmit
+
+- The shared low-level send slot `FUN_00481850` tests the BLE-connected flag through `FUN_00401680`.
+- When BLE is active, it passes the same byte array received by the shared send slot to `FUN_004050C0`. The upstream UART packet layer supplies the framed byte array described in section 2.
+- `FUN_004050C0` slices the byte array at offsets 0, 20, 40, ... by incrementing the offset by `0x14` (20 decimal).
+- Its queue pump `FUN_00404E80` removes one queued fragment, marks the queue busy, and constructs an asynchronous completion callback for subsequent queue processing.
+
+**Conclusion:** the shared outbound path sends the already-framed byte array into a fixed 20-byte application-chunk queue for BLE. This is not proof that the negotiated ATT MTU is 20 bytes or that the chunk size is dynamically negotiated.
+
+### Exact GATT write boundary still unresolved
+
+The executable contains the mangled symbol string for `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)`. However, the PE import descriptor at RVA `0xB9F000` has ambiguous/non-contiguous virtual mapping, and the protected indirect-dispatch path has not yielded a proven call-site-to-import edge. Therefore the exact API call, write-with-response versus write-without-response mode, and descriptor value remain unknown. The already observed lookup of descriptor UUID `0x2902` is not enough to infer its value.
+
+Remaining BLE unknowns:
+
+- Exact `writeCharacteristic` call target and `WriteMode`.
+- Exact CCCD `0x2902` value and notification sequencing.
+- Negotiated ATT MTU and whether the fixed 20-byte application chunks vary by device/connection.
+- Queue retry, error, timeout, disconnect and reconnection semantics.
+- Independent passive BLE capture and model/firmware applicability.
+
+Detailed evidence: [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md). No BLE operation or ESC command was executed.
