@@ -351,3 +351,12 @@
 - Added 3 classification tests. Fresh public clone: restore payloads, regenerate 13 resource variants/721 ordered entries, **80 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **77% to 78%**. Setup serialization rises to 92%; model/SKU selection and TopFlow schema remain open.
 - No setup data was sent.
+
+
+## 2026-11-22 — Firmware config version selector resolved
+
+- Cross-referenced both callers of `FUN_00492570`: startup helper `FUN_0047F530` and main-window constructor `FUN_0048E570`.
+- Both pass `(1, 7)`, matching the embedded path `ftesc/1.7`.
+- The loader parses two numeric values from `FirmwareVersionInf.xml` and compares them with these parameters. They are firmware major/minor selectors, not hardware model IDs.
+- Updated [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md). The mapping of the 13 ValueSetups resource IDs to actual hardware/SKU variants remains open.
+- Overall estimate updated from **78% to 79%**; test suite remains **80 passed, 0 failed**.
