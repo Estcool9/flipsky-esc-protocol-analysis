@@ -273,3 +273,13 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Complete byte-level response decoders for the outstanding V1.6 response commands and compare against V1.7.
 - Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
 - V1.6 comparison sub-workstream: 60% → 65%; whole-product weighted progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 separate CMD09/CMD0A setup responses
+
+- [x] Confirm the CMD09 `0xD2C6EF10` and CMD0A `0x4879187D` marker checks and metadata-driven ValueSeque traversal.
+- [x] Reuse the existing profile block decoder for V1.6 one-block responses while preserving unconsumed tail bytes.
+- [x] Add unit tests for valid CMD09/CMD0A blocks and wrong marker rejection; GitHub Actions #266 passes (167 tests).
+- [ ] Complete typed field names/units for the remaining PPM/ADC/IMU/motor-identification response APIs.
+- Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
+- V1.6 comparison sub-workstream: 65% → 70%; overall weighted project progress remains **72.6%**.
