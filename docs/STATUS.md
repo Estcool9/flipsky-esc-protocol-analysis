@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 73%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 75%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -20,13 +20,13 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | V1.4-to-V1.6 protocol comparison | 90% |
 | V1.7 command-ID and payload cross-reference | 86% |
 | Offline frame and protocol codecs/tests | 100% |
-| Firmware update and TEA relationship | 85% |
+| Firmware authorization and block-transfer flow | 90% |
 | Direct CAN V1.4 telemetry decoder | 100% |
 | V1.7 UART CAN-forward wrapper and slave response routing | 40% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **73%** |
+| **Overall estimate** | **75%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **60 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **71 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -125,3 +125,12 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - No direct CMD 0x02 builder appears in the decoded UartComm request method table.
 - UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists, but a signal name is not proof of an outbound request.
 - See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md); class/QML bridge tracing remains open.
+
+
+### V1.7 firmware erase/write pipeline
+- Corrected earlier function classification: `0x00485130` is the erase-and-block-write orchestrator, not an image validator.
+- Confirmed erase CMD 0x16 carries 32-bit BE image size.
+- Confirmed CMD 0x18 blocks are at most 240 bytes, XOR-masked with a per-block reset, retried up to 3 times on 2-second timeouts.
+- Recovered the 239-byte XOR mask and implemented an offline-only block codec.
+- The app's 150-Kbyte UI warning differs from its native 0x30F98-byte bound; exact intended limit remains unresolved.
+- See [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
