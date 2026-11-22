@@ -153,7 +153,7 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Decompile application-level Android BLE method bodies and compare ARM64/ARMv7 behavior.
 - [ ] Decode Qt `.rcc` QML resources and find the app's actual characteristic writes/CCCD/MTU arguments.
 - [ ] Complete function-level Windows V1.6/V1.7 diffs; PE import descriptors are currently unreadable in the import workflow.
-- BLE static sub-workstream: 80% → 90% (Android V1.6 exact mode/CCCD/parser); V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
+- BLE static sub-workstream: 80% → 95% (Android V1.6 ARM64/ARMv7 exact write mode and shared parser); V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
 - Detailed reports: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
 
 
@@ -166,4 +166,14 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve the exact QObject signal/slot connect call site.
 - [ ] Determine negotiated ATT MTU and runtime behavior from an authorized passive capture/device; no runtime BLE operation has been performed.
 - [ ] Confirm whether Windows V1.7's protected indirect target is the same Qt write mode. Android V1.6 strongly corroborates but does not prove the protected Windows edge.
-- Android/BLE static sub-workstream: 85% → 90%. Whole-project score remains 72.6%.
+- Android/BLE static sub-workstream: 85% → 95% after ARMv7 independently confirms the 20-byte chunk stride, direct WriteWithoutResponse call and common FTESC parser route. Whole-project score remains 72.6%.
+
+
+## 2026-11-22 — Android ARMv7 BLE path matches ARM64
+
+- [x] Confirm ARMv7 `BleUart::writeData` sets 20-byte (`0x14`) slices.
+- [x] Confirm ARMv7 `BleUart::sendNextPacket` directly calls Qt `writeCharacteristic` with C++ `WriteMode=1` (`WriteWithoutResponse`).
+- [x] Confirm ARMv7 CCCD method uses descriptor UUID `0x2902`, `QByteArray::fromHex` and `writeDescriptor`; a single `0100` string literal is present, but a direct cross-reference was not recovered.
+- [x] Confirm ARMv7 `FtescLowLevelFace::bleDataRx` invokes `uartPackData::uartPackDataHandle` after copying the input QByteArray.
+- [ ] Resolve Qt constructor signal/slot connection, negotiated MTU and runtime behavior.
+- Android/BLE static sub-workstream: 90% → 95%; whole-product score remains 72.6%.
