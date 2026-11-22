@@ -193,3 +193,8 @@ Some mappings are based on matching command/response semantics and the method na
 - Runtime validation against passive captures or a safe isolated ESC setup.
 
 No serial/BLE traffic was sent. The project remains static-analysis plus offline tests.
+
+
+## Response callback correlation update
+
+The matching response acknowledgements are now tied to exact UartComm signal indexes; see [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md), section 8. This closes the signal-name ambiguity for the currently mapped response switch cases.
