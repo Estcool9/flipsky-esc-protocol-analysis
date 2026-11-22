@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 71%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 73%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -21,11 +21,20 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | V1.7 command-ID and payload cross-reference | 86% |
 | Offline frame and protocol codecs/tests | 100% |
 | Firmware update and TEA relationship | 85% |
-| CAN target selection and forwarding state | 40% |
+| Direct CAN V1.4 telemetry decoder | 100% |
+| V1.7 UART CAN-forward wrapper and slave response routing | 40% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **71%** |
+| **Overall estimate** | **73%** |
+
+## Confirmed evidence
+
+### Official direct CAN V1.4 protocol and decoder
+- Read the user's Nextcloud copy of Flipsky FTESC CAN Communication Protocol V1.4 (FT-CM-CAN-20250423-04, 22 pages, 2025-04-23).
+- Implemented an offline-only 29-bit extended-ID parser and CRC validation for documented command ranges.
+- Implemented read-only telemetry decoding for CAN 0x0B (motor/battery current), 0x0C (eRPM/duty) and 0x0D (temperatures/voltage), including signed 24-bit sign extension.
+- Added 9 tests. The direct CAN protocol is distinct from UART INFO framing and opcodes. See [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md).
 
 ## Confirmed evidence
 
@@ -81,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **51 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **60 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
