@@ -293,7 +293,7 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 2. V1.7 CAN selection is stored by the UI but the standard UartComm send chain does not prepend the published V1.6 CMD 0x10 envelope; the external gateway path still needs evidence.
 3. Firmware image layout, full retry/rollback flow and complete bootloader state machine remain open.
 4. The desktop UI, actual serial/BLE transports, read-only session discovery and passive capture replay are not implemented.
-5. BLE UUIDs/MTU/write mode, V1.6 binary comparison and controlled hardware validation remain open.
+5. Windows V1.7 protected GATT write target/runtime MTU, function-level V1.6 PE diff and controlled hardware validation remain open. Android V1.6 app-selected mode/CCCD and ARM64/ARMv7 receive parser are statically established.
 
 
 ## VESC UART stream decoder — 2026-11-22
@@ -395,3 +395,10 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - All 69 control and 93 ordered official motor entries have supported `valType`/`valueTET` combinations; no missing required `valueTET`/scale metadata or unsupported pair was observed.
 - Observed type pairs: Control `(2,1)=7, (4,1)=19, (1,9)=33, (2,3)=1, (1,7)=3, (6,1)=3, (7,1)=3`; Motor `(4,1)=9, (1,9)=61, (2,5)=1, (1,7)=13, (2,1)=9`.
 - In both V1.6 files, Values XML child order differs from ValueSeque; the existing encoder's explicit `ValueSeque`-ordered design is therefore essential. This is metadata compatibility evidence, not a live ESC round-trip.
+
+
+### Latest repository CI — 2026-11-22
+
+- GitHub Actions [run #195](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45018768452) completed successfully on `5d6f2940999ddc2b59b5b33a9f79a3eb1b0af713`.
+- **159 tests passed, 0 failed**; deterministic catalog/profile restore and regeneration and Python `compileall` passed.
+- The Android resource reconstruction was documentation-only; the whole-project score remains **72.6%** (79.9 / 110).
