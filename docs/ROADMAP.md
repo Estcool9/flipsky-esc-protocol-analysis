@@ -226,3 +226,15 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve the protected Windows BLE write target and compare its call arguments with the proven Android V1.6 WriteWithoutResponse path.
 - Detailed report: [WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md](WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md).
 - Overall weighted progress remains **72.6%**; marker-only comparison does not complete a functional replacement milestone.
+
+
+## 2026-11-22 — Windows V1.6 UART frame/parser function-level pass
+
+- [x] Decompile V1.6 Windows outer frame builder, AA/BB candidate parser and incremental stream handler.
+- [x] Identify serial/device read loop and the direct QByteArray parser wrapper in `FtescLowLevelFace`.
+- [x] Match V1.6 function roles to the V1.7 frame builder/parser/stream-handler roles.
+- [x] Align Python frame error precedence with the native terminator-before-CRC order and add a regression test.
+- [ ] Resolve the V1.6 per-instance maximum payload initializer and exact Qt method-index/string-table mapping.
+- [ ] Complete the full V1.6/V1.7 function-level diff, including firmware and protected Windows BLE write path.
+- Detailed report: [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md).
+- The V1.6 comparison sub-workstream moves from 25% to 45%; overall weighted project progress remains **72.6%**.
