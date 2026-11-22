@@ -47,7 +47,7 @@ The application is built around Qt 5, C++ and QML. Identified modules include Qt
 
 The high-level `FtescLowLevelFace` façade coordinates UART and BLE. The separate `uartPackData` Qt meta-object exposes `sendDataToESC`, `uartPackDataFromESC`, `uartPackDataHandle` and `uartPackDataTimerSl`.
 
-See [QT_CONNECTION_REGISTRATION](docs/QT_CONNECTION_REGISTRATION.md), [QT_METAOBJECT](docs/QT_METAOBJECT.md), [QT_METACALL_DISPATCH_MAP](docs/QT_METACALL_DISPATCH_MAP.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
+See [QT_CONNECTION_REGISTRATION](docs/QT_CONNECTION_REGISTRATION.md), [QT_METAOBJECT](docs/QT_METAOBJECT.md), [QT_METACALL_DISPATCH_MAP](docs/QT_METACALL_DISPATCH_MAP.md), [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md) and the new [V1.7 BLE GATT reconstruction](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
 
 ## V1.7 UART framing
 
@@ -158,6 +158,10 @@ New offline modules:
 
 See [Flipsky VESC V1.0 analysis](docs/FLIPSKY_VESC_PROTOCOL_V1.0.md), [protocol-family matrix](docs/PROTOCOL_FAMILY_MATRIX.md) and [source-pinned comparison](docs/VESC_COMPARISON.md).
 
+## BLE GATT reconstruction
+
+Static analysis of V1.7 now confirms the BLE UART service UUID (`0000fff0-0000-1000-8000-00805f9b34fb`), TX characteristic UUID (`0000fff2-0000-1000-8000-00805f9b34fb`) and RX characteristic UUID (`0000fff1-0000-1000-8000-00805f9b34fb`). The controller/service state callbacks and the lookup of CCCD descriptor `0x2902` are mapped. This is static evidence only: the actual write mode, descriptor value, MTU/chunking, and live BLE behavior are not verified. See [BLE_GATT_V1_7_REVERSE_ENGINEERED](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
+
 ## What remains before 100%
 
 1. Recover the missing TopFlow ValueSetup XML and map profiles to exact hardware SKUs.
@@ -165,7 +169,7 @@ See [Flipsky VESC V1.0 analysis](docs/FLIPSKY_VESC_PROTOCOL_V1.0.md), [protocol-
 3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
 4. Compare against a V1.6 executable if one becomes available.
 5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
-6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE characteristic UUIDs/write mode, UART baud selection and timing units.
+6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, MTU/chunk size, UART baud selection and timing units. The three V1.7 BLE GATT UUIDs are now statically identified.
 
 Hardware validation is still **0%**. The 92% estimate means the static evidence and offline implementation are substantially complete; it does not mean the protocol is safe or verified on a live ESC.
 
