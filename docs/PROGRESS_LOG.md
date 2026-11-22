@@ -338,3 +338,16 @@
 - Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) and [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
 - Conclusion: this signal is response-side realtime telemetry, not a CMD 0x02 request builder. The actual CMD 0x02 request path remains unresolved.
 - Overall estimate remains **77%**.
+
+
+## 2026-11-22 — Firmware-directory table selection and resource families mapped
+
+- Analyzed `FUN_00488010`: selects `ftesc/1.7/TopFlowSetupValueTable.xml` for one mode, or the MotorSetup + ControlSetup official table paths otherwise.
+- Analyzed `FUN_00492570`: scans the `://ftesc` firmware directory, loads MotorSetupValueTable_official.xml, ControlSetupValueTable.xml, TopFlowSetupValueTable.xml and FirmwareVersionInf.xml, then matches two parsed integer selectors.
+- The exact meaning of those selectors and the mapping of the 13 compressed resource streams to named files/SKUs remain unresolved.
+- Classified the 13 extracted ValueSetups resources by parameter names: 4 control setup (173 values/173 ordered), 6 motor setup (273/261), 3 motor-signal/FOC setup (290/287).
+- Updated `scripts/ftesc_profiles.py` to emit the family label; updated full compressed CSV/JSON artifacts and summary.
+- Added [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md) and updated [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md).
+- Added 3 classification tests. Fresh public clone: restore payloads, regenerate 13 resource variants/721 ordered entries, **80 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **77% to 78%**. Setup serialization rises to 92%; model/SKU selection and TopFlow schema remain open.
+- No setup data was sent.
