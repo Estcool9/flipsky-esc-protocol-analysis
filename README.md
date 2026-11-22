@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 50% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 54% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
 
 ## Project status
 
@@ -12,10 +12,10 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Embedded XML extraction and validation | 100% |
 | Parameter catalog generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
-| UART/Qt signal-slot and meta-object mapping | 85% |
+| UART/Qt signal-slot and meta-object mapping | 100% |
 | Outer frame format and CRC reconstruction | 100% |
 | Receive-buffer and resynchronization analysis | 90% |
-| Inner command IDs and payload layouts | 12% |
+| Inner command IDs and payload layouts | 35% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 documented comparison | 90% |
 | V1.6 Windows binary comparison | 0% |
@@ -23,9 +23,9 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **50%** |
+| **Overall estimate** | **54%** |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
+See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -52,7 +52,7 @@ The application is built around Qt 5, C++ and QML. Identified modules include Qt
 
 The high-level `FtescLowLevelFace` façade coordinates UART and BLE paths. A separate Qt meta-object named `uartPackData` includes `sendDataToESC`, `uartPackDataFromESC`, `uartPackDataHandle` and `uartPackDataTimerSl`.
 
-See [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md) and [docs/QT_METAOBJECT.md](docs/QT_METAOBJECT.md).
+See [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md), [docs/QT_METAOBJECT.md](docs/QT_METAOBJECT.md), and [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md).
 
 ## Recovered outer UART framing
 
@@ -69,6 +69,8 @@ The receive parser and transmit builder independently support two frame forms.
 The sender selects the short form for payloads from 1 through 255 bytes and the extended form above 255 bytes. The receiver rejects zero-length short payloads and rejects extended lengths at or below 254. The constructor initializes the maximum-payload field to `0x2710` (10,000 bytes) in this binary.
 
 The checksum is **CRC-16/MODBUS**: reflected polynomial `0xA001`, initial value `0xFFFF`, final XOR `0x0000`. It is calculated over the payload only and transmitted high byte first. The two 256-byte lookup tables embedded in the binary match generated CRC-16/MODBUS tables; the standard check vector `123456789` yields `0x4B37`.
+
+The response dispatcher at `0x004997A0` now maps V1.7 response command cases. Commands `0x00`, `0x11`, `0x1A` and `0x1E` correlate strongly with public V1.6 telemetry, firmware identity, periodic telemetry acknowledgement and ESC-ID enumeration. The V1.7 `0x00` path reads the full 44-byte DATA auto-telemetry response, including three extra 32-bit angular values in the 12 bytes that V1.6 labels reserved. Their exact semantic names remain unknown. See [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md).
 
 The receive handler distinguishes:
 - a positive return value for a valid frame's consumed length;
@@ -124,7 +126,7 @@ See [docs/VESC_COMPARISON.md](docs/VESC_COMPARISON.md).
 - Exact persistence/reset behaviour for all fragmented or corrupted input patterns.
 - Compatibility across FT ESC hardware revisions.
 
-The method named `tea_encrypt` is present in the Qt meta-object and TEA-like code was identified. Its confirmed use is in the firmware-update path. Systematic encryption of ordinary UART frames has **not** been demonstrated.
+The Qt dispatch map now resolves `tea_encrypt` to a 32-round TEA block transform and `encrypt` to an 8-byte zero-padded buffer wrapper. The `firmwareUpdatePro` native body calls the wrapper directly. This confirms TEA use in the firmware-update path only; systematic encryption of ordinary UART frames has **not** been demonstrated.
 
 ## Repository contents
 
