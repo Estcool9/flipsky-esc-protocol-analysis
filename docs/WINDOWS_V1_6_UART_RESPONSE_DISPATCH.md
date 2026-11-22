@@ -107,7 +107,7 @@ Now implemented for V1.6 as profile-block decoders (marker + metadata-driven Val
 
 Still requiring full field-level reconstruction before implementation:
 - CMD01 / CMD1E ESC ID list formats and target correlation.
-- CMD09 / CMD0A / CMD1B shared motor-signal response layouts and distinctions.
+- CMD1B status text and distinctions among the motor-signal read response paths.
 - CMD0D PPM and CMD0E ADC six-field response schemas.
 - CMD0F identify response payload.
 - CMD14 / CMD24 text/sample output encoding and lengths.
@@ -136,3 +136,26 @@ The V1.6 response handler separates two profile responses which the V1.7 path la
 - Both success paths activate `ftescMotorSignalReadAck(QString,bool)` (UartComm signal index 7). If the expected marker/control value does not match, `FUN_0049ab10` emits the diagnostic `Invalid SecretKey` and returns false.
 
 The per-value parser `FUN_0049a5c0` reads the same native value families supported by `decode_profile_block`: scaled 16-/32-bit integers and float32 for floating entries; unsigned/signed 8-, 16- and 32-bit integers for integer entries; and signed byte values for the remaining enum/boolean-like classes. The offline V1.6 functions reuse `decode_profile_block()` with the correct marker and caller-supplied profile order/metadata. Unconsumed tail bytes are preserved as `trailing_data` rather than silently discarded.
+
+
+## 8. Offline codec coverage cross-check
+
+The recovered V1.6 branches have the following existing or newly added offline decoders:
+
+| V1.6 CMD | Offline decoder | Static layout cross-check |
+|---:|---|---|
+| `0x09` | `parse_v16_motor_setup_response` | One block, marker `D2C6EF10`, metadata-driven ValueSeque decode |
+| `0x0A` | `parse_v16_motor_signal_setup_response` | One block, marker `4879187D`, metadata-driven ValueSeque decode |
+| `0x0D` | `parse_signal_ppm_response` | One signed int32 scaled by 1e6 |
+| `0x0E` | `parse_signal_adc_response` | Six signed int32 values with scales 1e6, 1e6, 1, 1, 1, 1e6 |
+| `0x0F` | `parse_motor_identify_response` | Variable string/label plus trailing boolean status |
+| `0x11` | `parse_firmware_version_response` | Major/minor/type, variable label and suffix byte |
+| `0x14`, `0x24` | `parse_text_response` | Variable terminal/sample text paths |
+| `0x16`, `0x18`, `0x22` | `parse_boolean_ack` | One-byte status values |
+| `0x1A` | `parse_auto_realtime_ack` | No DATA |
+| `0x1B` | `parse_setup_write_ack` | No-DATA motor-signal read status |
+| `0x1C` | `parse_motor_signal_setup_response` | Two marker-prefixed blocks plus length/status check |
+| `0x21` | `parse_uuid_response` | Raw UUID DATA preserved |
+| `0x29` | `parse_imu_calibration_response` | Nine signed int32 values, each scaled by 1e6 |
+
+CMD `0x01` and `0x1E` ESC ID-list responses still need an offline decoder; the native path iterates the returned bytes into a QVector-like container and emits the two-argument `ftescGetIDResAck` signal. The exact boolean meaning and element semantics should be recovered before implementation.
