@@ -117,3 +117,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - UartComm fields at +0x0C and +0x10 hold CAN-forward enabled and target ID; accessors and setter are mapped.
 - UI target selection/clear flows, ID discovery request 0x01, per-target setup reads 0x1C and TopFlow reads 0x3B are traced.
 - The generic V1.7 CMD 0x10 wrapper insertion and slave response routing remain unresolved. See [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
+
+
+### V1.7 CMD 0x02 one-shot path
+- The public V1.6 command layout is documented.
+- No CMD 0x02 branch is present in the mapped V1.7 response dispatcher at 0x004997A0.
+- No direct CMD 0x02 builder appears in the decoded UartComm request method table.
+- UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists, but a signal name is not proof of an outbound request.
+- See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md); class/QML bridge tracing remains open.
