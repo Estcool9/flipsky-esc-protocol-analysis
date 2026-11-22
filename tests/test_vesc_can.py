@@ -25,7 +25,7 @@ class VescCanIdentifierTests(unittest.TestCase):
         decoded = decode_identifier(0x1234512A)
         self.assertEqual(decoded.controller_id, 0x2A)
         self.assertEqual(decoded.command_id, 0x51)
-        self.assertEqual(decoded.reserved, 0x123)
+        self.assertEqual(decoded.reserved, 0x1234)
 
     def test_invalid_identifiers_are_rejected(self):
         for bad in (-1, 0x20000000, True):
