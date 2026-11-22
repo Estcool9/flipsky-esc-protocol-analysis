@@ -451,3 +451,15 @@
 - Added official FT Series V1.6 update guide cross-check: bootloader, reconnect, flash; dual-drive master and slave updated independently over USB.
 - The linked Gateway V1.6 manual PDF could not be retrieved by the browser; this limitation is recorded in [EXTERNAL_REFERENCES.md](EXTERNAL_REFERENCES.md).
 - Overall estimate updated from **87% to 88%**. Reproducibility/CI rises to 90%; exact CAN wrapper, TopFlow schema, model/resource mapping and hardware validation remain open.
+
+
+## 2026-11-22 — Firmware-version and variable-text response decoders
+
+- Revisited response dispatcher `0x004997A0` case 0x11: reads three leading bytes, converts the following byte array to QString, then reads a trailing byte; emits firmware-version structure and separate firmware-type signal.
+- Added `parse_firmware_version_response()` preserving major, minor, type byte, raw label bytes, UTF-8 label and suffix byte without guessing suffix semantics.
+- CMD 0x0F reads a QString-like label followed by a boolean status; added `parse_motor_identify_response()`.
+- CMD 0x14 terminal print and CMD 0x24 samples print both convert response DATA to QString; added `parse_text_response()`.
+- Added three tests and updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md).
+- Fresh public clone: **107 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **88% to 89%**. Variable-text response paths are now 90%; the CMD 0x11 string boundary/encoding and suffix semantics remain unvalidated without a live capture.
+- No hardware response was captured.
