@@ -15,7 +15,7 @@ from scripts.ftesc_frame import decode_frame
 
 class FirmwareBlockCodecTests(unittest.TestCase):
     def test_erase_info_uses_uint32_big_endian_size(self):
-        self.assertEqual(build_erase_info(0x123456), bytes.fromhex("16 00 12 34 56"))
+        self.assertEqual(build_erase_info(0x12345), bytes.fromhex("16 00 01 23 45"))
 
     def test_erase_info_rejects_native_size_overflow(self):
         with self.assertRaises(ValueError):
