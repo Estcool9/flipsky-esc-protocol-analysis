@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 83%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 84%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **83%** |
+| **Overall estimate** | **84%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **91 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **99 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -182,3 +182,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Implemented the exact CMD 0x0F INFO field order from x86 instruction-level evidence; semantic labels/units for the five API arguments remain unknown.
 - Confirmed native scalar scaling helpers use round-half-away-from-zero; offline builders now have tie-case tests.
 - Request-builder suite now covers CMD 0x0F.
+
+
+### V1.7 response payload decoders
+- Added offline decoders for CMD 0x0D PPM, 0x0E six-value ADC (mixed scales), 0x16/0x18/0x22 boolean ACKs, 0x1A no-data ACK and 0x29 nine-value IMU calibration.
+- Corrected earlier response-map note: CMD 0x0E parses six values, not five.
+- CMD 0x01 and 0x1E ID-list responses share the same vector decoder.
+- 8 new tests; 99 passing tests on a fresh clone.
+- See [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md).
