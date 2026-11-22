@@ -666,3 +666,25 @@
 - Android/BLE static sub-workstream: 90% → 95%. Qt signal/slot connection edge, negotiated ATT MTU, runtime queue/notification behavior, and Windows V1.7 protected call target remain unresolved. Whole-product weighted score unchanged at **72.6%** (79.9 / 110).
 - Updated [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), STATUS and ROADMAP.
 - No Android device, BLE, GATT, UART, CAN or ESC operation was performed.
+
+
+## 2026-11-22 — Android V1.6 application QML, ValueSetup and firmware resource recovery
+
+- Parsed application-owned Qt RCC v3 tables embedded in ARM64 app `.so`, rather than relying on the generic APK Qt RCC bundle. Initializers and static table locations:
+  - `qInitResources_qml` @ `0x00259F5C`: tree `0x00296F6D`, names `0x002971EB`, data `0x002976E5`.
+  - `qInitResources_ftesc` @ `0x0025A088`: tree `0x002ACA6F`, names `0x002ACD45`, data `0x002ACED3`.
+  - `qInitResources_ftescFw` @ `0x0025A1B4`: tree `0x002D473F`, names `0x002D4A2B`, data `0x002D4C49`.
+  - `qInitResources_ftescIcon` @ `0x0025A2A4`: tree `0x007BC3CD`, names `0x007BC585`, data `0x007BC7F7`.
+- Extracted 116 resource tree nodes: 28 QML files, 24 XML profile/version resources, 31 firmware file entries, 18 icons; 101 files total and zero extraction errors. All outputs remain under `/data/analysis/extracted/v1.6_ble_embedded_resources/`; no raw source resources were copied to GitHub.
+- QML imports application modules `Flipsky.ftesc.FtescLowLevelFace`, `ToolLib`, `uartcomm`, `valuesetups`, `bleuart`. Main window owns UartComm and three ValueSetups objects for motor, signal and firmware metadata; BleConnectScreen uses the native BleUart object.
+- On startup the UI scans BLE and can retry the last address up to five times. On connection it requests firmware identity and ESC ID; successful ID ACK triggers motor setup read, 500 ms wait, signal setup read, another 500 ms wait. Custom motor/signal XML load/save is available.
+- QML screen resources cover home, BLE scan/connect, real-time telemetry/charts, motor settings/identification, signal setup and UART/PPM/ADC/PAS calibration, CAN master/slave, and firmware update.
+- `ValueSetters.qml` maps ValueSetup type tests to ValueSetupDouble, ValueSetupInt, ValueSetupListEnum, ValueSetupListEnumLong and ValueSetupListEnumShort.
+- FTESC control tables: version 1.0 24/24 Values/ValueSeque, 1.1 24/24, 1.2 26/26, 1.3 36/36, 1.4 46/46, 1.5 67/67, 1.6 69/69. V1.6 type code distribution 1=36, 2=8, 4=19, 6=3, 7=3.
+- V1.6 official motor table: 94 Values / 93 ValueSeque; only `motor_rated_current` is metadata-only and excluded from wire order. Earlier legacy motor tables omit `battery_cells_s`, `motor_rated_current`, `battery_cutoff_v` from sequence; all serializer implementations must honor `ValueSeque`, not XML order or all metadata keys. Separate TopFlow V1.7 XML remains unresolved and must not be substituted with this FTESC data.
+- Firmware RCC group has 31 names but 17 unique SHA-256 blobs; all 17 unique images are 165,880 bytes. Each first word points into SRAM (mostly `0x20011F40`, one `0x20012EE8`), and each reset vector is `0x08009019` (Thumb). This is consistent with a raw Cortex-M vector table around flash base `0x08009000`, but exact MCU, map, encryption/authentication are not established.
+- Firmware QML lists bundled images using `qmlfirmwareList()`; `qmlfirmwareData(QString)` reads a selected file with QFile. `firmwareWriteToFtesc` calls `eraseFirmware` before its write path. QML limits custom BIN files to 150 Kbyte, restricts updates to a master ESC, warns bootloader entry clears settings, and exposes errors: -1 BLE disconnected, -2 not bootloader, -3 invalid file, -4 open failure, -5 oversized custom BIN, -6 UUID timeout, -7 encrypted-data write timeout, -8 update failure. The custom BIN size limit is not assumed to apply to the separate bundled image path.
+- Firmware authorization, erase/write block codec, integrity, encryption, recovery and exact model-image mapping remain unresolved. No firmware code was executed or transferred to hardware.
+- Android static UI/resource sub-workstream: 0% → 80%. Overall score remains **72.6%** (79.9 / 110); no desktop UI implementation or live hardware validation is claimed.
+- Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
+- No APK/native execution, Android device query, BLE/GATT operation, UART/CAN transmission or ESC command occurred.
