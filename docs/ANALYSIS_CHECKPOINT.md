@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 79%**  
+**Overall estimated progress: 80%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -272,3 +272,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - This matches `ftesc/1.7` and resolves the selector as firmware major/minor.
 - Hardware/SKU mapping of the 13 ValueSetups resources remains open.
 - Overall estimate: **79%**.
+
+
+## V1.6 C source cross-check — 2026-11-22
+
+- Source confirms UART AA/BB framing, CRC16-MODBUS, CRC high/low order and DD terminator.
+- Command enum includes CMD 0x02 and CMD 0x10; sample only sends/parses CMD 0x00 telemetry.
+- Confirms base telemetry field order/scales.
+- Added [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
+- Overall estimate: **80%**.
