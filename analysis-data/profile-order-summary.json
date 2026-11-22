@@ -102,5 +102,53 @@
     "value_count": 97,
     "sequence_count": 96,
     "omitted_count": 1
+  },
+  {
+    "profile_file": "resource_15_001f78ba.xml",
+    "family": "control_setup",
+    "source_sha256": "fa1b2970603ce1681190888cfab6b753a2cdd3b42609da11919fe91383a70257",
+    "value_count": 26,
+    "sequence_count": 26,
+    "omitted_count": 0
+  },
+  {
+    "profile_file": "resource_16_001fed4a.xml",
+    "family": "control_setup",
+    "source_sha256": "148d4564a7e1bf5e5d8e33937b67321fb186566d79d1007ef21b030e541384d9",
+    "value_count": 69,
+    "sequence_count": 69,
+    "omitted_count": 0
+  },
+  {
+    "profile_file": "resource_17_00204444.xml",
+    "family": "control_setup",
+    "source_sha256": "45172ce2ba57f30b5ec6b71296f013bb05d75986ba6030c4e3f7b29e57904fa4",
+    "value_count": 69,
+    "sequence_count": 69,
+    "omitted_count": 0
+  },
+  {
+    "profile_file": "resource_18_0020cd8c.xml",
+    "family": "motor_signal_setup",
+    "source_sha256": "666e78c3326268730fc281023fcadc4e4281909fdca7cdfd53529a2edde3c0d0",
+    "value_count": 96,
+    "sequence_count": 95,
+    "omitted_count": 1
+  },
+  {
+    "profile_file": "resource_19_0020fe7f.xml",
+    "family": "encoder_setup",
+    "source_sha256": "0e3f2d99e64222b9cfdcb6dbb7446ea21cae4824d8f90977220ca88a688bcf57",
+    "value_count": 62,
+    "sequence_count": 62,
+    "omitted_count": 0
+  },
+  {
+    "profile_file": "resource_20_0021f2bc.xml",
+    "family": "motor_signal_setup",
+    "source_sha256": "5d3a06b3f9dcbebbe7f94ab49eb0c2a5cf5675f490d7da51f09522da6186f9da",
+    "value_count": 94,
+    "sequence_count": 93,
+    "omitted_count": 1
   }
 ]
