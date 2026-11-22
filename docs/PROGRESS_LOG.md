@@ -196,3 +196,19 @@
 - Added [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
 - Overall estimate updated from **60% to 62%**. Primitive setup serialization is now implemented; full per-profile value selection/order and all marker meanings remain open.
 - No ESC hardware interaction or data transmission.
+
+
+## 2026-11-22 — Transport pipeline linked end to end
+
+- Identified four adjacent Qt static meta-objects and class names: FtescLowLevelFace, ToolLib, UartComm and uartPackData.
+- Decoded the 4-method `uartPackData` meta-object: signal 0 `sendDataToESC`, signal 1 `uartPackDataFromESC`, slot 2 `uartPackDataHandle` → `FUN_0049CA30`, slot 3 timer → `FUN_0049C800`.
+- Confirmed `FUN_004BDB20` emits uartPackData signal index 0 and `FUN_004BDB60` emits signal index 1 by reading the meta-object pointer and literal signal-index immediates in machine code.
+- Confirmed `FUN_0049C5C0` builds the AA/BB/CRC/DD outer frame then calls `FUN_004BDB20`.
+- Confirmed `FUN_00495910` logs the unframed INFO command and payload, then calls `FUN_004BBC20`, which emits UartComm signal index 0 `sendDataToESC`.
+- Mapped FtescLowLevelFace methods: `uartCommSendToFtesc` index17 → `FUN_004819C0` → frame builder; `lowLevelSendDataToFtesc` index15 → `FUN_00481850` → serial write function pointer; `uartDataHandleAvailable` index13 → `FUN_00481030` → serial read and stream handler; `uartPackDataFromESC` index16 → `FUN_00481930` → response dispatcher.
+- Confirmed UartPackData stream handler emits each validated INFO payload via signal index1; the response parser then emits typed UartComm signals.
+- Added [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md). The legacy connect routine at `0x00483B90` has old-style connect signatures, but its full sender/receiver argument order remains explicitly qualified.
+- Added V1.7 angular extension parser `parse_realtime_data_00_v17_angular_extension`; it decodes the three 32-bit signed micro-radian fields as degrees.
+- Fresh public GitHub clone tested on REA: **48 tests passed, 0 failed**; `compileall` succeeded.
+- Overall estimate updated from **62% to 64%**. The main UART send/receive pipeline is now linked; BLE, CAN and full setup profile ordering remain open.
+- No hardware interaction or traffic transmitted.
