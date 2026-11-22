@@ -198,3 +198,8 @@ No serial/BLE traffic was sent. The project remains static-analysis plus offline
 ## Response callback correlation update
 
 The matching response acknowledgements are now tied to exact UartComm signal indexes; see [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md), section 8. This closes the signal-name ambiguity for the currently mapped response switch cases.
+
+
+## 8. Typed setup-value serialization
+
+The generic serializer behind the marker blocks is now documented and implemented offline. See [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md) for the `valType` / `valueTET` / `evalScl` mapping and the native helper chain. The offline script `scripts/ftesc_setup_serializer.py` emits a marker followed by typed values in supplied vector order; it deliberately does not guess missing profile-order rules.
