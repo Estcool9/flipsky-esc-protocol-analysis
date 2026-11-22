@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 73%**  
+**Overall estimated progress: 75%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -222,3 +222,16 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists, but it is response-side Qt signal evidence, not a request builder.
 - See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
 - Overall estimate remains **73%**.
+
+
+## V1.7 firmware update pipeline — 2026-11-22
+
+- `firmwareUpdatePro` at 0x00486570: built-in/custom file selection, 0x30F98 native size bound, UUID CMD 0x21, TEA challenge and CMD 0x22 authorization.
+- `FUN_00485130`: erase, then sequential 240-byte chunks.
+- Erase CMD 0x16 contains uint32 BE image size; wait for `ftescFirmwareEraseRespenseFlag`.
+- Write CMD 0x18 applies XOR sequence per block: first mask 0xD0, then 239-byte table at 0x00530F61; waits for `ftescFirmwareWriteBlockSuccessFalg`.
+- Each block waits 2 s and retries up to 3 times on timeout.
+- Implemented offline codec `scripts/ftesc_firmware.py`; 11 new tests.
+- Earlier claim of an 0xE9 firmware magic check at 0x00485130 withdrawn; that function is the flash loop.
+- Fresh clone test suite: **71 passed, 0 failed**.
+- Overall estimate: **75%**.
