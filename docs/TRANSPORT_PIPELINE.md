@@ -31,7 +31,7 @@ The static meta-call at `0x004BDBA0` dispatches index 2 to `FUN_0049CA30` and in
 
 ## 2. Outbound path: INFO payload to serial write
 
-The native call and signal evidence gives this path:
+The native call and signal evidence gives this path. The signal indexes and method bodies are direct evidence; the exact QObject sender/receiver argument ordering in the legacy connect routine is still being verified:
 
 1. A `UartComm` request method (for example `ftescControlDuty`) builds the INFO payload.
 2. `FUN_00495910` logs the command, CAN-forward flag/ID, payload length and payload bytes, then calls `FUN_004BBC20`.
@@ -53,9 +53,9 @@ Do not treat these as the same signal merely because their names match.
 
 ## 3. Inbound path: serial read to response dispatch
 
-1. The `QSerialPort::readyRead()` signal is connected to the low-level receive handler.
+1. The connection-registration routine at `0x00483B90` contains a legacy `readyRead()` signature. The native handler below reads from the serial device; the exact sender/receiver direction of every old-style connect call remains under review.
 2. `FtescLowLevelFace::uartDataHandleAvailable` (method index 13, native `0x00481030`) checks bytes available, reads the available data through a Qt I/O function pointer, and forwards the resulting QByteArray to the receive handler.
-3. The `uartPackDataHandle` slot dispatches to `FUN_0049CA30`.
+3. The `uartPackDataHandle` slot (UartPackData method index 2) dispatches to `FUN_0049CA30`; the low-level receive handler also forwards the bytes to that same stream handler.
 4. `FUN_0049CA30` appends input bytes to the bounded receive buffer, uses the parser's missing-byte countdown, slides one byte after invalid candidates, consumes full valid frames, and preserves incomplete candidates.
 5. Each validated INFO payload is collected and emitted through `FUN_004BDB60`.
 6. `FUN_004BDB60` activates `uartPackData` signal index 1: `uartPackDataFromESC(QByteArray&)`.
