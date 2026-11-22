@@ -170,6 +170,15 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         uuid = bytes(range(16))
         self.assertEqual(parse_uuid_response(bytes((0x21,)) + uuid), uuid)
 
+    def test_imu_calibration_signed_values_scale_by_one_million(self):
+        values = (-1_250_000, 0, 2_500_000, -3_000_000, 4_000_000, 5_000_000, 6_000_000, 7_000_000, -8_000_000)
+        info = b"\\x29" + b"".join(i32(value) for value in values)
+        result = parse_imu_calibration_response(info)
+        self.assertEqual(
+            result.values,
+            (-1.25, 0.0, 2.5, -3.0, 4.0, 5.0, 6.0, 7.0, -8.0),
+        )
+
     def test_imu_calibration_rejects_bad_length(self):
         with self.assertRaises(ValueError):
             parse_imu_calibration_response(b"\x29" + bytes(32))
