@@ -308,7 +308,7 @@ def build_control_and_obtain_data_once_info(
         raise SetupValueError("multi_mode must be an integer in 0..2")
     data = (
         _u16(current_code, "current_code")
-        + b"\\x00\\x00"
+        + bytes(2)
         + _bool_byte(direction_switch_enabled, "direction_switch_enabled")
         + _bool_byte(rotation_direction, "rotation_direction")
         + _u8(gear, "gear")
@@ -339,4 +339,4 @@ def build_v14_reset_reboot_info() -> bytes:
     V1.7 reuses CMD 0x1D for TopFlow/motor-signal setup operations; do not
     substitute this V1.4 variant for the V1.7-native reset builders.
     """
-    return build_info(0x1D, b"\\x00")
+    return build_info(0x1D, bytes((0,)))
