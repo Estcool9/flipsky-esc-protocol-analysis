@@ -4,6 +4,10 @@ from scripts.ftesc_can import (
     CAN_ESC_REALTIME_DATA_0,
     CAN_ESC_REALTIME_DATA_1,
     CAN_ESC_REALTIME_DATA_2,
+    CAN_SET_BRAKE_CURRENT_ENUM_ID,
+    CAN_SET_BRAKE_CURRENT_SECTION_ID,
+    CAN_SET_BRAKE_CURRENT_PERCENT_ENUM_ID,
+    CAN_SET_BRAKE_CURRENT_PERCENT_SECTION_ID,
     CanRealtimeData0,
     CanRealtimeData1,
     CanRealtimeData2,
@@ -90,8 +94,10 @@ class CanControlEncoderTests(unittest.TestCase):
             (build_can_duty_gear(3, 0.25, 2), 0x17, 5),
             (build_can_erpm_gear(3, 1500, 2), 0x18, 5),
             (build_can_position_gear(3, 1.25, 2), 0x19, 5),
-            (build_can_brake_current(3, 1.0), 0x1A, 4),
-            (build_can_brake_current_percent(3, 50.0), 0x1B, 4),
+            (build_can_brake_current(3, 1.0, command_id=CAN_SET_BRAKE_CURRENT_ENUM_ID), 0x1A, 4),
+            (build_can_brake_current(3, 1.0, command_id=CAN_SET_BRAKE_CURRENT_SECTION_ID), 0x20, 4),
+            (build_can_brake_current_percent(3, 50.0, command_id=CAN_SET_BRAKE_CURRENT_PERCENT_ENUM_ID), 0x1B, 4),
+            (build_can_brake_current_percent(3, 50.0, command_id=CAN_SET_BRAKE_CURRENT_PERCENT_SECTION_ID), 0x21, 4),
         ]
         for frame, command, length in cases:
             self.assertEqual(frame.identifier.command, command)
