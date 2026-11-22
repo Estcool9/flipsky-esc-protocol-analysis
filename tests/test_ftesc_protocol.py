@@ -84,14 +84,14 @@ class RealtimeTelemetryTests(unittest.TestCase):
         put_signed(d, 28, 4, 1_000_000)
         put_signed(d, 32, 4, -500_000)
         put_signed(d, 36, 4, 0)
-        angles = parse_realtime_data_00_v17_angular_extension(b"\\x00" + d)
+        angles = parse_realtime_data_00_v17_angular_extension(b"\x00" + d)
         self.assertAlmostEqual(angles[0], 57.295779513, places=8)
         self.assertAlmostEqual(angles[1], -28.647889756, places=8)
         self.assertEqual(angles[2], 0.0)
 
     def test_v17_angular_extension_requires_extended_response(self):
         with self.assertRaises(ValueError):
-            parse_realtime_data_00_v17_angular_extension(b"\\x00" + self.make_data())
+            parse_realtime_data_00_v17_angular_extension(b"\x00" + self.make_data())
 
     def test_realtime_response_rejects_wrong_size(self):
         with self.assertRaises(ValueError):
