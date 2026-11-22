@@ -169,3 +169,14 @@
 3. Map acknowledgement callback wrappers to their exact Qt signal indexes.
 4. Trace CAN forwarding and BLE transport.
 5. Compare V1.6 Windows binary with V1.7.
+
+
+## 2026-11-22 — Response callbacks resolved to exact Qt signals
+
+- Inspected the native signal-activation wrappers called by the `0x004997A0` response dispatcher.
+- Confirmed each wrapper passes the UartComm meta-object pointer `0x0051F248` and a literal Qt signal index to the Qt activation helper.
+- Resolved exact response-to-signal mapping: 0x00→signal13 realtime data; 0x01/0x1E→signal19 ESC ID list; 0x0D→signal16 PPM; 0x0E→signal17 ADC; 0x0F→signal18 motor identification; 0x11→signals3/5 firmware identity; 0x14→signal14 terminal print; 0x16→signal4 erase ack; 0x18→signal6 firmware block ack; 0x1A→signal11 auto-realtime ack; 0x1B→signal7 motor-signal read; 0x1C→signal8 motor-signal secret-key check; 0x1D/0x3A/0x3D→signal9 TopFlow setup read; 0x21→signal1 UUID; 0x22→signal2 encrypt write success; 0x24→signal15 samples print; 0x29→signal20 IMU calibration; 0x3B/0x3C→signal10 TopFlow secret-key check.
+- The signal indexes were cross-checked against the decoded UartComm meta-object table. The only signal not yet tied to these dispatcher cases is index12 `ftescSignalReadAckToRtData(QString,bool)`, which is connected through a separate application-level path.
+- Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) with exact callback/signal evidence.
+- Overall estimate updated from **58% to 60%**. Response callback mapping is now substantially complete; request payload schemas and CAN/BLE paths remain open.
+- No hardware interaction or command transmission.
