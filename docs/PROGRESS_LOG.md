@@ -329,3 +329,12 @@
 - Fresh public clone: restore 17+ payloads, regenerate 13 profiles (721 ordered values), **77 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **75% to 77%**. The ordered setup serializer is 90%; resource selection logic and conditional second-block selection remain open.
 - No setup values were transmitted.
+
+
+## 2026-11-22 — Realtime-data signal tied to CMD 0x00 response
+
+- Analyzed callback wrapper `0x004BC060`: it copies the `FTESC_REALTIME_DATA` structure and activates the corresponding Qt signal.
+- Correlated it with UartComm meta-object signal index 13, `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`, called by the CMD 0x00 response branch in `0x004997A0`.
+- Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) and [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
+- Conclusion: this signal is response-side realtime telemetry, not a CMD 0x02 request builder. The actual CMD 0x02 request path remains unresolved.
+- Overall estimate remains **77%**.
