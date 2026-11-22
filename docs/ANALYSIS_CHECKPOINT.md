@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 77%**  
+**Overall estimated progress: 78%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -253,3 +253,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - The CMD 0x00 response branch calls this wrapper.
 - This signal is response-side, not a CMD 0x02 request builder.
 - CMD 0x02 remains unresolved; progress remains **77%**.
+
+
+## Firmware config table discovery — 2026-11-22
+
+- `0x00488010` selects embedded V1.7 default table paths.
+- `0x00492570` scans firmware directories and loads four named XML tables, matching two numeric selectors.
+- 13 ValueSetups resources classify into 4 control, 6 motor, 3 motor-signal/FOC groups.
+- 736 Values entries, 721 ValueSeque entries, 15 omissions.
+- Updated family classifier and compressed order artifacts.
+- Fresh clone: **80 tests passed, 0 failed**.
+- Overall estimate: **78%**.
