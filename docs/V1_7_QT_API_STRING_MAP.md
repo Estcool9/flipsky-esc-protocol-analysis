@@ -79,3 +79,8 @@ These strings are important leads for the existing firmware-update and TEA works
 3. Trace ftescObtainIdOverCan and ftescIdentifyMotorOverCan to the CAN forwarding request and response handlers.
 4. Trace ftescObtainFwVerSlot, ftescEraseFirmware, ftescWriteFirmware and ftescJPMBootMode.
 5. Find the actual command IDs in the emitted payload buffers before updating the confidence column from "candidate" to "confirmed".
+
+
+## Response-dispatch cross-reference update
+
+The V1.7 response dispatcher is now mapped separately in [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md). High-confidence V1.6 semantic correlations are CMD 0x00 (extended telemetry), 0x11 (firmware identity), 0x1A (periodic telemetry acknowledgement) and 0x1E (ESC ID enumeration). These are response-side correlations; outbound request builders and several setup-specific IDs remain under analysis.
