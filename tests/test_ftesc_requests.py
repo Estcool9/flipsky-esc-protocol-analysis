@@ -47,6 +47,18 @@ class V17RequestBuilderTests(unittest.TestCase):
             bytes.fromhex("0F 34 12 FF FD 00 7D 56"),
         )
 
+    def test_identify_motor_over_can_uses_native_rounding_and_truncation(self):
+        # arg4 is cast to int16 with truncation toward zero; arg3 is *100
+        # and rounded to nearest with ties away from zero.
+        self.assertEqual(
+            build_identify_motor_over_can_info(0x12, 0x34, 1.25, 2.9, 0x56),
+            bytes.fromhex("0F 34 12 00 02 00 7D 56"),
+        )
+        self.assertEqual(
+            build_identify_motor_over_can_info(0x12, 0x34, -1.25, -2.9, 0x56),
+            bytes.fromhex("0F 34 12 FF FE FF 83 56"),
+        )
+
     def test_control_scaling_rounds_half_away_from_zero(self):
         self.assertEqual(build_control_current_info(0.0005), bytes.fromhex("04 00 00 00 01"))
         self.assertEqual(build_control_current_info(-0.0005), bytes.fromhex("04 FF FF FF FF"))
