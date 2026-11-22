@@ -263,3 +263,13 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve the protected `writeMcuEncrypt` helper and firmware challenge/key provisioning without publishing secrets.
 - Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
 - V1.6 comparison sub-workstream: 55% → 60%; overall weighted project progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 UART response command-to-signal mapping
+
+- [x] Decompile the V1.6 `uartPackHandle` response dispatcher and inventory its command branches.
+- [x] Resolve Qt signal wrapper indexes for firmware ACKs, UUID/encryption status, ID/CAN lists, telemetry, PPM/ADC, motor identification, setup reads, terminal/sample output and IMU calibration.
+- [x] Record remaining response field-schema gaps without guessing payload layouts.
+- [ ] Complete byte-level response decoders for the outstanding V1.6 response commands and compare against V1.7.
+- Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
+- V1.6 comparison sub-workstream: 60% → 65%; whole-product weighted progress remains **72.6%**.
