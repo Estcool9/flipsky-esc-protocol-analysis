@@ -5,6 +5,7 @@ from scripts.ftesc_responses import (
     ImuCalibrationResponse,
     SignalAdcResponse,
     parse_auto_realtime_ack,
+    parse_can_forward_response,
     parse_motor_signal_setup_response,
     parse_setup_write_ack,
     parse_topflow_setup_response,
@@ -55,6 +56,11 @@ class V17ResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_can_forward_response_uses_slave_command_as_info_command(self):
+        result = parse_can_forward_response(bytes.fromhex("04 01 02"), 0x04)
+        self.assertEqual(result.slave_command, 0x04)
+        self.assertEqual(result.slave_data, bytes((1, 2)))
 
     def test_motor_signal_setup_response_two_blocks(self):
         from scripts.ftesc_setup_serializer import encode_profile_block
