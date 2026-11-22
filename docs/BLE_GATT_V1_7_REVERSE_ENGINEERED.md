@@ -66,7 +66,7 @@ Still unresolved:
 
 The BLE reverse-engineering sub-workstream is raised from **40% to 55%**: the service and both characteristic UUIDs are identified, the controller/service signal flow is mapped, and the notification descriptor lookup is located. The transmit implementation, write mode, chunk/MTU behavior and hardware capture remain unresolved.
 
-The whole-product score remains **72.4% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
+The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
 ## Safety and verification
 
