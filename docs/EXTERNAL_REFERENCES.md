@@ -68,3 +68,39 @@ Research checked on 2026-11-22. External references are used for product-family 
     Inspected firmware `datatypes.h`, `comm/comm_can.c`, `comm/commands.c`, and `documentation/comm_can.md` for CAN IDs, command payloads, extended identifier composition and COMM_FORWARD_CAN behavior. This revision is dated 2026-11-21.
 
 Machine-readable source/file digests are recorded in [vesc-reference-manifest.json](../analysis-data/vesc-reference-manifest.json). The full comparison is in [VESC_COMPARISON.md](VESC_COMPARISON.md).
+
+
+## Flipsky VESC V1.0 protocol PDFs supplied through Nextcloud
+
+12. **Flipsky VESC UART Communication Protocol V1.0 (English)**  
+    User-provided file: `VESC UART Protocol V1.0.pdf`  
+    Document number `VESC-CM-UART-20250331-01`; issue date 2025-04-15; VESC firmware V3.00 and above; cover marks Public.
+
+13. **Flipsky VESC UART Communication Protocol V1.0 (Chinese)**  
+    User-provided file: `VESC UART 协议 V1.0.pdf`  
+    Same document number/date/version as the English UART copy. Its command-body table of contents is consistent with the VESC command namespace.
+
+14. **Flipsky VESC CAN Communication Protocol V1.0 (English)**  
+    User-provided file: `VESC CAN Protocol V1.0.pdf`  
+    Document number `VESC-CM-CAN-20250331-01`; issue date 2025-04-15; VESC firmware V3.00 and above; English cover states 12 pages.
+
+15. **Flipsky VESC CAN Communication Protocol V1.0 (Chinese)**  
+    User-provided file: `VESC CAN 协议 V1.0.pdf`  
+    Same CAN document number/date/version; Chinese cover says 17 pages. The English/Chinese cover page count discrepancy is recorded as an editorial issue only.
+
+The four PDFs were read through the user's connected Nextcloud files and cover pages visually inspected. The protocol digest and discrepancies are recorded in [FLIPSKY_VESC_PROTOCOL_V1.0.md](FLIPSKY_VESC_PROTOCOL_V1.0.md). The original PDFs are not committed to this repository.
+
+## Flipsky current family/gateway references checked 2026-11-22
+
+16. **Differences Between FT ESC and FSESC** — 9 January 2026  
+    https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc  
+    Flipsky explicitly identifies FT ESC as NON-VESC and FSESC as VESC-based and says their programming tools are not interchangeable.
+
+17. **What Is a CAN Gateway?** — 20 November 2026  
+    https://flipsky.net/blogs/vesc-tool/what-is-a-can-gateway  
+    Describes distinct FTESC and FSESC gateway products: FTESC Gateway is for non-VESC FTESC controllers and uses Flipsky ESC Tool; FSESC Gateway is for VESC-based controllers and uses VESC Tool. The article notes that the FTESC control mode must be OFF when the FTESC Gateway drives control through its CAN interface, to avoid competing control sources. This is product guidance, not a substitute for the missing native V1.7 command path.
+
+## Reusable analysis workflow
+
+18. **REA / Rizin / Ghidra toolchain**  
+    The analysis host already has Ghidra 12.2 and Rizin 0.9.1 available through REA/Gateway. No new paid disassembler was installed. The repeatable static workflow is documented in [RE_WORKFLOW.md](RE_WORKFLOW.md); the generic bounded zlib XML scanner is in [`scripts/scan_compressed_xml.py`](../scripts/scan_compressed_xml.py).
