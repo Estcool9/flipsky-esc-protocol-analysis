@@ -212,3 +212,13 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md) and [scripts/ftesc_can.py](../scripts/ftesc_can.py).
 - Fresh clone test suite: **60 passed, 0 failed**.
 - Overall estimate: **73%**.
+
+
+## CMD 0x02 gap — 2026-11-22
+
+- Public V1.6 CMD 0x02 request layout is 14 DATA bytes; V1.6 moved current request to DATA offsets 2–3.
+- V1.7 response dispatcher `0x004997A0` contains no CMD 0x02 case.
+- UartComm request table has no direct CMD 0x02 builder.
+- Signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists, but it is response-side Qt signal evidence, not a request builder.
+- See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
+- Overall estimate remains **73%**.
