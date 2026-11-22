@@ -12,7 +12,7 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 
 | Command byte | Observed V1.7 response handling | Confidence / correlation |
 |---:|---|---|
-| `0x00` | Parses MCU ID, error, voltage, currents, eRPM, duty, temperatures, CPU load, encoder angle, three additional scaled angular values and PAS RPM; calls telemetry callback `0x004BC060`. | **High.** Field order and lengths match V1.6's extended automatic telemetry response (45-byte INFO/DLEN, 44 DATA bytes). Extra angular-field semantics are not documented by the V1.6 PDF. |
+| `0x00` | Parses MCU ID, error, voltage, currents, eRPM, duty, temperatures, CPU load, encoder angle, three additional scaled angular values and PAS RPM; calls telemetry callback `0x004BC060`, which emits UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`. | **High.** Field order and lengths match V1.6's extended automatic telemetry response (45-byte INFO/DLEN, 44 DATA bytes). Extra angular-field semantics are not documented by the V1.6 PDF. |
 | `0x01` | Enters a large variable-length response path; iterates over payload bytes and calls callback/dispatch helper `0x004BC200`. | Unknown. Do not equate this with V1.6 CMD 0x02. |
 | `0x0D` | Reads a 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | Unknown response schema. |
 | `0x0E` | Reads five 32-bit values scaled by 1,000,000; calls `0x004BC120`. | Unknown response schema. |
