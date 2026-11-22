@@ -194,3 +194,8 @@ The V1.6 `uartPackHandle(QByteArray&)` slot at `FUN_004948d0` is mapped to the c
 ## 9. V1.6 single-block setup response readers
 
 The response dispatcher has separate CMD `0x09` and `0x0A` paths. CMD09 validates marker `0xD2C6EF10`; CMD0A validates `0x4879187D`. Both walk the configured ValueSeque and use `FUN_0049a5c0` to decode the property values, then activate `ftescMotorSignalReadAck(QString,bool)` (signal index 7). A mismatched marker/control value produces the `Invalid SecretKey` diagnostic. The offline equivalents are `parse_v16_motor_setup_response()` and `parse_v16_motor_signal_setup_response()` in `scripts/ftesc_responses.py`; the V1.7 combined two-marker response remains represented by `parse_motor_signal_setup_response()`.
+
+
+## 10. Numeric response reader reference
+
+The shared one-/two-/four-byte readers and their signed S16/S32 scale wrappers are mapped in [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md). This documents how the UartComm response branches obtain big-endian primitive values and where signedness is applied.

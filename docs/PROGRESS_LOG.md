@@ -832,3 +832,19 @@
 
 - Ajouté `parse_unclassified_id_vector_response()` pour la réponse V1.6 CMD `0x01` : retourne exclusivement le vecteur brut de DATA sous forme de tuple d'entiers, en validant l'opcode et sans interpréter master/slave, statut ou booléen Qt. Commits source `e7ed04f9a22b24124170d4cc63f89a47037dd55c`, tests `27af3bc6745b45de5ab8cf69cbfdf36ae7a5d31e`.
 - CI GitHub Actions run #284 (`45052257713`, head `27af3bc6745b45de5ab8cf69cbfdf36ae7a5d31e`) réussie : **172 tests passed, 0 failed** ; les deux nouveaux tests CMD01 passent, restoration des artefacts, régénération catalogue/profils et `python -m compileall -q scripts tests` passent. Run : https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45052257713
+
+
+## 2026-11-22 — Windows V1.6 numeric readers and text termination parity
+
+- Used Gateway to invoke REA/Ghidra against the staged V1.6 Windows PE and recovered the primitive read routines:
+  - `FUN_00496d80` / `FUN_00496dc0`: one raw byte;
+  - `FUN_00496e00` / `FUN_00496e50`: two-byte big-endian value;
+  - `FUN_00496ea0` / `FUN_00496f00`: four-byte big-endian value;
+  - `FUN_00496f60`: raw four-byte value interpreted as signed S32 and divided by its caller-supplied scale;
+  - `FUN_00496f90`: raw two-byte value cast to signed S16 and divided by its scale.
+- Traced command readers in `FUN_004948d0`: CMD0D = one S32 / 1e6; CMD0E = six S32 values with divisors 1e6, 1e6, 1, 1, 1, 1e6; CMD29 = nine S32 / 1e6. The CMD00 telemetry path uses the same signed S16/S32 scaled wrappers and agrees with the established field offsets/scales.
+- Confirmed setup property decoding in `FUN_0049a5c0` uses the same reader family and caller-specific signedness/valueTET interpretation; no duplicate codec was added.
+- Found and fixed one native/Python difference: V1.6 CMD14 scans the terminal DATA up to the first NUL, while CMD24 passes its complete QByteArray. `parse_text_response()` now truncates CMD14 only; CMD24 keeps embedded NUL bytes. Added tests for this split and negative signed IMU values.
+- Detailed report created: `docs/WINDOWS_V1_6_NUMERIC_READERS.md`; linked from README, STATUS and UartComm/response reports.
+- CI run #295 (`45055846796`, commit `0d20a0eb95bffc42f94563ebcaf0df0f832364fb`) passed **174 tests, 0 failures**. CMD14 NUL termination and signed IMU tests passed; artifact restoration, catalog/profile generation and `python -m compileall -q scripts tests` also passed. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796
+- V1.6 comparison sub-workstream moves **78% → 82%**. The whole-product weighted estimate remains **72.6% (79.9 / 110)** because no GUI/live transport or hardware milestone was completed.

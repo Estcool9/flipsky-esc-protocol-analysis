@@ -29,7 +29,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; GitHub Actions run #252 now verifies the complete suite: **164 tests passed, 0 failed**, catalog/profile regeneration passed and `compileall` passed.
+- Latest GitHub Actions run #295 verifies the complete suite: **174 tests passed, 0 failed**, including V1.6 CMD14 NUL termination and signed IMU scaling; artifact restoration, catalog/profile regeneration and `compileall` passed.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, CMD09/CMD0A profiles and CMD01/CMD1E ID vectors) | 78% |
+| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, profile blocks, ID vectors and numeric response reader parity) | 82% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -454,10 +454,10 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Reconstructed `ftescIdentifyMotorOverCan` CMD `0x0F` DATA field order/widths and native conversions. Corrected the existing offline builder to truncate its fourth float argument toward zero, while its third float argument is scaled ×100 and rounded half-away-from-zero.
 - V1.6 comparison sub-workstream advances **55% → 60%**; overall weighted project score remains **72.6% (79.9 / 110)**. Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
 
-### Latest GitHub Actions verification — run #252
-- Head commit: `3b33076edaedd867e97aadd5d9ee0defebe158e6`.
-- Job `verify`: success; **164 tests passed, 0 failed**, including native CMD 0x0F truncation/scaled-rounding coverage; artifact restore, catalog/profile regeneration and compileall passed.
-- Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45048896742
+### Latest GitHub Actions verification — run #295
+- Head commit: `0d20a0eb95bffc42f94563ebcaf0df0f832364fb`.
+- Job `verify`: success; **174 tests passed, 0 failed**. CMD14 NUL-termination and signed IMU S32/1e6 regression tests both passed; artifact restoration, catalog/profile regeneration and Python compileall passed.
+- Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796
 
 
 ## V1.6 UART response dispatcher mapped to Qt signals — 2026-11-22
@@ -491,3 +491,12 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - CMD `0x01` offline decoder preserves the native byte-vector as raw integer values only; its semantics are not documented in the official V1.6 command table.
 - GitHub Actions run #284: **172 tests passed, 0 failed**, including both CMD01 preservation tests; artifact/catalog/profile regeneration and compileall passed.
 - V1.6 comparison sub-workstream advances **75% → 78%**; overall weighted progress remains **72.6% (79.9 / 110)**.
+
+
+## V1.6 native numeric-reader parity — 2026-11-22
+
+- Inspected V1.6 byte readers `FUN_00496d80`, `FUN_00496dc0`, `FUN_00496e00`, `FUN_00496e50`, `FUN_00496ea0` and `FUN_00496f00`, plus signed scaled wrappers `FUN_00496f60` (S32/divisor) and `FUN_00496f90` (S16/divisor).
+- Confirmed big-endian construction, caller-selected signedness and exact PPM/ADC/IMU scales; no numeric decoder code change was needed.
+- Corrected CMD14 offline text parsing to stop at the first NUL like the native C-string path; CMD24 continues to preserve its full QByteArray. Added signed IMU regression coverage.
+- Detailed report: [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md).
+- V1.6 static comparison advances **78% → 82%**; overall weighted progress remains **72.6% (79.9 / 110)**.

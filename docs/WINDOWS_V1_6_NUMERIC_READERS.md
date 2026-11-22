@@ -133,3 +133,10 @@ The remaining gaps are not these primitive integer readers. They are semantic na
 - No ESC was connected and no UART/CAN/BLE bytes were transmitted.
 - No firmware was flashed.
 - No key bytes, protected tables or device-specific secret material are included.
+
+
+## 7. Latest regression verification
+
+GitHub Actions run #295 (`45055846796`, head `0d20a0eb95bffc42f94563ebcaf0df0f832364fb`) passed **174 tests, 0 failures**. The test for CMD14 NUL termination versus CMD24 full QByteArray and the negative IMU signed-S32 scale test both appear as passing in the log. The same workflow restored compressed research artifacts, rebuilt the parameter catalog and ordered setup profiles, ran the suite and compiled Python sources.
+
+Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796

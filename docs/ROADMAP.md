@@ -302,3 +302,16 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve CMD01's command semantics and the secondary boolean argument of `ftescGetIDResAck` only with stronger native or official evidence.
 - Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
 - V1.6 comparison sub-workstream: 75% → 78%; overall weighted project progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 numeric readers and native response parity
+
+- [x] Decompile the one-, two- and four-byte V1.6 big-endian readers and their signed scaled wrappers.
+- [x] Cross-check PPM, ADC and IMU response widths/scales against the Windows response dispatcher.
+- [x] Confirm CMD14 terminal text is NUL-terminated and CMD24 sample output preserves its QByteArray length.
+- [x] Align `parse_text_response()` and add CMD14/CMD24 plus signed IMU regression tests.
+- [x] Verify GitHub Actions #295: **174 tests passed, 0 failed**, artifact/catalog/profile regeneration and compileall passed.
+- [ ] Finish field semantics for CMD01, ADC/IMU labels, motor-signal response variants and undocumented setup status booleans.
+- [ ] Continue firmware ACK/retry/timeout and protected MCU-encryption call-path reconstruction.
+- Detailed report: [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md).
+- V1.6 comparison sub-workstream: 78% → 82%; whole-product weighted score remains **72.6%**.

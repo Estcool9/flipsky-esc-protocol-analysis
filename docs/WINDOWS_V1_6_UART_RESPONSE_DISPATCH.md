@@ -38,7 +38,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | `0x0E` | Parses ADC signal response, resets throttle at `this+0x34`; recovers six values for the signal arguments | `FUN_004b5a60`, index 15 `signalADCRecAck` | Wrapper index 15 directly confirmed in the tail of the function; exact units still need review |
 | `0x0F` | Parses motor-identification response and forwards result values | `FUN_004b5950`, index 16 `motorIdentifyResAck` | Wrapper index 16 confirmed; full response payload schema not yet recovered |
 | `0x11` | Parses firmware major/minor/type/status fields; resets firmware-version throttle at `this+0x20` | `FUN_004b57e0`, index 5 `ftescFirmwareVerRecType`, then `FUN_004b57a0`, index 3 `ftescFirmwareVerRec` | Both wrappers confirmed; the three version/status fields need a typed schema write-up |
-| `0x14` | Extracts a text-like response and routes it to terminal output | `FUN_004b58d0`, index 12 `ftescTermialPrint` | Wrapper index 12 confirmed; encoding/termination details not fully verified |
+| `0x14` | Scans DATA up to the first NUL byte, converts that prefix to the terminal string, then routes it to output | `FUN_004b58d0`, index 12 `ftescTermialPrint` | C-style NUL termination is observed in the native handler; UTF-8 display decoding remains the offline display convention |
 | `0x16` | Converts response status to a boolean-like value | `FUN_004b5700`, index 4 `ftescFirmwareEraseRespenseFlag` | Wrapper index 4 confirmed; no retry policy inferred |
 | `0x18` | Converts response status to a boolean-like value | `FUN_004b5750`, index 6 `ftescFirmwareWriteBlockSuccessFalg` | Wrapper index 6 confirmed; ACK sequence/retry semantics remain open |
 | `0x1A` | Auto-realtime status response | `FUN_004b55c0`, index 9 `ftescAutoGetRealtimeDataAck` | No-argument wrapper index 9 confirmed |
@@ -47,7 +47,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | `0x1E` | Parses the master/slave ID vector; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck(QVector<int>,bool)` | Official V1.6 spec defines D0 as master ID and D1 onward as slave IDs; offline decoder added. The secondary signal boolean is not interpreted |
 | `0x21` | Parses UUID bytes; resets UUID throttle at `this+0x28` | `FUN_004b5670`, index 1 `ftescGetUuidAck` | Wrapper index 1 confirmed; exact UUID normalization/validation not asserted here |
 | `0x22` | Reads an encryption/write-success status byte; resets encryption throttle at `this+0x2c` | `FUN_004b56b0`, index 2 `writeEncryptSuccess` | Wrapper index 2 confirmed; no key or challenge bytes are exposed |
-| `0x24` | Converts a byte sequence to a textual/sample output | `FUN_004b5630`, index 13 `ftescSamplesPrint` | Wrapper index 13 directly confirmed; this is a sample/diagnostic output, not proven control telemetry |
+| `0x24` | Passes the complete DATA QByteArray to the sample/diagnostic output signal | `FUN_004b5630`, index 13 `ftescSamplesPrint` | Full byte-array length is preserved; unlike CMD14, no NUL scan is observed |
 | `0x29` | Parses a set of IMU calibration numeric values | `FUN_004b5b90`, index 18 `imuCalibrationReceived` | Wrapper index 18 confirmed; full units/ranges/field names not yet documented |
 
 ## 3. Wrapper verification
@@ -169,3 +169,8 @@ Added `EscIdEnumerationResponse` and `parse_esc_id_enumeration_response()` to `s
 ## 10. CMD01 raw vector preservation
 
 The V1.6 Windows handler builds a QVector-like byte list for command `0x01`, but the official V1.6 command table does not assign a command name/layout to this opcode. The offline API therefore exposes only `parse_unclassified_id_vector_response()` → `tuple[int, ...]`. It validates the command byte, preserves all DATA values as unsigned bytes and does not infer master/slave roles or the Qt signal's secondary boolean.
+
+
+## 11. V1.6 numeric readers and text-length parity
+
+The native reader family and the PPM/ADC/IMU response scaling are documented in [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md). In short, multibyte primitives are big-endian; signedness is selected by the typed caller/wrapper. CMD14 scans its byte array to the first NUL before creating the terminal string, while CMD24 forwards the complete QByteArray. The offline `parse_text_response()` now matches this length distinction.

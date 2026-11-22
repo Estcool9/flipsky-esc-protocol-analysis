@@ -18,7 +18,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Hardware validation | 5% | 0% |
 | **Weighted overall estimate** | **110 points** | **72.6%** |
 
-The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. The VESC UART profile now includes an incremental stream layer; GitHub Actions run #156 validates the full **159-test** offline suite and Python compilation. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
+The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. GitHub Actions [run #295](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796) validates the current **174-test** offline suite; research-artifact restoration, catalog/profile regeneration and Python compilation also pass. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
 See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
 
@@ -99,7 +99,7 @@ The repository contains standard-library-only Python codecs for both protocol fa
 - `scripts/ftesc_stream.py`: incremental UART decoder, retaining incomplete frames and recovering after invalid candidates.
 - `scripts/ftesc_protocol.py`: INFO envelopes, realtime telemetry, V1.4/V1.6 legacy response parsing and ESC-ID lists.
 - `scripts/ftesc_requests.py`: V1.7 request builders plus version-specific V1.4/V1.6 UART builders, including CMD 0x10 CAN forwarding, CMD 0x02 control layouts and CMD 0x20.
-- `scripts/ftesc_responses.py`: V1.7 PPM/ADC, firmware identity, UUID, text, setup ACK, motor-signal and generic TopFlow response decoders.
+- `scripts/ftesc_responses.py`: shared V1.6/V1.7 PPM/ADC, firmware identity, UUID, text, setup ACK, motor-signal and generic TopFlow response decoders; also V1.6 CMD09/CMD0A single-profile, CMD01 raw-vector and CMD1E master/slave-ID decoders.
 - `scripts/ftesc_setup_serializer.py`: typed ValueSetup encoder and marker-validated ValueSeque response decoder.
 - `scripts/ftesc_firmware.py`: offline-only V1.7 firmware erase/write payload and 240-byte XOR block codec.
 - `scripts/ftesc_can.py`: direct FTESC CAN V1.4 extended-ID codec, CRC validation, periodic telemetry decoders and offline control-command encoders.
@@ -115,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result:** GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed **162 tests, 0 failures**; catalog/profile regeneration and `compileall` also passed. The follow-on documentation commit is also green in [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143). The offline workflow restores payloads, regenerates the catalog and profiles, validates deterministic outputs, runs the tests and compiles Python sources.
+**Latest verified result:** GitHub Actions [run #295](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796) passed **174 tests, 0 failures**. The same run successfully restored research payloads, rebuilt the parameter catalog and ordered setup profiles, ran all offline tests and compiled Python sources.
 
 ## Official V1.4/V1.6 protocol references
 
@@ -132,6 +132,20 @@ Important version differences:
 - V1.4/V1.6 CMD 0x1A documents a seven-byte response; the V1.7 desktop response dispatcher emits a no-DATA acknowledgement.
 - V1.4 CMD 0x1D is reset/reboot with one reserved zero byte. V1.7 reuses 0x1D for TopFlow and motor-signal setup operations.
 - Direct-CAN command 0x00 means current-with-gear; UART INFO command 0x00 means realtime telemetry. Numeric command IDs are bus-specific.
+
+## Windows V1.6 executable comparison — current checkpoint
+
+The Windows V1.6 follow-on is a static comparison against V1.7, not a separate claim of live-device compatibility.
+
+- **Sub-workstream progress: 82%** (the whole-product weighted estimate remains **72.6%**).
+- Reconstructed the V1.6 `FtescLowLevelFace` AA/BB frame builder, candidate parser and incremental receive path; matched their roles against V1.7.
+- Decoded the full `UartComm` Qt meta-object: **50 methods, 19 signals and 31 slots/invokable methods**.
+- Mapped **19 INFO response commands** to their Qt signal wrappers; field layouts are fully implemented only where supported by native readers/markers.
+- Added offline decoders for V1.6 CMD09/CMD0A single-marker setup blocks, CMD1E master/slave ID enumeration and CMD01 raw unclassified ID vectors.
+- Verified numeric readers: signed S32/S16 and raw U8/U16/U32 byte readers use big-endian order; PPM/ADC/IMU scaling matches the existing codecs. Corrected CMD14 NUL-terminated text handling while keeping CMD24's full QByteArray.
+- Latest CI: **174 passed / 0 failed**, run [#295](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796).
+
+Detailed evidence: [V1.6 UART frame/parser](docs/WINDOWS_V1_6_UART_FRAME_PARSER.md), [UartComm method map](docs/WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md), [response dispatcher](docs/WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md) and [numeric readers](docs/WINDOWS_V1_6_NUMERIC_READERS.md).
 
 ## Firmware update analysis
 
