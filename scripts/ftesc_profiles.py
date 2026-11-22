@@ -53,6 +53,8 @@ def parse_profile(path: Path) -> dict[str, Any]:
         values[element.tag] = _text_map(element)
 
     sequence = [(element.text or "").strip() for element in sequence_element]
+    values_order_filtered = [key for key in values if key in set(sequence)]
+    values_order_matches_sequence = values_order_filtered == sequence
     if any(not key for key in sequence):
         raise ProfileError(f"{path.name}: empty ValueSeque entry")
     if len(sequence) != len(set(sequence)):
@@ -81,6 +83,7 @@ def parse_profile(path: Path) -> dict[str, Any]:
         "value_count": len(values),
         "sequence_count": len(sequence),
         "omitted_count": len(omitted),
+        "values_order_matches_sequence": values_order_matches_sequence,
         "ordered_parameters": ordered,
         "omitted_parameters": omitted,
     }
@@ -98,7 +101,7 @@ def write_profile_catalog(profiles: list[dict[str, Any]], out_dir: Path) -> None
     (out_dir / "profile-order.json").write_text(
         json.dumps(profiles, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    columns = ["profile_file", "source_sha256", "sequence_index", "xml_id", *FIELDS]
+    columns = ["profile_file", "family", "source_sha256", "values_order_matches_sequence", "sequence_index", "xml_id", *FIELDS]
     with (out_dir / "profile-order.csv").open("w", newline="", encoding="utf-8-sig") as fp:
         writer = csv.DictWriter(fp, fieldnames=columns)
         writer.writeheader()
@@ -106,12 +109,14 @@ def write_profile_catalog(profiles: list[dict[str, Any]], out_dir: Path) -> None
             for item in profile["ordered_parameters"]:
                 writer.writerow({
                     "profile_file": profile["profile_file"],
+                    "family": profile["family"],
                     "source_sha256": profile["source_sha256"],
+                    "values_order_matches_sequence": profile["values_order_matches_sequence"],
                     **item,
                 })
     summary = [
         {key: profile[key] for key in (
-            "profile_file", "family", "source_sha256", "value_count", "sequence_count", "omitted_count"
+            "profile_file", "family", "source_sha256", "value_count", "sequence_count", "omitted_count", "values_order_matches_sequence"
         )}
         for profile in profiles
     ]
