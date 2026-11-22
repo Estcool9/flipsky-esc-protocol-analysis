@@ -246,7 +246,7 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Decompiled `FUN_004A10C0` marker validation and `FUN_004A0B70` per-value decode.
 - Added inverse ValueSeque decoder supporting float32, scaled signed16/32, signed/unsigned byte, signed/unsigned16 and signed/unsigned32.
 - Decoder supports sequential marker blocks via `next_offset`, including the optional second CMD 0x1B block.
-- “Invalid SecretKey” is a fixed setup marker mismatch message, distinct from UUID/TEA firmware authorization.
+- The setup decoder's U32 marker mismatch is a separate validation path. Firmware authorization independently emits ftescMotorSignalSecretKeyCheckAck(int) and accepts only ACK value 0; the V1.6 UI contains a distinct Invalid SecretKey failure string. Do not conflate these errors.
 - See [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
 
 
@@ -402,3 +402,16 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - GitHub Actions [run #195](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45018768452) completed successfully on `5d6f2940999ddc2b59b5b33a9f79a3eb1b0af713`.
 - **159 tests passed, 0 failed**; deterministic catalog/profile restore and regeneration and Python `compileall` passed.
 - The Android resource reconstruction was documentation-only; the whole-project score remains **72.6%** (79.9 / 110).
+
+
+## Native V1.6 ValueSetup codec and firmware authorization/write pipeline — 2026-11-22
+
+- Native ValueSetups::configValueStreamXml explicitly compares XML ValueSeque, clears the native list at object+0x28, reads each child seque and appends the ID to QList<QString>. Clustering is parsed into a different list at +0x30.
+- valueArralize appends the caller-selected big-endian U32 marker and iterates the ValueSeque list; valueDeArralize validates the marker then iterates the same list. This closes the native XML-order → wire-order proof.
+- All nine valueTET encodings and both directions are mapped: U8/I8/U16/I16/U32/I32, scaled signed16/32 and IEEE-754 binary32. Native helpers use big-endian order; scaled values round ties away from zero. Python codec already matches; three new boundary test methods were added.
+- Android V1.6 firmware preflight uses 32-round TEA over a 16-byte input/key block, sends a 0x22 request through UartComm::writeMcuEncrypt, and waits for ftescMotorSignalSecretKeyCheckAck(int); only integer ACK 0 marks the secret valid. The key bytes are not published.
+- Separate firmware erase 0x16 waits up to 20 s for its response; write 0x18 applies a repeating 256-byte XOR lookup transform and sends 240-byte max chunks. A per-block helper makes three total attempts, retrying on -10 and returning -20 after exhaustion. The XOR table and TEA key values are intentionally not reproduced.
+- Android V1.6 firmware static reverse-engineering sub-workstream: 75%. Exact device-side challenge semantics, key provisioning/model compatibility, complete write/ACK schema, integrity/recovery and hardware behavior remain open. Firmware package score in the weighted product table remains 55%; overall project estimate remains 72.6% (79.9 / 110).
+- Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
+- GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed 162 tests, 0 failures; catalog/profile regeneration and Python compileall passed. Follow-on doc commit [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143) is also green.
+- No APK execution, handset, BLE/GATT, UART/CAN, ESC or bootloader operation was performed.
