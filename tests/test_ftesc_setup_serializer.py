@@ -1,7 +1,7 @@
 import struct
 import unittest
 
-from scripts.ftesc_setup_serializer import SetupValueError, encode_profile_block, encode_setup_block, encode_setup_value
+from scripts.ftesc_setup_serializer import SetupValueError, decode_profile_block, encode_profile_block, encode_setup_block, encode_setup_value
 
 
 class SetupValueSerializerTests(unittest.TestCase):
@@ -39,6 +39,64 @@ class SetupValueSerializerTests(unittest.TestCase):
         }
         encoded = encode_profile_block(0x12345678, ["beta", "alpha"], values)
         self.assertEqual(encoded, bytes.fromhex("12 34 56 78 02 01"))
+
+    def test_signed_byte_tets_and_value_types(self):
+        self.assertEqual(encode_setup_value(val_type=2, value_tet=2, value_int=-12), b"\\xF4")
+        for val_type in (4, 6, 7):
+            self.assertEqual(encode_setup_value(val_type=val_type, value_tet=1, value_int=-3), b"\\xFD")
+
+    def test_decode_profile_block_all_observed_types(self):
+        marker = 0xD2C6EF10
+        metadata = {
+            "f16": {"valType": 1, "valueTET": 7, "value_dou": 1.235, "evalScl": 100},
+            "f32": {"valType": 1, "valueTET": 8, "value_dou": -1.234, "evalScl": 1000},
+            "fieee": {"valType": 1, "valueTET": 9, "value_dou": 3.5},
+            "u8": {"valType": 2, "valueTET": 1, "value_int": 255},
+            "i8": {"valType": 2, "valueTET": 2, "value_int": -12},
+            "u16": {"valType": 2, "valueTET": 3, "value_int": 0x1234},
+            "i16": {"valType": 2, "valueTET": 4, "value_int": -123},
+            "u32": {"valType": 2, "valueTET": 5, "value_int": 0x12345678},
+            "i32": {"valType": 2, "valueTET": 6, "value_int": -123456},
+            "flag4": {"valType": 4, "valueTET": 1, "value_int": -3},
+            "flag6": {"valType": 6, "valueTET": 1, "value_int": 2},
+            "flag7": {"valType": 7, "valueTET": 1, "value_int": 3},
+        }
+        order = list(metadata)
+        encoded = encode_profile_block(marker, order, metadata)
+        decoded = decode_profile_block(encoded, marker, order, metadata)
+        self.assertEqual(decoded.next_offset, len(encoded))
+        self.assertEqual(decoded.values["f16"]["value_dou"], 1.24)
+        self.assertEqual(decoded.values["f32"]["value_dou"], -1.234)
+        self.assertEqual(decoded.values["fieee"]["value_dou"], 3.5)
+        self.assertEqual(decoded.values["u8"]["value_int"], 255)
+        self.assertEqual(decoded.values["i8"]["value_int"], -12)
+        self.assertEqual(decoded.values["u16"]["value_int"], 0x1234)
+        self.assertEqual(decoded.values["i16"]["value_int"], -123)
+        self.assertEqual(decoded.values["u32"]["value_int"], 0x12345678)
+        self.assertEqual(decoded.values["i32"]["value_int"], -123456)
+        self.assertEqual(decoded.values["flag4"]["value_int"], -3)
+
+    def test_decode_two_consecutive_marker_blocks(self):
+        first_meta = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        second_meta = {"b": {"valType": 2, "valueTET": 1, "value_int": 2}}
+        first = encode_profile_block(0xD2C6EF10, ["a"], first_meta)
+        second = encode_profile_block(0x4879187D, ["b"], second_meta)
+        combined = first + second
+        decoded_first = decode_profile_block(combined, 0xD2C6EF10, ["a"], first_meta)
+        decoded_second = decode_profile_block(
+            combined, 0x4879187D, ["b"], second_meta, offset=decoded_first.next_offset
+        )
+        self.assertEqual(decoded_first.values["a"]["value_int"], 1)
+        self.assertEqual(decoded_second.values["b"]["value_int"], 2)
+        self.assertEqual(decoded_second.next_offset, len(combined))
+
+    def test_decode_profile_block_rejects_bad_marker_and_truncation(self):
+        metadata = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        encoded = encode_profile_block(0xD2C6EF10, ["a"], metadata)
+        with self.assertRaises(SetupValueError):
+            decode_profile_block(encoded, 0x4879187D, ["a"], metadata)
+        with self.assertRaises(SetupValueError):
+            decode_profile_block(encoded[:-1], 0xD2C6EF10, ["a"], metadata)
 
     def test_profile_block_rejects_missing_sequence_value(self):
         with self.assertRaises(SetupValueError):
