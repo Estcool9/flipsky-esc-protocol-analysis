@@ -1,10 +1,18 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 90%**  
+**Overall project progress: 72%** (weighted full open-source desktop replacement; scoring model in README and STATUS).  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
+
+## Latest confirmed milestone: 148 passing tests, separate FTESC/VESC profiles and 19 extracted profiles
+
+- Fresh REA clone: 148 tests passed, zero failures; compileall passed.
+- Flipsky VESC V1.0 UART/CAN English and Chinese PDFs analyzed and checked against pinned VESC Tool/firmware source; separate VESC offline codecs are present.
+- Full bounded XML scan found 19 unique ValueSetup resources; catalog now has 1,152 rows, 286 distinct XML IDs, 1,135 ValueSeque entries and 17 omissions.
+- The normal V1.7 UartComm transmit chain has been traced end-to-end; it does not prepend the public V1.6 CMD 0x10 wrapper at the standard insertion points examined.
+- TopFlow metadata, exact native gateway route, full firmware state machine, BLE transport and the desktop client remain incomplete.
 
 ## Latest confirmed milestone: outer framing and CRC
 
