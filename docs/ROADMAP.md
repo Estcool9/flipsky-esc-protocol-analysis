@@ -1,7 +1,7 @@
 # Technical roadmap — open-source Flipsky client
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72.2% unrounded (72% rounded)** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); current unrounded estimate 72.4%).
+**Overall project progress: 72.2% unrounded (72% rounded)** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); 79.4 / 110 = 72.18%).
 
 ## Phase A — Artifact intake and static reverse engineering
 
@@ -106,10 +106,19 @@
 2. **CAN target path:** the UI stores the flag and target ID, but the standard send path inspected does not add the V1.6 `0x10` envelope. Need an authorized Gateway document, alternate path or passive trace.
 3. **Firmware update:** the authorization and block codec are partially recovered; image container/recovery state is incomplete.
 4. **Desktop application:** no serial/BLE UI or device integration has been implemented yet.
-5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, MTU/chunking, retransmission and live behavior remain unknown.
+5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, negotiated ATT MTU, retries and live behavior remain unknown; the static application-level chunk stride is 20 bytes.
 6. **Hardware:** no live controller validation has occurred.
 7. **V1.6 binary comparison / Android BLE cross-check:** the V1.6 EXEs and BLE APK are inventoried in Nextcloud but not staged in the REA sample directory.
 
 ## Safety boundary
 
 All current protocol encoders and decoders are offline. No UART, CAN or BLE interface has been opened. No ESC control command or firmware update was transmitted.
+
+
+## 2026-11-22 — BLE shared parser / transmit chunker static closure
+
+- [x] Confirmed the native `bleDataRx` callback calls the common AA/BB receive stream handler `FUN_0049CA30`.
+- [x] Confirmed the shared lower-level sender routes the same framed byte array into the BLE branch when BLE is connected.
+- [x] Recovered the BLE branch's fixed 20-byte application chunk stride and asynchronous queue pump.
+- [ ] Resolve the final `writeCharacteristic` call, exact write mode, CCCD value, negotiated ATT MTU and passive trace.
+- Static BLE workstream: 60% → 75%; whole-product score remains 72.2%.
