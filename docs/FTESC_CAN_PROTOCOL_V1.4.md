@@ -139,3 +139,9 @@ The V1.4 PDF is not internally consistent for the two no-CRC braking command IDs
 The offline builder exposes both variants and requires an explicit command ID. It does not decide which is used by the shipping firmware. An authoritative corrected PDF, firmware source or live capture is required to resolve this.
 
 The V1.4 PDF's CMD 0x14 D-axis-current frame contains four current bytes and two CRC bytes. There is no reserved/gear byte. The encoder and tests now follow that six-byte data length.
+
+
+## 10. Additional source-document inconsistencies
+
+- The C enum comment describes CAN telemetry 0x0B as automatically returned every 20 ms, whereas section 3.1.7 says every 10 ms. Sections 3.1.8 and 3.1.9 also say 10 ms. The decoder does not encode a scheduler; the period remains documentation-only and unresolved for 0x0B.
+- The 0x0D frame table allocates two bytes each to MOSFET temperature, motor temperature and battery voltage. The example C parser later calls `valueCompose_I24` three times after reading an 8-byte DLC with a 2-byte CRC. That sample parser cannot fit three 24-bit values in the six data bytes. The offline decoder follows the frame table's signed 16-bit fields and treats the sample parser as inconsistent.
