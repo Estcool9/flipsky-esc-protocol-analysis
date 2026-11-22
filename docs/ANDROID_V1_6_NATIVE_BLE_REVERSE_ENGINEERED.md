@@ -139,6 +139,39 @@ This shows the Flipsky BLE slot routes the received byte array into the applicat
 
 The function bodies, literal, and relocation targets above were recovered from the hash-identified extracted library. The APK is not executed and no device was contacted. Still unknown: negotiated ATT MTU, controller-specific behavior, queue retry/timeout outcomes on real links, actual notifications observed over the air, and whether other APK versions use identical values.
 
+## ARMv7 cross-ABI verification — 2026-11-22
+
+The same application-level BLE behavior was checked in the ARMv7 library `lib/armeabi-v7a/libFilpsky_ESC_Tool_V1.6_20251014_armeabi-v7a.so` (SHA-256 `8ba92821d1310762ae582a9cbb07918e7e1d416238ac8110be6a04063d8b0562`).
+
+### TX chunk size
+
+- `BleUart::writeData(QByteArray)` is at `0x000C6FAC`.
+- At `0x000C6FD0`, `movw r2, 0x14` sets a 20-byte chunk length.
+- The loop calls `QByteArray::mid(int,int)` at `0x000C701C` and repeats using the fixed 20-byte value.
+
+### TX write mode
+
+- `BleUart::sendNextPacket()` is at `0x000C70BC`.
+- `0x000C71C8` loads integer 1 and `0x000C71CC` stores the byte into the WriteMode argument local.
+- `0x000C71E0` places that value in the fourth AAPCS argument slot; the call at `0x000C71F0` is directly resolved by Rizin to `QLowEnergyService::writeCharacteristic(..., QLowEnergyService::WriteMode)`.
+- Therefore ARMv7 also requests C++ `WriteMode=1` = Qt 5.15 `WriteWithoutResponse`.
+
+### CCCD path
+
+- `BleUart::serviceStateChanged` is at `0x000C8694`.
+- At `0x000C8950`, it constructs descriptor UUID `0x2902`; at `0x000C89FC`, it calls `QByteArray::fromHex`; at `0x000C8A10`, it calls `QLowEnergyService::writeDescriptor`.
+- The ARMv7 library contains a single ASCII literal `0100` at `0x0026F7D9`. The same method contains the fromHex/writeDescriptor sequence. Rizin did not recover a direct cross-reference from this literal to the call in this pass, so the ARMv7 payload is recorded as a strong match to the ARM64-proven `01 00` value rather than an independently complete literal-to-call proof.
+
+### RX routing to the common parser
+
+- `BleUart::updateData` is at `0x000C8C38` and checks the characteristic UUID before its signal/dispatch path.
+- `BleUart::dataRx(QByteArray)` is at `0x0022AF34` and is the corresponding Qt signal thunk.
+- `FtescLowLevelFace::bleDataRx(QByteArray)` is at `0x00202DC8`.
+- The ARM ELF JUMP_SLOT relocations resolve PLT `0x000B159C` through GOT `0x00809294` to `QByteArray::QByteArray(QByteArray const&)`, and PLT `0x000C0194` through GOT `0x0080E13C` to `uartPackData::uartPackDataHandle(QByteArray)`.
+- This independently confirms the ARMv7 Android receive slot forwards the incoming bytes to the shared FTESC stream parser, rather than a separate BLE framing parser.
+
+**Cross-ABI conclusion:** ARM64 and ARMv7 both statically establish 20-byte application chunking, the direct Qt writeCharacteristic call with `WriteMode=1` (WriteWithoutResponse), and BLE receive-slot routing to the shared FTESC stream parser. The ARM64 CCCD payload `01 00` is directly tied to the descriptor write; ARMv7 has the same `0100` literal and equivalent descriptor construction/write sequence, but the direct literal reference remains a minor unresolved detail. The exact Qt signal-to-slot connection call site is still unresolved on both ABIs, as are negotiated MTU and all runtime outcomes.
+
 ## Windows V1.6 and V1.7 marker comparison
 
 All four Windows PE32 x86 builds (V1.6 dated 2025-10-14, 2026-08-06, 2026-09-12 and V1.7 dated 2026-10-29) produced the same targeted printable marker set:
@@ -185,7 +218,7 @@ Static ELF inspection reported: NX enabled, full RELRO, stack canary present, PI
 6. Complete static diffs of all three V1.6 builds, especially the 2025-10-14 Win32 Qt BLE symbol delta.
 7. Verify manifest service implementation and signature cryptographically.
 
-The V1.6 Android BLE static workstream advances from 85% to **95%**: exact 20-byte chunking, C++ WriteWithoutResponse mode, CCCD notifications payload, and BLE receive handoff into the shared FTESC stream parser are now recovered. Remaining work is the Qt signal connection edge, negotiated MTU/runtime outcomes, ARMv7 cross-check and resource/UI mapping. The complete-product score remains **72.6%** (79.9 / 110 points): no desktop or live transport feature was implemented and no hardware validation was performed.
+The V1.6 Android BLE static workstream advances from 85% to **95%**: exact 20-byte chunking, C++ WriteWithoutResponse mode, CCCD notifications payload, and BLE receive handoff into the shared FTESC stream parser are now recovered. Remaining work is the Qt signal connection edge, negotiated MTU/runtime outcomes, the exact ARMv7 literal-to-CCCD reference and resource/UI mapping. The complete-product score remains **72.6%** (79.9 / 110 points): no desktop or live transport feature was implemented and no hardware validation was performed.
 
 ## Safety / execution record
 
