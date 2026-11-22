@@ -13,11 +13,11 @@ This is a weighted estimate for the complete desktop replacement, not an offline
 | Setup metadata, ValueSeque ordering and typed serializer | 10 | 95 | 9.5 |
 | Direct CAN and V1.7 gateway/slave routing | 10 | 60 | 6.0 |
 | Firmware authorization, transfer and bootloader flow | 10 | 55 | 5.5 |
-| Separate VESC/FSESC profile and source comparison | 10 | 80 | 8.0 |
+| Separate VESC/FSESC profile and source comparison | 10 | 85 | 8.5 |
 | Open-source desktop UI and real serial/BLE integration | 15 | 20 | 3.0 |
 | Reproducible extraction, tests and CI | 10 | 95 | 9.5 |
 | Hardware validation | 5 | 0 | 0.0 |
-| **Total** | **100** | | **71.9 ≈ 72%** |
+| **Total** | **100** | | **72.4 ≈ 72%** |
 
 The score does not mean safe or hardware-validated operation. All encoders are offline-only.
 
@@ -28,7 +28,8 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - 1,152 metadata rows, 286 distinct XML IDs, 1,135 `ValueSeque` entries and 17 values omitted from transmission sequences.
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
-- Latest REA verification: **148 tests passed, 0 failed**; `compileall` passed.
+- Latest REA verification before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
+- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; these new tests have not yet been executed by CI in this session.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
 ## Workstream progress
@@ -47,7 +48,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Firmware authorization and block codec | 55% |
 | Direct FTESC CAN V1.4 codec | 95% |
 | V1.7 CAN target routing and slave response path | 40% |
-| Flipsky VESC UART V1.0 profile codec | 90% |
+| Flipsky VESC UART V1.0 profile codec | 95% |
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
@@ -277,3 +278,13 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 3. Firmware image layout, full retry/rollback flow and complete bootloader state machine remain open.
 4. The desktop UI, actual serial/BLE transports, read-only session discovery and passive capture replay are not implemented.
 5. BLE UUIDs/MTU/write mode, V1.6 binary comparison and controlled hardware validation remain open.
+
+
+## VESC UART stream decoder — 2026-11-22
+
+- Added `scripts/vesc_stream.py`, an incremental offline decoder for VESC 0x02/0x03/0x04 frames.
+- Handles fragmented and concatenated frames, leading noise, CRC/terminator failures, configurable INFO-length limits and byte-wise resynchronization.
+- Added 7 tests covering fragmentation, concatenation, noise, CRC recovery, medium/long frames, size limits and reset.
+- The VESC/FSESC protocol work package moves from 80% to 85%; weighted total changes from 71.9% to 72.4%, still **72%** when rounded to a whole percent.
+- The 7 new tests are committed but pending a fresh CI run; the previously verified baseline remains 148 passing tests.
+- No serial/CAN/BLE interface was opened and no ESC command was transmitted.
