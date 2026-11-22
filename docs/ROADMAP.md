@@ -292,3 +292,13 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve the undocumented Windows CMD01 ID-vector semantics and the secondary Qt success boolean.
 - Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
 - V1.6 comparison sub-workstream: 70% → 75%; overall weighted progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 CMD01 raw ID vector
+
+- [x] Preserve the CMD01 DATA byte vector in an offline decoder without guessing its undocumented meaning.
+- [x] Keep CMD1E as the separate documented master/slave ID enumeration response.
+- [x] Verify raw vector, empty response and opcode validation tests in GitHub Actions #284 (172 tests passed).
+- [ ] Resolve CMD01's command semantics and the secondary boolean argument of `ftescGetIDResAck` only with stronger native or official evidence.
+- Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
+- V1.6 comparison sub-workstream: 75% → 78%; overall weighted project progress remains **72.6%**.
