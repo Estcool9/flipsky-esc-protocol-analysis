@@ -147,6 +147,8 @@ Response: INFO/DLEN 0x1C, CMD 0x02, 27 DATA bytes.
 
 The PAS alias also lists PAS RPM in DATA bytes 27-30. However, the same section still labels the response DLEN as 0x1C, which cannot contain those additional four bytes. 31 DATA bytes plus CMD would require DLEN 0x20. This is an inconsistency in the PDF, recorded as unresolved. The offline decoder accepts either the 27-byte base DATA or 31-byte PAS-extended DATA and does not invent missing bytes.
 
+Offline request builders now distinguish the V1.4 field order (current code at DATA[0:2], reserved at DATA[2:4]) from the V1.6 field order (reserved at DATA[0:2], current code at DATA[2:4]). See `build_v14_control_and_obtain_data_once_info()` and `build_v16_control_and_obtain_data_once_info()` in `scripts/ftesc_requests.py`. The V1.6 PAS alias has a separate builder.
+
 ### 3.3 Current, duty and motion commands
 
 | CMD | Request DLEN | DATA | Response |
@@ -173,11 +175,11 @@ Response DATA:
 - D0: returned slave command ID (must match the slave command);
 - D1-Dn: slave response data.
 
-This defines the UART-level envelope for forwarding to a CAN slave. CAN arbitration identifiers and all low-level CAN transport details are not specified by this UART section.
+This defines the UART-level envelope for forwarding to a CAN slave. The repository implements this as `build_can_forward_info(slave_id, slave_command, slave_data)`; the reply's first INFO byte is the returned slave command ID and is decoded by `parse_can_forward_response()`. CAN arbitration identifiers and low-level CAN transport details are specified separately in [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md). The exact V1.7 desktop-code insertion point for this envelope is still unresolved.
 
 ### 3.5 Identity, keepalive and reboot
 
-- 0x11: request DLEN 1, no DATA. Response CMD 0x11: D0 version major, D1 version minor, D2 mode marker (0xAC bootloader, 0xEF application), D3 onward hardware name as ASCII, followed by hardware serial number.
+- 0x11: request DLEN 1, no DATA. Response CMD 0x11: D0 version major, D1 version minor, D2 mode marker (0xAC bootloader, 0xEF application), D3 onward hardware name as ASCII, followed by hardware serial number. The V1.7 response decoder now exposes these semantic field names.
 - 0x19: no DATA request; DLEN 1. After relevant control commands, send this at least every 500 ms to keep the last command valid. Response is an empty CMD 0x19.
 - 0x1D: request DLEN 2 and one reserved DATA byte set to zero. Response DLEN 1, empty DATA. The controller begins factory reset and restart 50 ms after the ECU receives the response.
 - 0x23: request DLEN 1, no DATA; no response is specified.
@@ -246,7 +248,16 @@ The PAS response section lists 31 DATA bytes but retains DLEN 1C; that length in
 - The sample C decodes only the base CMD 00 telemetry. The PDF describes the longer periodic telemetry response.
 - No physical ESC was contacted during this analysis.
 
-## 7. Source inventory
+## 7. Offline implementation notes
+
+- `build_can_forward_info()` implements the UART CMD 0x10 envelope; `parse_can_forward_response()` unwraps the slave command/data response.
+- `build_v14_control_and_obtain_data_once_info()` and `build_v16_control_and_obtain_data_once_info()` preserve the version-specific CMD 0x02 byte order.
+- `build_v16_pas_gear_control_info()` implements the PAS-mode CMD 0x02 alias.
+- `build_current_gear_and_obtain_data_info()` covers CMD 0x20; `build_v14_reset_reboot_info()` preserves the V1.4 CMD 0x1D reserved byte.
+- `build_keepalive_info()` builds CMD 0x19. The PDF specifies a 500 ms refresh after relevant control commands; this repository does not schedule or transmit it.
+- `parse_auto_realtime_config()` decodes the V1.4/V1.6 seven-byte CMD 0x1A response; the V1.7 desktop binary's dispatcher instead emits a no-DATA acknowledgement.
+
+## 8. Source inventory
 
 - V1.4 UART protocol PDF: 510,037 bytes.
 - V1.6 English UART protocol PDF: 534,546 bytes, 23 pages.
