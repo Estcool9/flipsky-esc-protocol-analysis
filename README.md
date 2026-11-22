@@ -115,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result on REA:** **148 tests passed, 0 failures**; `compileall` also passed. The catalog and profile regeneration comparisons also passed. GitHub Actions is configured in [offline-checks.yml](.github/workflows/offline-checks.yml) to restore payloads, regenerate the catalog and profiles, compare them byte-for-byte, run the tests and compile Python sources.
+**Latest verified result:** GitHub Actions [run #195](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45018768452) passed **159 tests, 0 failures**; catalog/profile regeneration and `compileall` also passed. The offline workflow restores payloads, regenerates the catalog and profiles, validates deterministic outputs, runs the tests and compiles Python sources.
 
 ## Official V1.4/V1.6 protocol references
 
@@ -141,7 +141,7 @@ The V1.7 application performs a UUID-based TEA authorization preflight:
 - sends the encrypted challenge with CMD 0x22;
 - waits for an authorization acknowledgement.
 
-Separate native request methods implement boot mode (0x13), erase (0x16) and firmware block write (0x18). The write path uses a 240-byte block payload and a separate XOR transform. The complete UI/bootloader state machine, retry progression and exact firmware image format remain unfinished. No firmware image was available in the analysis workspace and no firmware was flashed.
+Separate native request methods implement boot mode (0x13), erase (0x16) and firmware block write (0x18). The write path uses a 240-byte block payload and a separate XOR transform. The complete UI/bootloader state machine, retry progression and exact V1.7 firmware image format remain unfinished. The V1.6 Android APK now provides 17 unique embedded firmware images (165,880 bytes each) with raw Cortex-M-like vector-table headers; this does not prove their MCU/SKU mapping or establish the V1.7 update image format. No firmware was flashed. See [Android V1.6 QML/ValueSetup/firmware resources](docs/ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
 
 See [FIRMWARE_UPDATE_FLOW](docs/FIRMWARE_UPDATE_FLOW.md).
 
