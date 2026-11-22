@@ -97,3 +97,16 @@ def parse_imu_calibration_response(
         for offset in range(0, 36, 4)
     )
     return ImuCalibrationResponse(values=values)  # type: ignore[arg-type]
+
+
+def parse_uuid_response(info: bytes | bytearray | memoryview) -> bytes:
+    """Return raw CMD 0x21 UUID DATA as emitted by the native QByteArray signal.
+
+    The firmware-update TEA preflight uses a 16-byte key, but the native
+    response dispatcher copies the QByteArray without a visible 16-byte
+    length check. This decoder therefore preserves the raw length.
+    """
+    message = parse_info(info)
+    if message.command != 0x21:
+        raise ValueError(f"expected CMD 0x21, got 0x{message.command:02X}")
+    return bytes(message.data)
