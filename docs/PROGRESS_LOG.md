@@ -313,3 +313,19 @@
 - Fresh public GitHub clone: **71 tests passed, 0 failed**; `compileall` succeeded.
 - Overall estimate updated from **73% to 75%**. Firmware update path rises to 90%; image container format, whole-image CRC consumer, exact cross-version table compatibility and runtime behavior remain open.
 - No bootloader was entered and no firmware was flashed.
+
+
+## 2026-11-22 — Exact ValueSeque serialization order recovered
+
+- Restored all compressed source XML and catalogs from the fresh public clone on REA using `scripts/restore_payloads.py`.
+- Parsed the `Values` and `ValueSeque` sections of all 13 ValueSetups XML resources.
+- Confirmed `ValueSeque` order differs from the `Values` order in all 13 resources; serialization order cannot be inferred from XML element order or sorted IDs.
+- Counted 736 Values entries, 721 ValueSeque entries and 15 values omitted from their sequence; zero duplicate sequence entries and zero sequence IDs missing from Values.
+- Omitted IDs: `motor_rated_current` (9 resources), `battery_cells_s` (3), `battery_cutoff_v` (3). Their exclusion reason is not assumed.
+- Added `scripts/ftesc_profiles.py` to validate and extract order, omission records and source hashes.
+- Added `encode_profile_block()` to `scripts/ftesc_setup_serializer.py`; added six tests for sequence order and malformed profile lists.
+- Generated and published full ordered CSV/JSON artifacts as gzip+base64 payloads; `scripts/restore_payloads.py` restores them automatically. Added [profile-order-summary.json](../analysis-data/profile-order-summary.json).
+- Added [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md) and updated [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
+- Fresh public clone: restore 17+ payloads, regenerate 13 profiles (721 ordered values), **77 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **75% to 77%**. The ordered setup serializer is 90%; resource selection logic and conditional second-block selection remain open.
+- No setup values were transmitted.
