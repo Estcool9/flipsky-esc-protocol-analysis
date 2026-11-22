@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm requests/ACKs and separate CMD09/CMD0A setup block codecs) | 70% |
+| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, CMD09/CMD0A profile blocks and CMD1E ID enumeration) | 75% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -475,3 +475,11 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Added offline decoders `parse_v16_motor_setup_response()` and `parse_v16_motor_signal_setup_response()` plus tests for both markers, typed values and mismatch handling. Trailing bytes are preserved.
 - GitHub Actions #266: **167 tests passed, 0 failed**, compileall and artifact/catalog/profile regeneration passed.
 - V1.6 comparison sub-workstream advances **65% → 70%**; overall weighted progress remains **72.6% (79.9 / 110)**.
+
+
+## V1.6 master/slave ID enumeration codec — 2026-11-22
+
+- Confirmed official CMD `0x1E` response layout: D0 master MCU ID; D1 onward slave MCU IDs. The native Windows handler iterates each DATA byte into its `ftescGetIDResAck(QVector<int>,bool)` signal vector.
+- Added `EscIdEnumerationResponse` / `parse_esc_id_enumeration_response()` with raw-byte preservation and tests for master/slave split, empty vector and command validation. The secondary Qt boolean remains uninterpreted.
+- CMD `0x01` also constructs a raw ID byte vector in the Windows handler but is absent from the official V1.6 command table, so remains unclassified.
+- V1.6 comparison sub-workstream: **70% → 75%**; overall weighted progress remains **72.6% (79.9 / 110)**.
