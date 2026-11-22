@@ -296,3 +296,20 @@
 - Added [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md) with exact negative evidence and next static-analysis targets.
 - Overall estimate remains **73%**; this is an identified unresolved feature gap, not a completed protocol path.
 - No command was sent.
+
+
+## 2026-11-22 — V1.7 firmware erase/write pipeline recovered
+
+- Corrected a prior report classification: `FUN_00485130` is the erase-and-block-write orchestrator, not a firmware image validator. The previously claimed `0xE9` image-magic check is withdrawn; it is not present in the traced update path.
+- Traced `firmwareUpdatePro` (`0x00486570`) through UUID/TEA preflight and into the flash orchestrator.
+- Confirmed native file-size guard `0x30F98` bytes (200,600) and separate UI warning “150Kbyte”; mismatch documented.
+- Confirmed erase request CMD 0x16 contains 32-bit big-endian image size and waits for `ftescFirmwareEraseRespenseFlag`.
+- Confirmed flash loop chunks image into at most 0xF0 (240) bytes, sends CMD 0x18, waits up to 2,000 ms and retries each block up to 3 times on timeout.
+- Confirmed per-block XOR transform resets each chunk: first byte mask 0xD0; remaining bytes use the 239-byte table at VA 0x00530F61 from index 0. The table was recovered and placed in the offline codec.
+- Confirmed CMD 0x18 response signal `ftescFirmwareWriteBlockSuccessFalg`.
+- Confirmed updater computes whole-image CRC16 and builds a size+CRC buffer; its downstream consumer is not yet resolved, so the codec does not claim it is transmitted.
+- Added `scripts/ftesc_firmware.py` and `tests/test_ftesc_firmware.py` (11 tests); offline frame builder uses the existing UART codec.
+- Rewrote [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md) to correct the earlier misclassification and document exact block/retry behavior.
+- Fresh public GitHub clone: **71 tests passed, 0 failed**; `compileall` succeeded.
+- Overall estimate updated from **73% to 75%**. Firmware update path rises to 90%; image container format, whole-image CRC consumer, exact cross-version table compatibility and runtime behavior remain open.
+- No bootloader was entered and no firmware was flashed.
