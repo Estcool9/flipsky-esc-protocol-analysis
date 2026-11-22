@@ -32,6 +32,18 @@ class SetupValueSerializerTests(unittest.TestCase):
         for val_type in (4, 6, 7):
             self.assertEqual(encode_setup_value(val_type=val_type, value_tet=1, value_int=1), b"\x01")
 
+    def test_profile_block_uses_value_sequence_order(self):
+        values = {
+            "alpha": {"valType": 2, "valueTET": 1, "value_int": 1},
+            "beta": {"valType": 2, "valueTET": 1, "value_int": 2},
+        }
+        encoded = encode_profile_block(0x12345678, ["beta", "alpha"], values)
+        self.assertEqual(encoded, bytes.fromhex("12 34 56 78 02 01"))
+
+    def test_profile_block_rejects_missing_sequence_value(self):
+        with self.assertRaises(SetupValueError):
+            encode_profile_block(0, ["missing"], {})
+
     def test_marker_and_vector_order(self):
         block = encode_setup_block(0xD2C6EF10, [
             {"valType": "2", "valueTET": "1", "value_int": "3"},
