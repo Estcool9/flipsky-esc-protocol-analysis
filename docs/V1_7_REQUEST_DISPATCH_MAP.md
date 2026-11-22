@@ -217,3 +217,7 @@ Additional native method details:
 - TopFlow setter `FUN_00498960` emits CMD 0x3A with marker 0x54464346.
 - TopFlow reset `FUN_00497F30` emits CMD 0x1D with no DATA; motor-signal reset/reboot `FUN_00497E20` emits CMD 0x1D plus one byte.
 - IMU calibration `FUN_00499070` emits CMD 0x29 with a signed 32-bit big-endian value scaled by 1,000.
+
+
+### CMD 0x0F identify-motor payload
+Instruction-level analysis of `FUN_00499180` confirms: CMD 0x0F, argument 2 byte, low byte of argument 1, signed int16 argument 4, signed int16 argument 3×100, argument 5 byte. See [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md).
