@@ -26,7 +26,7 @@
 - [x] Implement offline request/response codecs for discovered control, identity, telemetry, setup and string operations.
 - [x] Recover typed setup value serialization and response decoding for observed types.
 - [x] Extract 19 unique ValueSetup resources and generate reproducible catalogs and ValueSeque order files.
-- [ ] Recover TopFlow ValueSetup XML and exact model/SKU mapping.
+- [ ] Recover TopFlow ValueSetup XML and exact model/SKU mapping. The FTESC Android XML parser now proves ValueSeque is copied into the native wire-order list; do not substitute FTESC tables for TopFlow.
 - [ ] Validate all V1.7 command response layouts against passive captures.
 - [ ] Resolve remaining V1.7 request-schema and unknown command cases.
 
@@ -67,7 +67,8 @@
 - [x] Implement offline firmware authorization/block helpers.
 - [ ] Complete all bootloader entry, erase, write, ACK, retry and timeout transitions.
 - [ ] Identify exact firmware image container/metadata and checksum/signature.
-- [ ] Validate against an authorized firmware image; do not flash during protocol discovery.
+- [ ] Complete static analysis of device-side firmware challenge semantics, key provisioning, full write/ACK frame fields, integrity checks and recovery; keep TEA/XOR secrets out of public artifacts.
+- [ ] Validate against an authorized firmware image in a safe, isolated test plan; do not flash during protocol discovery.
 - [ ] Add safe recovery/abort states to the replacement application before any firmware UI is enabled.
 
 ## Phase F — Open-source application implementation
@@ -90,7 +91,8 @@
 - [x] Add GitHub Actions for artifact restore, regeneration compare, unit tests and compileall.
 - [x] Maintain tests for FTESC framing, stream recovery, requests, responses, setup serializer, firmware blocks, direct CAN, generic XML scanning and VESC UART/CAN.
 - [x] Fresh REA clone test run: **148 passed, 0 failed** (earlier baseline).
-- [x] GitHub Actions run #156: **159 passed, 0 failed**, 25/25 research payloads restored, parameter catalog/profile exports regenerated deterministically, and Python compileall passed.
+- [x] GitHub Actions run #156: 159 passed, 0 failed, 25/25 research payloads restored, parameter catalog/profile exports regenerated deterministically, and Python compileall passed.
+- [x] GitHub Actions run #199 after native ValueSetup boundary tests: 162 passed, 0 failed; catalog/profile regeneration and Python compileall passed. Documentation follow-on run #200 also green.
 - [ ] Add protocol capture replay fixtures from authorized passive traces.
 - [ ] Build a benign fake-ESC simulator for read-only responses.
 - [ ] Perform a staged bench test with a known ESC model, firmware and mechanically safe configuration.
@@ -200,3 +202,16 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] GitHub Actions run #195: 159 passed, 0 failed; profile/catalog regeneration and compileall passed.
 - [x] Corrected README/STATUS/ROADMAP to distinguish the V1.6 Android embedded firmware images from the still-unresolved V1.7 firmware update image/container.
 - Overall weighted project score remains 72.6%.
+
+
+## 2026-11-22 — Native ValueSetup ordering and firmware state-machine evidence
+
+- [x] Prove configValueStreamXml reads ValueSeque/seque into native QList at ValueSetups+0x28; Clustering goes to a separate list.
+- [x] Prove valueArralize and valueDeArralize use that same list for ordered serialization and marker-validated response parsing.
+- [x] Map all nine native valueTET codecs, big-endian integer/binary32 encodings and ties-away-from-zero scaled rounding.
+- [x] Add negative-halfway and IEEE negative-zero regression tests; run CI #199: 162 tests, 0 failures.
+- [x] Map Android V1.6 TEA preflight, 0x22 request, ACK=0 validity rule, erase 0x16 response wait, write 0x18 XOR transform, 240-byte blocks and three total attempts.
+- [ ] Recover device-side key/challenge selection, entire firmware frame/ACK schema, integrity/authentication and recovery/resume.
+- [ ] Compare equivalent auth/erase/write paths in Windows V1.6/V1.7 to establish version parity or differences.
+- Firmware static reverse-engineering sub-workstream: 75%; weighted firmware package stays 55%, overall weighted score remains 72.6% (79.9 / 110).
+- Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
