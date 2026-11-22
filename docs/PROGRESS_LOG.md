@@ -727,3 +727,5 @@
 - Prochaine action : exécuter uniquement cette vérification SSH passive, puis réutiliser REA pour analyser les fonctions existantes. Aucun binaire Flipsky, firmware ou ESC n'a été exécuté/commandé.
 
 - Vérification SSH depuis Open Terminal vers CT107 réussie : `hostname=rea-mcp`, `systemctl is-active rea-mcp=active`, exit code 0. La connexion a utilisé la clé SSH existante en mode BatchMode ; aucun secret n'a été lu ni transmis.
+
+- Réactivé la session REA MCP après un timeout transitoire ; `binary_session` confirme REA 6.10.1 et Ghidra 12.2 disponibles. Session Ghidra courante : PE x86 V1.6 daté 2026-09-12, SHA-256 `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`, chemin REA `/data/analysis/pe/v1.6_20260912/Flipsky_ESC_Tool_V1.6_20260912.exe`. L'analyse est checkpointée par REA ; aucune modification manuelle de projet n'a été faite. L'inventaire Evidence conservé comporte 224 enregistrements et 62 liens directs, sans liens manquants.
