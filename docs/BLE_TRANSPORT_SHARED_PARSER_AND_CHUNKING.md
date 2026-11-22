@@ -22,7 +22,18 @@ The shared lower-level send slot `FUN_00481850` (`0x00481850`) checks the BLE-co
 
 This establishes a static 20-byte application-level chunk stride and the shared outbound path. It does **not** establish that 20 bytes is a negotiated ATT MTU, an MTU-derived maximum payload, or the exact value submitted to the BLE stack at the lowest API boundary.
 
-### Qt API evidence and limitations
+### Likely Qt GATT write call site — strong candidate, not fully proven
+
+Assembly of `FUN_00404E80` shows an indirect call at `0x00404FEC`. At that call, ECX contains the BLE service object; the stack contains a local characteristic-like object, the queued `QByteArray`, and a final integer argument `1`. Ghidra resolves the computed call reference to `0x00B5A1D0`.
+
+The call signature and argument shape strongly resemble `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)`, whose mangled symbol string is present in the executable. However, `0x00B5A1D0` is within the protected Enigma region; Ghidra's decompilation reports bad instruction data and does not recover a valid Qt thunk body. A proven edge from that protected target to the mangled Qt method is still missing. Therefore the third argument value `1` is observed, but its `WriteMode` meaning is **not established**.
+
+Evidence:
+- Queue-pump assembly: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`.
+- Computed call target resolution for `0x00404FEC`: `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`.
+- Protected target decompilation: `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
+
+## Qt API evidence and limitations
 
 The executable contains the mangled symbol string for `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)`. However, the PE import descriptor at RVA `0xB9F000` could not be mapped unambiguously by the import inspector, and the protected/indirect dispatch path does not yet give a proven call-site-to-import edge. The symbol string alone is not sufficient to claim the exact write mode or call target.
 
@@ -48,7 +59,7 @@ The executable contains the mangled symbol string for `QLowEnergyService::writeC
 
 ## Progress accounting
 
-The static BLE transport sub-workstream rises from 60% to **75%**: the receive-to-common-parser route and the transmit queue's 20-byte segmentation are now statically established. At the time of the BLE analysis the complete-product weighted score was 72.2%; after the separate CI verification later in this session, the current score is **72.6%** (79.9 / 110 points). No live transport or desktop functionality has been added, and hardware validation remains 0%.
+The static BLE transport sub-workstream rises from 60% to **80%**: the receive-to-common-parser route and the transmit queue's 20-byte segmentation are now statically established. At the time of the BLE analysis the complete-product weighted score was 72.2%; after the separate CI verification later in this session, the current score is **72.6%** (79.9 / 110 points). No live transport or desktop functionality has been added, and hardware validation remains 0%.
 
 ## Acquisition and environment note
 
