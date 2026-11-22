@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 84%**  
+**Overall estimated progress: 85%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -311,3 +311,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - CMD 0x01 and 0x1E share ESC ID vector parser.
 - Added `scripts/ftesc_responses.py`; fresh clone **99 tests passed, 0 failed**.
 - Overall estimate: **84%**.
+
+
+## UUID response — 2026-11-22
+
+- CMD 0x21 copies response DATA into QByteArray; firmware TEA preflight consumes 16 bytes.
+- Native response branch does not visibly enforce length; decoder preserves raw length.
+- Added `parse_uuid_response()` and test.
+- Fresh clone: **100 tests passed, 0 failed**.
+- Overall estimate: **85%**.
