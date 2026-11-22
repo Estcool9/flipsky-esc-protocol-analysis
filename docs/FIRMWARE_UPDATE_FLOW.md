@@ -112,3 +112,10 @@ These functions only construct offline byte arrays/frames. They do not open seri
 ## 8. Safety and scope
 
 No firmware was flashed, no bootloader was entered and no ESC command was sent. A successful TEA authorization does not imply an arbitrary firmware image is compatible or safe. Never use the offline frame builders as a reason to flash unverified firmware.
+
+
+## 8. Official update procedure cross-check
+
+Flipsky's official [FT Series V1.6 update guide](https://flipsky.net/blogs/vesc-tool/how-to-update-ft-series-esc-to-v16) describes entering bootloader, reconnecting after the bootloader LED indication, then starting the flash. For dual-drive controllers it says the master and slave are updated independently through their respective USB connections.
+
+This matches the application-level separation between boot-mode, erase and block-write commands. It also supports keeping CAN-slave firmware flashing out of the inferred normal path. The official guide is V1.6; it is used as procedural context, not as proof of the exact V1.7 bootloader implementation.
