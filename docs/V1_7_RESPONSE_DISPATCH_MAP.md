@@ -22,17 +22,17 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 | `0x16` | Reads one byte as boolean and calls `0x004BBD30`. | Firmware erase acknowledgement; offline decoder added. |
 | `0x18` | Reads one byte as boolean and calls `0x004BBD80`. | Firmware write-block acknowledgement; offline decoder added. |
 | `0x1A` | Calls no-argument callback wrapper `0x004BBBF0`. | Auto-realtime acknowledgement with no DATA; offline decoder added. |
-| `0x1B` | Calls callback wrapper `0x004BBE60` with a byte value. | Setup/acknowledgement path; exact schema unknown. |
-| `0x1C` | Reads setup-related values using helper `0x0049DDB0`, performs additional checks and calls `0x004BBF90` in one branch. | Setup response path; exact schema unknown. |
-| `0x1D` | Calls callback wrapper `0x004BBEB0` with a byte value. | Possible reset/reboot/setup acknowledgement family; not assigned to the public V1.6 command without call-site proof. |
+| `0x1B` | No-DATA status response; calls `0x004BBE60` (signal index 7). | Emits `ftescMotorSignalReadAck(QString,bool)` with a UI status message; offline no-DATA ACK decoder added. |
+| `0x1C` | Validates markers `0xD2C6EF10` and `0x4879187D`, decodes two ValueSetup vectors, checks expected vs actual payload length; emits `0x004BBF90` and `0x004BBE60`. | Motor-signal setup read: secret-key status index 8 (0 success, -1 failure) plus `ftescMotorSignalReadAck(QString,bool)` index 7. Offline two-block decoder added. |
+| `0x1D` | No-DATA status response; calls `0x004BBEB0` (signal index 9). | TopFlow reset acknowledgement via `ftescTopFlowSetupReadAck(QString,bool)`. |
 | `0x1E` | Iterates over remaining payload bytes into a vector-like container and calls `0x004BC200`. | **High.** Matches V1.6 `UART_OBTAIN_ALL_FTESC_ID`: master ID followed by slave IDs. |
 | `0x21` | Calls parser helper `0x0049CE00`, then callback wrapper `0x004BBCA0`. | Unknown. |
 | `0x22` | Reads one byte as boolean and calls `0x004BBCE0`. | Firmware authorization acknowledgement; offline decoder added. |
 | `0x24` | Converts response DATA to QString and calls `0x004BBC60`. | Samples-print UTF-8 text; offline decoder added. |
 | `0x29` | Reads nine signed 32-bit values, each scaled by 1,000,000; calls `0x004BC250`. | IMU calibration response; offline decoder added, semantic labels remain unknown. |
-| `0x3A` | Calls callback wrapper `0x004BBEB0` with a byte value. | Setup-frame family; exact schema unknown. |
-| `0x3B`, `0x3C` | Share a setup-frame parsing path. The handler checks a marker `0x54464346` in one branch. | Vendor-specific setup-frame path; meaning of marker and payload unresolved. |
-| `0x3D` | Calls callback wrapper `0x004BBEB0` with a byte value. | Setup-frame family; exact schema unknown. |
+| `0x3A` | No-DATA status response; calls `0x004BBEB0` (signal index 9). | TopFlow setup-write acknowledgement via `ftescTopFlowSetupReadAck(QString,bool)`. |
+| `0x3B`, `0x3C` | Validate marker `0x54464346`, decode TopFlow ValueSetup vector, check expected/actual length; emit `0x004BBFD0` and `0x004BBEB0`. | TopFlow setup/default read: secret-key status index 10 (0 success, -1 failure) plus `ftescTopFlowSetupReadAck(QString,bool)` index 9. Generic decoder added; TopFlow XML metadata still missing. |
+| `0x3D` | No-DATA status response; calls `0x004BBEB0` (signal index 9). | TopFlow setup/reset status acknowledgement via `ftescTopFlowSetupReadAck(QString,bool)`. |
 
 The initial receive function also emits a diagnostic string `"RX setup frame command:"` for command bytes `0x1B`, `0x1C`, and `0x3A`–`0x3D`. This is direct evidence that these cases are treated as setup-related responses in the application.
 
@@ -130,13 +130,13 @@ The callback wrappers called by the response switch were inspected at machine-co
 | `0x18` | `0x004BBD80` | 6 | `ftescFirmwareWriteBlockSuccessFalg(...)` |
 | `0x1A` | `0x004BBBF0` | 11 | `ftescAutoGetRealtimeDataAck()` |
 | `0x1B` | `0x004BBE60` | 7 | `ftescMotorSignalReadAck(QString, bool)` |
-| `0x1C` | `0x004BBF90` | 8 | `ftescMotorSignalSecretKeyCheckAck(int)` |
+| `0x1C` | `0x004BBF90` | 8 | `ftescMotorSignalSecretKeyCheckAck(int)`; also emits index 7 `ftescMotorSignalReadAck(QString,bool)` via `0x004BBE60` |
 | `0x1D`, `0x3A`, `0x3D` | `0x004BBEB0` | 9 | `ftescTopFlowSetupReadAck(QString, bool)` |
 | `0x21` | `0x004BBCA0` | 1 | `ftescGetUuidAck(...)` |
 | `0x22` | `0x004BBCE0` | 2 | `writeEncryptSuccess(...)` |
 | `0x24` | `0x004BBC60` | 15 | `ftescSamplesPrint(...)` |
 | `0x29` | `0x004BC250` | 20 | `imuCalibrationReceived(FTESC_IMU_CALIBRATION)` |
-| `0x3B`, `0x3C` | `0x004BBFD0` | 10 | `ftescTopFlowSecretKeyCheckAck(int)` |
+| `0x3B`, `0x3C` | `0x004BBFD0` | 10 | `ftescTopFlowSecretKeyCheckAck(int)`; also emits index 9 `ftescTopFlowSetupReadAck(QString,bool)` via `0x004BBEB0` |
 
 Signal indexes were read from the wrapper's immediate arguments and cross-checked against the decoded 58-method UartComm meta-object table. This is direct evidence for the callback signal identity.
 
@@ -176,3 +176,10 @@ CMD 0x21 raw UUID DATA is decoded by `parse_uuid_response()` in `scripts/ftesc_r
 - CMD 0x24: samples-print text.
 
 The CMD 0x11 decoder preserves the raw label bytes because the exact string convention has not been validated against a live response. These decoders are based on the native parser's field-read order, not a hardware capture.
+
+
+## 11. High-level setup response decoders
+
+- `parse_setup_write_ack()` validates no-DATA responses for CMD 0x1B, 0x1D, 0x3A and 0x3D.
+- `parse_motor_signal_setup_response()` decodes both required CMD 0x1C marker blocks and validates that the response is fully consumed; success corresponds to native secret-key status 0.
+- `parse_topflow_setup_response()` decodes CMD 0x3B/0x3C with the TopFlow marker and caller-supplied metadata. The generic decoder is implemented, but no TopFlow XML profile is currently available.
