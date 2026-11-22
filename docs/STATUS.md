@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 87%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 88%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **87%** |
+| **Overall estimate** | **88%** |
 
 ## Confirmed evidence
 
@@ -204,3 +204,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Decoder supports sequential marker blocks via `next_offset`, including the optional second CMD 0x1B block.
 - “Invalid SecretKey” is a fixed setup marker mismatch message, distinct from UUID/TEA firmware authorization.
 - See [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
+
+
+### Reproducible CI and external cross-checks
+- Added `.github/workflows/offline-checks.yml`: restore compressed artifacts, regenerate catalog/profile data, compare byte-for-byte, run unit tests and compileall.
+- Initial catalog comparison found whitespace-normalization drift in the committed generated artifacts; regenerated the compressed CSV/JSON/ID catalog payloads using the current script.
+- Re-ran the complete workflow-equivalent sequence on REA: all catalog/profile comparisons passed; **104 tests passed**; compileall passed.
+- Verified repository visibility is public, default branch `main`, and write/admin permission is available.
+- Added official FTESC Gateway USB-to-CAN passthrough context and official firmware update procedure cross-check.
