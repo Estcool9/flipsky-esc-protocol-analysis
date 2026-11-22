@@ -90,3 +90,8 @@ See:
 ## Safety
 
 All operations were static analysis of immutable binaries. No Windows/Android application was launched, no ESC was connected, no UART/CAN/BLE command was sent and no firmware was flashed. Cryptographic secrets are not included.
+
+
+## Function-level UART follow-on
+
+The targeted marker pass was followed by static decompilation of the V1.6 UART frame builder, candidate parser and stream handler, including their Qt wrappers. See [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md) for exact function addresses and behavior. This closes the main V1.6 UART framing/parser role comparison, but not the complete PE function diff or protected BLE write path.
