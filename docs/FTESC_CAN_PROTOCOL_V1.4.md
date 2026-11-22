@@ -59,8 +59,8 @@ The V1.4 enum contains these command IDs:
 | `0x17` | Duty with gear | no CRC variant |
 | `0x18` | eRPM with gear | no CRC variant |
 | `0x19` | Position with gear | no CRC variant |
-| `0x1A` | Brake current | no CRC variant |
-| `0x1B` | Brake-current percentage | no CRC variant |
+| `0x1A` / `0x20` | Brake current | Conflict in V1.4 PDF: C enum assigns decimal 26 (`0x1A`), but section heading says `20H` (`0x20`) |
+| `0x1B` / `0x21` | Brake-current percentage | Conflict in V1.4 PDF: C enum assigns decimal 27 (`0x1B`), but section heading says `21H` (`0x21`) |
 
 Control values and scale factors above describe the protocol encoding only. They are not operating limits or safe motor settings.
 
@@ -115,7 +115,7 @@ The repository now contains:
 - `scripts/ftesc_can.py`: fixed 29-bit ID codec, generic CAN frame parser, CRC validation, read-only telemetry decoders for 0x0B/0x0C/0x0D, and offline encoders for all documented CRC and no-CRC control command families;
 - `tests/test_ftesc_can.py`: tests for ID prefix, ESC ID and command extraction, signed 24-bit telemetry, scaling, CRC failure, control command payloads and malformed lengths.
 
-The implementation does not open a CAN interface or transmit frames. The command builders only produce offline byte structures; they do not apply safety limits or select operating values. V1.4 float-to-integer scaling uses truncation toward zero to match the sample C conversion behavior.
+The implementation does not open a CAN interface or transmit frames. The command builders only produce offline byte structures; they do not apply safety limits or select operating values. V1.4 float-to-integer scaling uses truncation toward zero to match the sample C conversion behavior. The D-axis current command encodes only the 4-byte signed current before the 2-byte CRC. For the two no-CRC brake commands, the builder requires an explicit `command_id` choice because the PDF's C enum values and section headings disagree.
 
 ## 7. Relationship to UART and V1.7
 
@@ -128,3 +128,14 @@ V1.7 UI code maps CAN target selection and setup-read workflows, but the exact n
 This digest was derived from the user's V1.4 CAN PDF. The full PDF is not duplicated in this repository. It is a public Flipsky protocol document, but the user's source copy remains the reference used here. The protocol is versioned V1.4; newer hardware/firmware revisions may differ.
 
 No physical CAN bus or ESC was connected during this work.
+
+
+## 9. PDF inconsistencies retained as explicit variants
+
+The V1.4 PDF is not internally consistent for the two no-CRC braking command IDs:
+- C enum: `CAN_SET_CURRENT_BRAKE=26`, `CAN_SET_CURRENT_BRAKE_PERCENT=27` (decimal literals; therefore `0x1A` and `0x1B`);
+- section headings: `CAN_SET_CURRENT_BRAKE(20H)` and `CAN_SET_CURRENT_BRAKE_PERCENT(21H)` (therefore `0x20` and `0x21`).
+
+The offline builder exposes both variants and requires an explicit command ID. It does not decide which is used by the shipping firmware. An authoritative corrected PDF, firmware source or live capture is required to resolve this.
+
+The V1.4 PDF's CMD 0x14 D-axis-current frame contains four current bytes and two CRC bytes. There is no reserved/gear byte. The encoder and tests now follow that six-byte data length.
