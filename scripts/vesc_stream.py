@@ -40,6 +40,45 @@ class VescStreamDecoder:
         self._frames = 0
         self._discarded = 0
 
+    def _later_valid_frame_offset(self) -> int | None:
+        """Find a later complete CRC-valid frame behind a false/incomplete prefix.
+
+        VESC uses 0x03 both as a medium-frame start marker and as the common
+        end marker. After dropping a corrupt short frame, its terminator can
+        therefore look like a plausible medium-frame header whose length
+        consumes the following good frame. Only skip that prefix when a
+        later candidate is complete and validates as a full frame.
+        """
+        for offset in range(1, len(self._buffer)):
+            if self._buffer[offset] not in (0x02, 0x03, 0x04):
+                continue
+            candidate_view = self._buffer[offset:]
+            try:
+                frame_length = extract_complete_frame_length(candidate_view)
+            except (NeedMoreData, VescFrameError):
+                continue
+
+            marker = candidate_view[0]
+            header_length = 2 if marker == 0x02 else 3 if marker == 0x03 else 4
+            info_length = frame_length - header_length - 3
+            if info_length > self.max_info_length or len(candidate_view) < frame_length:
+                continue
+
+            try:
+                decode_frame(candidate_view[:frame_length])
+            except VescFrameError:
+                continue
+            return offset
+        return None
+
+    def _recover_later_valid_frame(self) -> bool:
+        offset = self._later_valid_frame_offset()
+        if offset is None:
+            return False
+        del self._buffer[:offset]
+        self._discarded += offset
+        return True
+
     @property
     def buffered_bytes(self) -> int:
         return len(self._buffer)
@@ -66,6 +105,8 @@ class VescStreamDecoder:
             try:
                 frame_length = extract_complete_frame_length(self._buffer)
             except NeedMoreData:
+                if self._recover_later_valid_frame():
+                    continue
                 break
             except VescFrameError:
                 del self._buffer[0]
@@ -80,6 +121,8 @@ class VescStreamDecoder:
                 continue
 
             if len(self._buffer) < frame_length:
+                if self._recover_later_valid_frame():
+                    continue
                 break
 
             candidate = bytes(self._buffer[:frame_length])
