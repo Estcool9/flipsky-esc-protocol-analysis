@@ -38,10 +38,11 @@ class EscIdEnumerationResponse:
 
 @dataclass(frozen=True, slots=True)
 class MotorSignalSetupResponse:
-    first_block: DecodedSetupBlock
-    second_block: DecodedSetupBlock
+    first_block: DecodedSetupBlock | None
+    second_block: DecodedSetupBlock | None
     secret_key_status: int
     success: bool
+    error: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -290,22 +291,48 @@ def parse_motor_signal_setup_response(
     second_profile_order: Iterable[str],
     second_metadata: Mapping[str, Mapping[str, Any]],
 ) -> MotorSignalSetupResponse:
-    """Decode CMD 0x1C's two required marker-prefixed setup blocks."""
+    """Decode CMD 0x1C's two marker-prefixed setup blocks.
+
+    Native V1.6 emits secret_key_status=-1 when either marker fails or the
+    decoded block lengths do not account for the complete INFO payload.
+    Preserve any first block already decoded before a second-marker failure.
+    Other metadata/type/truncation errors remain exceptions.
+    """
     message = parse_info(info)
     if message.command != 0x1C:
         raise ValueError(f"expected CMD 0x1C, got 0x{message.command:02X}")
-    first = decode_profile_block(
-        message.data, MOTOR_SETUP_MARKER, first_profile_order, first_metadata
-    )
-    second = decode_profile_block(
-        message.data,
-        MOTOR_SIGNAL_SETUP_MARKER,
-        second_profile_order,
-        second_metadata,
-        offset=first.next_offset,
-    )
+    try:
+        first = decode_profile_block(
+            message.data, MOTOR_SETUP_MARKER, first_profile_order, first_metadata
+        )
+    except SetupValueError as exc:
+        if "setup marker mismatch" not in str(exc):
+            raise
+        return MotorSignalSetupResponse(
+            first_block=None, second_block=None, secret_key_status=-1,
+            success=False, error=str(exc)
+        )
+    try:
+        second = decode_profile_block(
+            message.data,
+            MOTOR_SIGNAL_SETUP_MARKER,
+            second_profile_order,
+            second_metadata,
+            offset=first.next_offset,
+        )
+    except SetupValueError as exc:
+        if "setup marker mismatch" not in str(exc):
+            raise
+        return MotorSignalSetupResponse(
+            first_block=first, second_block=None, secret_key_status=-1,
+            success=False, error=str(exc)
+        )
     if second.next_offset != len(message.data):
-        raise SetupValueError("CMD 0x1C response has unexpected trailing DATA")
+        return MotorSignalSetupResponse(
+            first_block=first, second_block=second, secret_key_status=-1,
+            success=False,
+            error="CMD 0x1C block lengths do not consume the complete INFO DATA",
+        )
     return MotorSignalSetupResponse(
         first_block=first, second_block=second, secret_key_status=0, success=True
     )
