@@ -1,9 +1,35 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 90%** toward an evidenced protocol specification and independently testable offline client.
+**Overall project progress: 72%** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
 
-Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
+This is a weighted estimate for the complete desktop replacement, not an offline-codec-only score. The previous 90–92% figures overstated readiness because the desktop UI, serial/BLE integration and hardware validation remain incomplete.
+
+| Work package | Weight | Progress | Weighted contribution |
+|---|---:|---:|---:|
+| Binary inventory and static application mapping | 10 | 100 | 10.0 |
+| FTESC UART framing, parser and stream handling | 10 | 100 | 10.0 |
+| V1.7 request/response command coverage | 20 | 87 | 17.4 |
+| Setup metadata, ValueSeque ordering and typed serializer | 10 | 95 | 9.5 |
+| Direct CAN and V1.7 gateway/slave routing | 10 | 60 | 6.0 |
+| Firmware authorization, transfer and bootloader flow | 10 | 55 | 5.5 |
+| Separate VESC/FSESC profile and source comparison | 10 | 80 | 8.0 |
+| Open-source desktop UI and real serial/BLE integration | 15 | 20 | 3.0 |
+| Reproducible extraction, tests and CI | 10 | 95 | 9.5 |
+| Hardware validation | 5 | 0 | 0.0 |
+| **Total** | **100** | | **71.9 ≈ 72%** |
+
+The score does not mean safe or hardware-validated operation. All encoders are offline-only.
+
+## Current evidence and status
+
+- FTESC V1.7 executable SHA-256 verified: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- 19 unique compressed `ValueSetups` XML resources from 20 candidate offsets (one duplicate).
+- 1,152 metadata rows, 286 distinct XML IDs, 1,135 `ValueSeque` entries and 17 values omitted from transmission sequences.
+- Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
+- Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
+- Latest REA verification: **148 tests passed, 0 failed**; `compileall` passed.
+- No physical controller connected and no serial, BLE or CAN command transmitted.
 
 ## Workstream progress
 
@@ -11,22 +37,23 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 |---|---:|
 | Binary inventory and integrity (V1.7) | 100% |
 | Embedded XML extraction and validation | 100% |
-| Parameter catalog generation | 100% |
+| Parameter catalog and ValueSeque generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
 | UART/Qt event and meta-object mapping | 100% |
-| Outer frame format and CRC reconstruction | 100% |
-| Receive-buffer and resynchronization analysis | 90% |
-| Public V1.6 UART protocol extraction | 100% |
-| V1.4-to-V1.6 protocol comparison | 90% |
-| V1.7 command-ID and payload cross-reference | 86% |
-| Offline frame and protocol codecs/tests | 100% |
-| Firmware authorization and block-transfer flow | 90% |
-| Direct CAN V1.4 telemetry decoder | 100% |
-| V1.7 UART CAN-forward wrapper and slave response routing | 40% |
-| VESC compatibility assessment | 25% |
-| V1.6 executable binary comparison | 0% |
+| FTESC UART frame/CRC and incremental parser | 100% |
+| V1.7 request payload schemas | 87% |
+| V1.7 response dispatch/decoders | 90% |
+| ValueSetup typed serializer/response decoder | 95% |
+| Firmware authorization and block codec | 55% |
+| Direct FTESC CAN V1.4 codec | 95% |
+| V1.7 CAN target routing and slave response path | 40% |
+| Flipsky VESC UART V1.0 profile codec | 90% |
+| Flipsky VESC direct CAN V1.0 basic codec | 80% |
+| VESC/FTESC family separation and compatibility evidence | 95% |
+| Open-source GUI and live transport integration | 20% |
+| BLE UUID/chunk/write-mode reconstruction | 40% |
+| V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **90%** |
 
 ## Confirmed evidence
 
@@ -54,8 +81,8 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 - Unusual .enigma1 and .enigma2 sections; protection/packing is plausible but the protector is not identified.
 
 ### Embedded metadata
-- 13 embedded XML resources recovered and validated.
-- 736 catalog rows, 222 unique parameter IDs and 13 profile/resource variants.
+- 19 unique embedded XML resources recovered and validated; one additional candidate was a duplicate.
+- 1,152 catalog rows, 286 unique XML parameter IDs and 19 profile/resource variants; 1,135 are listed in ValueSeque and 17 are explicitly omitted.
 - Derived catalogs and XML resources are stored as gzip/base64 and restored with scripts/restore_payloads.py.
 
 ### Qt architecture and UART code paths
@@ -90,7 +117,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **110 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **148 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -209,7 +236,7 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 ### Reproducible CI and external cross-checks
 - Added `.github/workflows/offline-checks.yml`: restore compressed artifacts, regenerate catalog/profile data, compare byte-for-byte, run unit tests and compileall.
 - Initial catalog comparison found whitespace-normalization drift in the committed generated artifacts; regenerated the compressed CSV/JSON/ID catalog payloads using the current script.
-- Re-ran the complete workflow-equivalent sequence on REA: all catalog/profile comparisons passed; **104 tests passed**; compileall passed.
+- Re-ran the complete workflow-equivalent sequence on REA: all catalog/profile comparisons passed; **148 tests passed**; compileall passed.
 - Verified repository visibility is public, default branch `main`, and write/admin permission is available.
 - Added official FTESC Gateway USB-to-CAN passthrough context and official firmware update procedure cross-check.
 
@@ -229,3 +256,24 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Added high-level motor-signal and generic TopFlow response decoders, plus no-DATA setup ACK validation.
 - TopFlow XML metadata remains missing.
 - Fresh clone now has 110 passing tests.
+
+
+## Flipsky VESC UART/CAN V1.0 documents and parallel adapter — 2026-11-22
+
+- Read the user's four Nextcloud files: VESC UART V1.0 (English and Chinese) and VESC CAN V1.0 (English and Chinese), document numbers `VESC-CM-UART-20250331-01` and `VESC-CM-CAN-20250331-01`, issue date 2025-04-15, firmware target VESC V3.00+.
+- Compared UART 02/03/04 framing, 0x1021/initial-zero CRC, big-endian payloads and the VESC command table against pinned `vedderb/vesc_tool` sources.
+- Compared the direct-CAN command IDs, basic scaling and extended-ID construction against Flipsky's C example and pinned `vedderb/bldc/comm/comm_can.c`.
+- Recorded two document editorial ambiguities: stale English UART TOC entries and CAN bit-field prose that is less clear than the C identifier expression. The code expression and upstream firmware establish controller ID in bits 0..7 and command ID in bits 8..15.
+- Added [FLIPSKY_VESC_PROTOCOL_V1.0.md](FLIPSKY_VESC_PROTOCOL_V1.0.md) and [PROTOCOL_FAMILY_MATRIX.md](PROTOCOL_FAMILY_MATRIX.md).
+- Added independent offline modules `scripts/vesc_uart.py` and `scripts/vesc_can.py`, kept separate from FTESC modules.
+- Added 16 VESC UART/CAN tests. Fresh REA clone: **148 tests passed, 0 failures**; `compileall` passed.
+- Flipsky's official [FT ESC vs FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc) article and its [20 November 2026 Gateway explainer](https://flipsky.net/blogs/vesc-tool/what-is-a-can-gateway) confirm the two families require different tools/gateways.
+- Recalibrated the whole-product estimate to **72%**. The earlier 90–92% figures measured too narrow an offline-codec milestone and are no longer used as the project-completion score.
+
+## Remaining blockers
+
+1. The built-in V1.7 TopFlow metadata resource and exact SKU mapping are missing.
+2. V1.7 CAN selection is stored by the UI but the standard UartComm send chain does not prepend the published V1.6 CMD 0x10 envelope; the external gateway path still needs evidence.
+3. Firmware image layout, full retry/rollback flow and complete bootloader state machine remain open.
+4. The desktop UI, actual serial/BLE transports, read-only session discovery and passive capture replay are not implemented.
+5. BLE UUIDs/MTU/write mode, V1.6 binary comparison and controlled hardware validation remain open.
