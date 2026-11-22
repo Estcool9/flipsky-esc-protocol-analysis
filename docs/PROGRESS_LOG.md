@@ -180,3 +180,19 @@
 - Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) with exact callback/signal evidence.
 - Overall estimate updated from **58% to 60%**. Response callback mapping is now substantially complete; request payload schemas and CAN/BLE paths remain open.
 - No hardware interaction or command transmission.
+
+
+## 2026-11-22 — Typed setup-value serializer recovered and implemented
+
+- Decompiled `FUN_004A0790`, `FUN_004A0B00`, `FUN_0049D080`, `FUN_0049D150`, `FUN_0049D1E0`, `FUN_0049D270`, `FUN_0049CF00`, `FUN_0049CE50` and `FUN_0049CFB0`.
+- Confirmed setup-write block structure: 32-bit big-endian marker followed by ordered typed values from a vector-like collection.
+- Parameter IDs are used to look up metadata but are not appended by the recovered per-value serializer. The helper emits values in the collection's existing order.
+- Correlated the outer discriminator with XML `valType`, the inner transmit discriminator with `valueTET`, and the scaled floating multiplier with `evalScl`.
+- Recovered primitive serialization: scaled signed 16/32-bit big-endian values, IEEE-754 float32 big-endian, raw byte, unsigned/signed 16-bit, unsigned/signed 32-bit.
+- Catalog distribution across 736 profile rows includes 469 `(valType=1,valueTET=9)` float32 values, 60 `(1,7)` scaled int16 values, and the other integer/byte families documented in [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
+- The XML includes `(1,0)` and `(2,0)` combinations for which no native transmit branch was found; the offline serializer rejects them.
+- Implemented `scripts/ftesc_setup_serializer.py` and `tests/test_ftesc_setup_serializer.py`. The block builder is offline only and emits marker + values in supplied order.
+- Fresh public GitHub clone tested on REA: **46 tests passed, 0 failed**; `compileall` succeeded.
+- Added [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
+- Overall estimate updated from **60% to 62%**. Primitive setup serialization is now implemented; full per-profile value selection/order and all marker meanings remain open.
+- No ESC hardware interaction or data transmission.
