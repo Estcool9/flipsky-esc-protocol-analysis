@@ -20,7 +20,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 
 The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. The VESC UART profile now includes an incremental stream layer; the new stream tests are committed but await CI execution. A 72% project score does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
-See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for the scoring model, evidence and remaining blockers.
+See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
 
 ## Artifact under analysis
 
