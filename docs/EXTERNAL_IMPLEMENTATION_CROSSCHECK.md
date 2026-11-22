@@ -28,7 +28,7 @@ The repository describes itself as an implementation of Flipsky FTESC UART V1.4 
 | Extended frame | Not implemented in this small driver | `0xBB` + 16-bit BE length | V1.7 adds capability |
 | Telemetry base DATA | 28 bytes | 28-byte base layout | Match |
 | Base telemetry fields | ID, error, voltage, currents, eRPM, duty, temperatures, CPU, encoder angle | Same field order/scales | Match |
-| CAN wrapper | CMD `0x10`, CAN ID, nested command/data | V1.7 has CAN-forward state and command paths; exact wrapping is still being traced | Partial |
+| CAN wrapper | CMD `0x10`, CAN ID, nested command/data | V1.7 has CAN-forward state and command paths; offline envelope builder/response parser added, native insertion point still unresolved | Protocol codec match; V1.7 path partial |
 | Keepalive | CMD `0x19`, claimed ≤500 ms | V1.7 API/response maps contain CMD `0x19` | Command match; scheduling not yet confirmed |
 | Speed command | CMD `0x27`, signed 32-bit BE eRPM | V1.7 request method emits CMD `0x27`, signed 32-bit BE | Match |
 
