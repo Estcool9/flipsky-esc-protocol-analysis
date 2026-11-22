@@ -76,3 +76,10 @@ Only the V1.7 executable is currently staged in /data/samples on REA. The V1.6 b
 4. Trace BLE-specific framing separately; do not assume BLE sends the same raw bytes as UART.
 5. Compare the latest V1.6 Windows build with V1.7 after the V1.6 binary is staged locally.
 6. Keep hardware interaction out of scope until payload meanings and safety conditions are understood.
+
+
+## Newly mapped Qt API names
+
+The V1.7 Qt string/meta-object region also exposes high-level API names for the control methods, automatic telemetry, CAN ID lookup/identification and firmware update. See [V1_7_QT_API_STRING_MAP.md](V1_7_QT_API_STRING_MAP.md) for the complete list and confidence labels.
+
+The names are now known; the native caller paths, payload layouts and numeric command bytes still need to be traced.
