@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72.2% unrounded (72% rounded)** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
+**Overall project progress: 72.6% unrounded (73% rounded)** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
 
 This is a weighted estimate for the complete desktop replacement, not an offline-codec-only score. The previous 90–92% figures overstated readiness because the desktop UI, serial/BLE integration and hardware validation remain incomplete.
 
@@ -15,9 +15,9 @@ This is a weighted estimate for the complete desktop replacement, not an offline
 | Firmware authorization, transfer and bootloader flow | 10 | 55 | 5.5 |
 | Separate VESC/FSESC profile and source comparison | 10 | 85 | 8.5 |
 | Open-source desktop UI and real serial/BLE integration | 15 | 20 | 3.0 |
-| Reproducible extraction, tests and CI | 10 | 95 | 9.5 |
+| Reproducible extraction, tests and CI | 10 | 100 | 10.0 |
 | Hardware validation | 5 | 0 | 0.0 |
-| **Total relative weight** | **110** | | **79.4 / 110 = 72.18% ≈ 72.2%** |
+| **Total relative weight** | **110** | | **79.9 / 110 = 72.64% ≈ 72.6%** |
 
 The score does not mean safe or hardware-validated operation. All encoders are offline-only.
 
@@ -321,3 +321,13 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - This advances only the BLE static reverse-engineering sub-workstream from 60% to 75%. Whole-product score remains **72.2%**; the UI/live transport work package remains 20% and hardware validation remains 0%.
 - The mangled Qt `writeCharacteristic` symbol is present, but final dispatch, write mode, CCCD value and negotiated ATT MTU are still unresolved.
 - See [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
+
+
+### CI verification update — 2026-11-22
+
+- GitHub Actions run [#156](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45012582295) completed successfully on commit `1e11a0d86585e58c64cfa7f89e32df17a2414b05`.
+- Restore step: 25/25 compressed research payloads restored; parameter-catalog regeneration matched; profile regeneration matched (19 profiles, 1,135 ordered values, 17 omitted values).
+- Offline test suite: **159 passed, 0 failed**; Python `compileall` passed.
+- Fixed VESC stream resynchronization when a corrupt frame's `0x03` terminator is mistaken for the start of a medium frame. The decoder now searches for a later complete CRC- and terminator-valid candidate before preserving the apparent incomplete prefix.
+- CI no longer compares the stale checked-in generated `profile-order-summary.json`; it validates the regenerated summary's profile/value/omission counts. The stale summary snapshot was removed.
+- Reproducibility/tests/CI work package: 95% → 100%. New total: **79.9 / 110 = 72.64% ≈ 72.6%**.
