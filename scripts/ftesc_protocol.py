@@ -12,6 +12,7 @@ import math
 
 class CommandId(IntEnum):
     OBTAIN_DATA_ONCE = 0x00
+    OBTAIN_ID_OVER_CAN = 0x01
     CONTROL_AND_OBTAIN_DATA_ONCE = 0x02
     PAS_GEAR_CONTROL_AND_OBTAIN_DATA_ONCE = 0x02  # same ID; firmware mode selects meaning
     SET_DUTY = 0x03
@@ -238,8 +239,8 @@ def parse_motor_telemetry_02_or_20(
 def parse_all_esc_ids(info: bytes | bytearray | memoryview) -> tuple[int, tuple[int, ...]]:
     """Parse CMD 1EH response: master ESC ID followed by zero or more slave IDs."""
     message = parse_info(info)
-    if message.command != CommandId.OBTAIN_ALL_ESC_IDS:
-        raise ValueError(f"expected CMD 0x1E, got 0x{message.command:02X}")
+    if message.command not in (CommandId.OBTAIN_ID_OVER_CAN, CommandId.OBTAIN_ALL_ESC_IDS):
+        raise ValueError(f"expected CMD 0x01 or 0x1E, got 0x{message.command:02X}")
     if not message.data:
         raise ValueError("CMD 0x1E response must include the master ESC ID")
     return message.data[0], tuple(message.data[1:])
