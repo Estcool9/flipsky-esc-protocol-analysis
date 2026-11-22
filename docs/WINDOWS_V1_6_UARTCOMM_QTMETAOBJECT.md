@@ -199,3 +199,8 @@ The response dispatcher has separate CMD `0x09` and `0x0A` paths. CMD09 validate
 ## 10. Numeric response reader reference
 
 The shared one-/two-/four-byte readers and their signed S16/S32 scale wrappers are mapped in [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md). This documents how the UartComm response branches obtain big-endian primitive values and where signedness is applied.
+
+
+## 11. CMD1C profile-read result handling
+
+The CMD1C response path is described in [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md): it validates both profile markers, checks exact combined block length via `FUN_00497800`, and reports secret-key/profile status 0 or -1. The offline response model now exposes the native -1 failure status for marker/length mismatches.

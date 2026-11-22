@@ -174,3 +174,18 @@ The V1.6 Windows handler builds a QVector-like byte list for command `0x01`, but
 ## 11. V1.6 numeric readers and text-length parity
 
 The native reader family and the PPM/ADC/IMU response scaling are documented in [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md). In short, multibyte primitives are big-endian; signedness is selected by the typed caller/wrapper. CMD14 scans its byte array to the first NUL before creating the terminal string, while CMD24 forwards the complete QByteArray. The offline `parse_text_response()` now matches this length distinction.
+
+
+## 12. CMD1C combined profile status and length equation
+
+The CMD1C branch is now reconstructed beyond the two marker names:
+
+1. If the first profile object is configured, validate `0xD2C6EF10` and traverse that profile's ValueSeque through `FUN_0049ab10`.
+2. If the second profile object is configured, validate `0x4879187D` and traverse its ValueSeque through the same helper.
+3. When both configured blocks have been accepted, retrieve each decoded QByteArray length through `FUN_00497800`. The helper simply returns the stored length field at object offset `+0x0C`.
+4. The dispatcher requires `decoded_block_1_size + decoded_block_2_size == INFO_length - 9`. The 9 bytes are the one-byte command and two four-byte markers; the remaining INFO DATA must be exactly the two serialized ValueSeque blocks.
+5. On valid markers and length, it emits secret-key status 0 and the motor-signal read success notification. On a marker failure or length mismatch it emits secret-key status -1.
+
+The offline `parse_motor_signal_setup_response()` now models this native result: it returns status -1 for a marker mismatch or extra/unaccounted DATA, and keeps the first decoded block if the second marker fails. Metadata/type/truncation errors remain exceptions so they are not silently relabelled as authentication failures.
+
+The three new CMD1C failure-state tests are part of GitHub Actions run #298 (177 passed, 0 failed).

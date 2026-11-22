@@ -848,3 +848,14 @@
 - Detailed report created: `docs/WINDOWS_V1_6_NUMERIC_READERS.md`; linked from README, STATUS and UartComm/response reports.
 - CI run #295 (`45055846796`, commit `0d20a0eb95bffc42f94563ebcaf0df0f832364fb`) passed **174 tests, 0 failures**. CMD14 NUL termination and signed IMU tests passed; artifact restoration, catalog/profile generation and `python -m compileall -q scripts tests` also passed. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45055846796
 - V1.6 comparison sub-workstream moves **78% → 82%**. The whole-product weighted estimate remains **72.6% (79.9 / 110)** because no GUI/live transport or hardware milestone was completed.
+
+
+## 2026-11-22 — V1.6 CMD1C combined profile validation completed
+
+- Inspected `FUN_00497800`: a four-byte accessor that returns the QByteArray-like object's stored size at offset `+0x0C`; it is not a stream reader.
+- Re-read the `case 0x1C` pseudocode in `FUN_004948d0`. The handler validates marker `0xD2C6EF10` and marker `0x4879187D` against the configured profiles and invokes the same metadata-driven `FUN_0049ab10` / `FUN_0049a5c0` value decoders as CMD09/CMD0A.
+- When both blocks validate, it checks `size(first decoded block) + size(second decoded block) == INFO_length - 9`. The constant 9 is the one-byte command plus the two four-byte marker headers; this is an exact-consumption check, not an extra status field.
+- Native failure path reports `secret_key_status = -1` when a marker check fails or the total-length comparison fails. The offline `parse_motor_signal_setup_response()` now mirrors this structured failure result, preserving block 1 when block 2 has the wrong marker; unrelated truncation/type/metadata errors remain exceptions.
+- Added three tests: wrong first marker; wrong second marker with first-block preservation; and trailing-data/length mismatch.
+- GitHub Actions run #298 (`45056404675`, head `11f84a486cb468dd0e68ae9d46d9d4b687e84d07`) passed **177 tests, 0 failures**. All three CMD1C regressions pass; artifact restore, catalog/profile rebuild and Python compileall pass. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056404675
+- V1.6 static comparison sub-workstream advances **82% → 84%**. Weighted whole-product progress remains **72.6% (79.9 / 110)**.

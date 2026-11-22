@@ -315,3 +315,15 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Continue firmware ACK/retry/timeout and protected MCU-encryption call-path reconstruction.
 - Detailed report: [WINDOWS_V1_6_NUMERIC_READERS.md](WINDOWS_V1_6_NUMERIC_READERS.md).
 - V1.6 comparison sub-workstream: 78% → 82%; whole-product weighted score remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 CMD1C combined motor/setup response status
+
+- [x] Confirm `FUN_00497800` returns a decoded QByteArray length, not a data-stream field.
+- [x] Recover CMD1C's two marker checks and the exact length equation: first-block length + second-block length = INFO length − 9.
+- [x] Match native failure signaling (`secret_key_status=-1`) for a wrong marker or inconsistent total length.
+- [x] Update the offline decoder to preserve the first valid block when the second marker fails.
+- [x] Verify 3 new regressions in GitHub Actions #298: **177 tests passed, 0 failed**.
+- [ ] Continue response-payload semantics for CMD01, CMD0D/0E field names, CMD0F and CMD29; continue the firmware ACK/retry/timeout chain.
+- Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
+- V1.6 comparison sub-workstream: 82% → 84%; overall project progress remains **72.6%**.
