@@ -256,3 +256,18 @@
 - The third-party README's claims of FT85BD hardware testing and V1.4 compatibility are attributed to that project's author, not independently verified here.
 - Overall estimate updated from **68% to 70%**. V1.7 telemetry extension decoder and independent short-frame cross-check are now implemented; extended-frame cross-model coverage, CAN, command schemas, firmware update and hardware remain open.
 - No ESC was connected and no bytes were transmitted to hardware.
+
+
+## 2026-11-22 — V1.7 CAN target selection state traced
+
+- Mapped UartComm CAN-forward state: byte at object +0x0C and selected target ID at +0x10.
+- Decoded setter `FUN_004954D0(enable,target)` and accessors `FUN_00495510` / `FUN_00495520`.
+- UI target selection at `0x0048CE90` validates IDs below 255, sets target state and requests motor-signal setup via CMD 0x1C.
+- Target-change path at `0x0048D740` updates state and repeats the setup read when the selected target changes.
+- UI maintenance at `0x004890C0` clears CAN state and calls `0x004992F0`; that method builds CMD 0x01, sets a pending counter to 200 and sends it.
+- Multi-target iteration at `0x00493B80` temporarily selects candidate IDs, requests CMD 0x1C setup data, then restores previous target state.
+- TopFlow read at `0x004972F0` sends CMD 0x3B and uses a separate pending counter.
+- `FUN_00495910` logs CAN flag/ID and payload but its body does not rewrite the payload. The exact point where CMD 0x10 + target ID wrapping is inserted remains unresolved.
+- Added [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
+- Overall estimate updated from **70% to 71%**. CAN target UI/state is now mapped to 40%; wire envelope and slave response routing remain open.
+- No CAN/UART traffic was transmitted.
