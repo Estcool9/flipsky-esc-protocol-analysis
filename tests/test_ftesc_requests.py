@@ -6,7 +6,9 @@ from scripts.ftesc_requests import (
     TOPFLOW_SETUP_MARKER,
     build_auto_realtime_info,
     build_can_forward_info,
-    build_control_and_obtain_data_once_info,
+    build_v14_control_and_obtain_data_once_info,
+    build_v16_control_and_obtain_data_once_info,
+    build_v16_pas_gear_control_info,
     build_current_gear_and_obtain_data_info,
     build_control_brake_current_info,
     build_control_current_info,
@@ -106,7 +108,7 @@ class V14CompatibilityRequestBuilderTests(unittest.TestCase):
         )
 
     def test_control_and_obtain_data_once_14_byte_payload(self):
-        info = build_control_and_obtain_data_once_info(
+        info = build_v14_control_and_obtain_data_once_info(
             512,
             direction_switch_enabled=True,
             rotation_direction=False,
@@ -136,8 +138,24 @@ class V14CompatibilityRequestBuilderTests(unittest.TestCase):
 
     def test_v14_control_ranges(self):
         with self.assertRaises(SetupValueError):
-            build_control_and_obtain_data_once_info(1024)
+            build_v14_control_and_obtain_data_once_info(1024)
         with self.assertRaises(SetupValueError):
-            build_control_and_obtain_data_once_info(100, gear=5)
+            build_v14_control_and_obtain_data_once_info(100, gear=5)
         with self.assertRaises(SetupValueError):
-            build_control_and_obtain_data_once_info(100, multi_mode=3)
+            build_v14_control_and_obtain_data_once_info(100, multi_mode=3)
+
+
+
+class V16CompatibilityRequestBuilderTests(unittest.TestCase):
+    def test_v16_cmd02_reserved_bytes_precede_current_code(self):
+        info = build_v16_control_and_obtain_data_once_info(512, gear=2)
+        self.assertEqual(
+            info,
+            bytes.fromhex("02 00 00 02 00 00 00 02 00 00 00 00 00 00 00"),
+        )
+        self.assertEqual(len(info) - 1, 14)
+
+    def test_v16_pas_alias_sets_d0_and_zeroes_ignored_tail(self):
+        info = build_v16_pas_gear_control_info(3)
+        self.assertEqual(info[0], 0x02)
+        self.assertEqual(info[1:], bytes((3,)) + bytes(13))
