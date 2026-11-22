@@ -271,3 +271,17 @@
 - Added [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
 - Overall estimate updated from **70% to 71%**. CAN target UI/state is now mapped to 40%; wire envelope and slave response routing remain open.
 - No CAN/UART traffic was transmitted.
+
+
+## 2026-11-22 — Official FTESC CAN V1.4 protocol and offline telemetry decoder
+
+- Read the user's Nextcloud copy of `FLIPSKY FTESC CAN Protocol V1.4 English.pdf`, document FT-CM-CAN-20250423-04, 22 pages, issue date 2025-04-23.
+- Extracted direct CAN format: 29-bit extended identifiers, ESC ID in bits 8–15, command in bits 0–7, fixed/reserved prefix, big-endian data.
+- Recorded CAN command namespace separately from UART INFO commands; direct CAN 0x00 means current-with-gear, while UART 0x00 is telemetry.
+- Extracted CRC-bearing command ranges and no-CRC command family; periodic telemetry 0x0B, 0x0C and 0x0D are documented as automatically emitted every 10 ms.
+- Added `scripts/ftesc_can.py`: identifier decoder/encoder, generic frame parser, CRC validation, signed I24 decoding and read-only telemetry decoders for current, eRPM/duty, temperature and voltage.
+- Added `tests/test_ftesc_can.py`: 9 tests covering identifier bits, invalid prefix/width, signed current, eRPM, duty, temperature, voltage, bad CRC and malformed length.
+- Added [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md); clarified the direct CAN layer in [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
+- Fresh public GitHub clone: **60 tests passed, 0 failed**; `compileall` succeeded.
+- Overall estimate updated from **71% to 73%**. Direct CAN V1.4 telemetry decoder is complete for the three periodic messages; V1.7 UART CMD 0x10 wrapper and slave response routing remain 40%.
+- No CAN interface opened and no frames transmitted.
