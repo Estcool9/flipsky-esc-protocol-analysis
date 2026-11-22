@@ -27,6 +27,8 @@ def _text_map(element: ET.Element) -> dict[str, str]:
 
 def classify_family(values: dict[str, dict[str, str]]) -> str:
     names = {fields.get("valName", "") for fields in values.values()}
+    if "Encoder Zero Position(rad)" in names or "Encoder Direction Sign" in names:
+        return "encoder_setup"
     if "FOC Current Kp" in names:
         return "motor_signal_setup"
     if "Motor Current(A)" in names:
