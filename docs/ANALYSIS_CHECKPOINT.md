@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 78%**  
+**Overall estimated progress: 79%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -264,3 +264,11 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Updated family classifier and compressed order artifacts.
 - Fresh clone: **80 tests passed, 0 failed**.
 - Overall estimate: **78%**.
+
+
+## Firmware config version selection — 2026-11-22
+
+- `FUN_00492570` is called by `FUN_0047F530` and `FUN_0048E570`, both with parameters `(1,7)`.
+- This matches `ftesc/1.7` and resolves the selector as firmware major/minor.
+- Hardware/SKU mapping of the 13 ValueSetups resources remains open.
+- Overall estimate: **79%**.
