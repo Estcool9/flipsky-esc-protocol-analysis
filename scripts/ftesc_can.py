@@ -155,8 +155,13 @@ CAN_SET_CURRENT_PERCENT_GEAR = 0x16
 CAN_SET_DUTY_GEAR = 0x17
 CAN_SET_ERPM_GEAR = 0x18
 CAN_SET_POSITION_GEAR = 0x19
-CAN_SET_BRAKE_CURRENT = 0x1A
-CAN_SET_BRAKE_CURRENT_PERCENT = 0x1B
+# The V1.4 PDF is inconsistent for the two no-CRC brake commands:
+# enum values are decimal 26/27 (0x1A/0x1B), while section titles say 20H/21H
+# (0x20/0x21). Encoders require an explicit chosen command ID.
+CAN_SET_BRAKE_CURRENT_ENUM_ID = 0x1A
+CAN_SET_BRAKE_CURRENT_SECTION_ID = 0x20
+CAN_SET_BRAKE_CURRENT_PERCENT_ENUM_ID = 0x1B
+CAN_SET_BRAKE_CURRENT_PERCENT_SECTION_ID = 0x21
 
 
 def _can_i32(value: int) -> bytes:
@@ -303,17 +308,27 @@ def build_can_position_gear(
     )
 
 
-def build_can_brake_current(esc_id: int, current: int | float) -> CanFrame:
+def build_can_brake_current(
+    esc_id: int, current: int | float, *, command_id: int
+) -> CanFrame:
+    """Encode brake current; caller must select one of the two PDF variants."""
+    if command_id not in (CAN_SET_BRAKE_CURRENT_ENUM_ID, CAN_SET_BRAKE_CURRENT_SECTION_ID):
+        raise ValueError("brake current command_id must match an explicit V1.4 PDF variant")
     return _build_plain_can_frame(
-        esc_id, CAN_SET_BRAKE_CURRENT,
-        _can_scaled_i32(current, 100_000, "brake current"),
+        esc_id, command_id, _can_scaled_i32(current, 100_000, "brake current")
     )
 
 
 def build_can_brake_current_percent(
-    esc_id: int, percent: int | float
+    esc_id: int, percent: int | float, *, command_id: int
 ) -> CanFrame:
+    """Encode brake-current percentage; caller must select a documented variant."""
+    if command_id not in (
+        CAN_SET_BRAKE_CURRENT_PERCENT_ENUM_ID,
+        CAN_SET_BRAKE_CURRENT_PERCENT_SECTION_ID,
+    ):
+        raise ValueError("brake-current-percent command_id must match an explicit V1.4 PDF variant")
     return _build_plain_can_frame(
-        esc_id, CAN_SET_BRAKE_CURRENT_PERCENT,
+        esc_id, command_id,
         _can_scaled_i32(percent, 100_000, "brake current percent"),
     )
