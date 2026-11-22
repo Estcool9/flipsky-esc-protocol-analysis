@@ -25,6 +25,17 @@ def _text_map(element: ET.Element) -> dict[str, str]:
     return {child.tag: (child.text or "").strip() for child in element}
 
 
+def classify_family(values: dict[str, dict[str, str]]) -> str:
+    names = {fields.get("valName", "") for fields in values.values()}
+    if "Input Signal Type" in names or "Throttle Response Level" in names:
+        return "control_setup"
+    if "Motor Current(A)" in names:
+        return "motor_setup"
+    if "FOC Current Kp" in names:
+        return "motor_signal_setup"
+    return "unknown"
+
+
 def parse_profile(path: Path) -> dict[str, Any]:
     raw = path.read_bytes()
     root = ET.fromstring(raw)
@@ -63,6 +74,7 @@ def parse_profile(path: Path) -> dict[str, Any]:
 
     return {
         "profile_file": path.name,
+        "family": classify_family(values),
         "source_sha256": hashlib.sha256(raw).hexdigest(),
         "value_count": len(values),
         "sequence_count": len(sequence),
@@ -97,7 +109,7 @@ def write_profile_catalog(profiles: list[dict[str, Any]], out_dir: Path) -> None
                 })
     summary = [
         {key: profile[key] for key in (
-            "profile_file", "source_sha256", "value_count", "sequence_count", "omitted_count"
+            "profile_file", "family", "source_sha256", "value_count", "sequence_count", "omitted_count"
         )}
         for profile in profiles
     ]
