@@ -13,7 +13,8 @@
 - [x] Trace the normal UartComm transmit path end-to-end and document the scoped CMD 0x10 negative finding.
 - [x] Add a generic bounded Zlib/XML resource scanner and regression tests.
 - [ ] Finish QML resource tree and all remaining UI/property dynamic behaviour.
-- [ ] Obtain and compare the staged V1.6 Windows executable with V1.7.
+- [x] Inventory the complete Nextcloud Software tree and identify three dated V1.6 Windows builds plus Android BLE and macOS V1.6 packages.
+- [ ] Stage and compare the V1.6 Windows executables with V1.7 (the Nextcloud binaries are not yet on the REA host).
 
 ## Phase B — FTESC protocol reconstruction
 
@@ -96,6 +97,7 @@
 - [x] Add [RE_WORKFLOW.md](RE_WORKFLOW.md) covering intake, triage, Ghidra/Rizin, Qt metadata, bounded extraction, evidence discipline, tests and GitHub hygiene.
 - [x] Add a generic compressed XML scanner for future Qt/resource-heavy programs.
 - [ ] Add a reusable blank project-template generator for artifact inventory, evidence ledger and checkpoint files.
+- [x] Add [NEXTCLOUD_SOFTWARE_INVENTORY.md](NEXTCLOUD_SOFTWARE_INVENTORY.md) and [TOOLING_AUDIT.md](TOOLING_AUDIT.md) for source/tool tracking.
 
 ## Current blockers
 
@@ -105,7 +107,7 @@
 4. **Desktop application:** no serial/BLE UI or device integration has been implemented yet.
 5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, MTU/chunking, retransmission and live behavior remain unknown.
 6. **Hardware:** no live controller validation has occurred.
-7. **V1.6 binary comparison:** binaries are inventoried in Nextcloud but not staged in the REA sample directory.
+7. **V1.6 binary comparison / Android BLE cross-check:** the V1.6 EXEs and BLE APK are inventoried in Nextcloud but not staged in the REA sample directory.
 
 ## Safety boundary
 
