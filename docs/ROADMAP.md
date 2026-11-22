@@ -283,3 +283,12 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Complete typed field names/units for the remaining PPM/ADC/IMU/motor-identification response APIs.
 - Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
 - V1.6 comparison sub-workstream: 65% → 70%; overall weighted project progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 CMD1E ESC ID enumeration
+
+- [x] Correlate the Windows response vector to the official V1.6 CMD1E definition (master ID first, then slave IDs).
+- [x] Add an offline decoder with raw-vector preservation and tests for master/slave split and empty responses.
+- [ ] Resolve the undocumented Windows CMD01 ID-vector semantics and the secondary Qt success boolean.
+- Detailed report: [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md).
+- V1.6 comparison sub-workstream: 70% → 75%; overall weighted progress remains **72.6%**.
