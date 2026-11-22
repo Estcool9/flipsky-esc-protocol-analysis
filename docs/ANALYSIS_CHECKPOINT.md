@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 89%**  
+**Overall estimated progress: 90%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -350,3 +350,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added `parse_firmware_version_response()`, `parse_motor_identify_response()`, `parse_text_response()`.
 - Fresh clone: **107 tests passed, 0 failed**.
 - Overall estimate: **89%**.
+
+
+## Setup response signal mapping — 2026-11-22
+
+- Qt signal indexes 7/8/9/10 mapped to motor read, motor key status, TopFlow read and TopFlow key status.
+- CMD 0x1C validates both markers and length; CMD 0x3B/3C validates TopFlow marker and length.
+- Added high-level decoders and no-DATA setup ACK validator.
+- Fresh clone: **110 tests passed, 0 failed**.
+- Overall estimate: **90%**.
