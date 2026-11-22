@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 87%**  
+**Overall estimated progress: 88%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -330,3 +330,13 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
 - Fresh clone: **104 tests passed, 0 failed**.
 - Overall estimate: **87%**.
+
+
+## CI and external cross-checks — 2026-11-22
+
+- Added GitHub Actions workflow for payload restoration, catalog/profile regeneration, byte-for-byte comparison, unit tests and compileall.
+- Refreshed catalog payloads after detecting whitespace normalization drift.
+- REA workflow-equivalent verification: all comparisons passed, **104 tests passed**, compileall passed.
+- Repo verified public, main branch, admin/push access.
+- Official FTESC Gateway page confirms USB passthrough via CAN ID; official V1.6 update guide confirms separate master/slave USB flashing procedure.
+- Overall estimate: **88%**.
