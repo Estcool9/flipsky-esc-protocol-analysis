@@ -19,6 +19,30 @@ class ImuCalibrationResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class TextResponse:
+    command: int
+    raw: bytes
+    text: str
+
+
+@dataclass(frozen=True, slots=True)
+class MotorIdentifyResponse:
+    label_raw: bytes
+    label: str
+    success: bool
+
+
+@dataclass(frozen=True, slots=True)
+class FirmwareVersionResponse:
+    major: int
+    minor: int
+    firmware_type: int
+    label_raw: bytes
+    label: str
+    suffix_byte: int
+
+
+@dataclass(frozen=True, slots=True)
 class BooleanAck:
     command: int
     success: bool
@@ -110,3 +134,63 @@ def parse_uuid_response(info: bytes | bytearray | memoryview) -> bytes:
     if message.command != 0x21:
         raise ValueError(f"expected CMD 0x21, got 0x{message.command:02X}")
     return bytes(message.data)
+
+
+def parse_text_response(
+    info: bytes | bytearray | memoryview, expected_command: int
+) -> TextResponse:
+    """Decode UTF-8 text responses CMD 0x14 (terminal) and CMD 0x24 (samples)."""
+    if expected_command not in (0x14, 0x24):
+        raise ValueError("text responses are supported for CMD 0x14 and 0x24")
+    message = parse_info(info)
+    if message.command != expected_command:
+        raise ValueError(
+            f"expected CMD 0x{expected_command:02X}, got 0x{message.command:02X}"
+        )
+    raw = bytes(message.data)
+    return TextResponse(command=message.command, raw=raw, text=raw.decode("utf-8", errors="replace"))
+
+
+def parse_motor_identify_response(
+    info: bytes | bytearray | memoryview,
+) -> MotorIdentifyResponse:
+    """Decode CMD 0x0F QString plus trailing boolean response."""
+    message = parse_info(info)
+    if message.command != 0x0F:
+        raise ValueError(f"expected CMD 0x0F, got 0x{message.command:02X}")
+    if not message.data:
+        raise ValueError("CMD 0x0F response requires a trailing status byte")
+    raw = bytes(message.data[:-1])
+    return MotorIdentifyResponse(
+        label_raw=raw,
+        label=raw.decode("utf-8", errors="replace"),
+        success=message.data[-1] != 0,
+    )
+
+
+def parse_firmware_version_response(
+    info: bytes | bytearray | memoryview,
+) -> FirmwareVersionResponse:
+    """Decode CMD 0x11 version tuple, UTF-8 label bytes and trailing type byte.
+
+    The native parser reads three leading bytes, converts the following
+    QByteArray to QString, then reads one trailing byte. The label bytes are
+    preserved as raw data because the exact vendor string convention is not
+    yet independently validated against a live response.
+    """
+    message = parse_info(info)
+    if message.command != 0x11:
+        raise ValueError(f"expected CMD 0x11, got 0x{message.command:02X}")
+    if len(message.data) < 4:
+        raise ValueError("CMD 0x11 response requires three header bytes and one suffix byte")
+    major, minor, firmware_type = message.data[:3]
+    label_raw = bytes(message.data[3:-1])
+    suffix = message.data[-1]
+    return FirmwareVersionResponse(
+        major=major,
+        minor=minor,
+        firmware_type=firmware_type,
+        label_raw=label_raw,
+        label=label_raw.decode("utf-8", errors="replace"),
+        suffix_byte=suffix,
+    )
