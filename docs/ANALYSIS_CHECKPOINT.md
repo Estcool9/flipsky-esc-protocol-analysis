@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 68%**  
+**Overall estimated progress: 70%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -180,3 +180,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Qt Bluetooth imports include `QLowEnergyService::writeCharacteristic`; characteristic UUIDs/write mode not yet mapped.
 - See [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
 - Overall estimate: **68%**.
+
+
+## Independent frame and telemetry cross-check — 2026-11-22
+
+- Inspected third-party `adamivie/flipsky-ft85bd` pinned commit `49989ac0cde531a68799284d1de9efdd7ba14c7f`. It is a community implementation, not Flipsky source.
+- Short frame and CRC independently agree; exact example `AA 01 11 4C 7F DD` reproduced by our codec.
+- Standard CRC vector `123456789` → `0x4B37`.
+- Added `parse_realtime_data_00_v17_extension`: 3 signed 32-bit micro-radian values converted to degrees, plus signed 32-bit PAS RPM.
+- Added [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md).
+- Fresh clone test suite: **51 passed, 0 failed**; compileall succeeded.
+- Overall estimate: **70%**.
