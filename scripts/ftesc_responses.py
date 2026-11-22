@@ -29,6 +29,14 @@ class CanForwardResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class EscIdEnumerationResponse:
+    """CMD 0x1E: first DATA byte is master ID, remaining bytes are slave IDs."""
+    master_id: int | None
+    slave_ids: tuple[int, ...]
+    raw_ids: bytes
+
+
+@dataclass(frozen=True, slots=True)
 class MotorSignalSetupResponse:
     first_block: DecodedSetupBlock
     second_block: DecodedSetupBlock
@@ -361,6 +369,28 @@ def parse_topflow_setup_response(
     if block.next_offset != len(message.data):
         raise SetupValueError("TopFlow response has unexpected trailing DATA")
     return TopFlowSetupResponse(block=block, secret_key_status=0, success=True)
+
+
+def parse_esc_id_enumeration_response(
+    info: bytes | bytearray | memoryview,
+) -> EscIdEnumerationResponse:
+    """Decode official V1.6 CMD 0x1E: D0 master ID, D1.. slaves.
+
+    The native Qt signal has an additional boolean argument whose exact
+    meaning is not established here, so this decoder preserves only the
+    documented ID vector and does not infer a success flag.
+    """
+    message = parse_info(info)
+    if message.command != 0x1E:
+        raise ValueError(f"expected CMD 0x1E, got 0x{message.command:02X}")
+    raw = bytes(message.data)
+    if not raw:
+        return EscIdEnumerationResponse(master_id=None, slave_ids=(), raw_ids=raw)
+    return EscIdEnumerationResponse(
+        master_id=raw[0],
+        slave_ids=tuple(raw[1:]),
+        raw_ids=raw,
+    )
 
 
 def parse_can_forward_response(
