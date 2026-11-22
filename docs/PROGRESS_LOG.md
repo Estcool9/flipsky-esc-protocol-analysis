@@ -118,3 +118,25 @@
 3. Correlate response command IDs with acknowledgement handlers.
 4. Continue CAN-forwarding and firmware-update call graphs.
 5. Compare V1.6 Windows executable(s) against V1.7 once staged locally.
+
+
+## 2026-11-22 — Qt meta-call dispatch and first V1.7 response command map
+
+- Decoded the Qt 5 revision-8 meta-object data at `0x00F20D60`: 64 method entries, method-table offset 14 words; decoded each string index from the `QByteArrayData` table at `0x00F215C0`.
+- Decompiled static meta-call dispatcher `0x004B98D0` and mapped all 64 indexes to names and native dispatch targets. The first 12 are signal activation cases; slots 12–24 include serial receive, timer, UART send/receive, firmware-version callback, TEA methods and BLE receive/disconnect.
+- Added [QT_METACALL_DISPATCH_MAP.md](QT_METACALL_DISPATCH_MAP.md).
+- Resolved the TEA methods: index 19 `tea_encrypt` → `0x00481B30`, a 32-round TEA block transform; index 20 `encrypt` → `0x00481BC0`, zero-padding to an 8-byte boundary and encrypting each block.
+- Confirmed that `firmwareUpdatePro` at `0x00486570` calls the buffer encryption wrapper at `0x00486C1F`. This proves TEA is used by the firmware-update path, not that ordinary UART telemetry/control packets are encrypted. No key material was copied to GitHub.
+- Decompiled response dispatcher `0x004997A0`; it reads the command byte through `0x0049D370` and switches across the observed response command cases.
+- Mapped `0x00` telemetry, `0x11` firmware identity, `0x1A` periodic telemetry acknowledgement and `0x1E` ESC-ID enumeration to their V1.6 semantic counterparts with high confidence.
+- The V1.7 `0x00` parser reads a 44-byte DATA response: base telemetry through encoder angle, three additional 32-bit values converted from micro-radians to degrees, and PAS RPM. This matches V1.6's 45-byte INFO auto-telemetry response; V1.6 calls the middle 12 bytes reserved, while V1.7 interprets them as angular values. Their semantic names remain unknown.
+- Added [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md), with all observed command cases and confidence labels.
+- Overall estimate updated from **50% to 54%**. The FtescLowLevelFace Qt meta-call mapping is complete; the broader outbound command builders and several custom response IDs remain open.
+- No hardware connected and no serial/BLE commands transmitted.
+
+### Next work
+1. Trace the separate high-level control API methods into their outgoing INFO payloads.
+2. Resolve setup response IDs 0x1B, 0x1C and 0x3A–0x3D, including marker `0x54464346`.
+3. Trace CAN forwarding CMD 0x10 and its nested slave response.
+4. Identify BLE framing and its relationship to the UART frame helper.
+5. Stage a V1.6 Windows executable for binary comparison.
