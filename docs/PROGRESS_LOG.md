@@ -360,3 +360,14 @@
 - The loader parses two numeric values from `FirmwareVersionInf.xml` and compares them with these parameters. They are firmware major/minor selectors, not hardware model IDs.
 - Updated [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md). The mapping of the 13 ValueSetups resource IDs to actual hardware/SKU variants remains open.
 - Overall estimate updated from **78% to 79%**; test suite remains **80 passed, 0 failed**.
+
+
+## 2026-11-22 — V1.6 C source cross-check
+
+- Read the user's `ftesc_v1.4_1.5_1.6_uart_handle.c` (12,314 bytes) through Nextcloud.
+- Confirmed the short/long UART frame markers, length encoding, CRC-16/MODBUS table algorithm, CRC high/low byte order and 0xDD terminator.
+- Confirmed V1.6 command enum including 0x00 telemetry, 0x02 control+one-shot telemetry, 0x10 CAN forwarding, 0x19 keepalive, 0x1A auto telemetry, 0x1E ID list, 0x20, 0x25, 0x26 and 0x27.
+- Confirmed the C sample sends one-shot realtime command 0x00 and parses the base telemetry layout that V1.7 extends.
+- The C enum declares CMD 0x02 and 0x10 but the sample parser implements only response 0x00 and contains no outbound builder for 0x02 or CAN wrapper. This corroborates, but does not close, the V1.7 gaps.
+- Added [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md); did not copy the source file into the public repo.
+- Overall estimate updated from **79% to 80%**; test suite remains **80 passed, 0 failed**.
