@@ -46,3 +46,8 @@ The evidence establishes that CMD 0x00 response handling emits this Qt signal an
 5. If no native path is found, record V1.7 CMD 0x02 as not exposed in this build rather than implementing an unsupported request.
 
 No command was sent to an ESC.
+
+
+## 6. Older C reference cross-check
+
+The user-provided V1.4/V1.5/V1.6 C reference defines enum value `0x02` as `UART_CONTROL_AND_OBTAIN_DATA_ONCE`, but its example response parser implements only case `0x00` and it contains no outbound CMD 0x02 builder. This corroborates the gap: the protocol command is documented, but neither this sample nor the mapped V1.7 response dispatcher establishes an actual V1.7 CMD 0x02 path. See [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
