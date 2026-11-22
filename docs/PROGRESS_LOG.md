@@ -827,3 +827,5 @@
 
 - Implémenté `parse_esc_id_enumeration_response()` pour CMD `0x1E`, sur la base du protocole officiel V1.6 : D0 = master MCU ID, D1..Dn = slave IDs. Le parser conserve `raw_ids`, accepte proprement DATA vide (master_id=None) et ne déduit pas le booléen secondaire de `ftescGetIDResAck(QVector<int>,bool)`. Tests ajoutés pour le découpage, la liste vide et l'opcode incorrect.
 - Le chemin natif CMD `0x01` construit un vecteur de bytes comparable, mais il n'est pas listé dans la table officielle V1.6; il reste documenté comme vecteur brut non interprété, sans fusion avec CMD1E.
+
+- GitHub Actions run #277 (`45052134589`, head `101332673dda445e55689b96fd72a16d57324edd`) réussi : **170 tests passed, 0 failed** ; les trois tests `test_esc_id_enumeration_response_*` passent, `python -m compileall -q scripts tests` passe, restauration des artefacts et génération du catalogue/profils ordonnés réussies. Run : https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45052134589
