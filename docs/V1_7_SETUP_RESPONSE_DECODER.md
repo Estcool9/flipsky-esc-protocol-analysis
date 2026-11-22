@@ -73,3 +73,14 @@ The decoder is generic and can decode any supported ValueSetup table once the ma
 Four tests cover all observed primitive decode types, signed bytes, marker mismatch/truncation and sequential decoding of two marker blocks. The full public clone suite now has **104 passing tests** and `compileall` succeeds.
 
 No hardware was connected and no setup response was captured.
+
+
+## 7. High-level response wrappers
+
+The response dispatcher confirms:
+- CMD 0x1B is a no-DATA status response routed to `ftescMotorSignalReadAck(QString,bool)`.
+- CMD 0x1C requires both motor/signal marker blocks, validates the total payload length, emits `ftescMotorSignalSecretKeyCheckAck(0)` on success (or -1 on failure), and emits `ftescMotorSignalReadAck(QString,bool)`.
+- CMD 0x1D, 0x3A and 0x3D are no-DATA TopFlow status responses routed to `ftescTopFlowSetupReadAck(QString,bool)`.
+- CMD 0x3B and 0x3C decode the TopFlow marker block, validate payload length, emit `ftescTopFlowSecretKeyCheckAck(0)` on success (or -1 on failure), and emit `ftescTopFlowSetupReadAck(QString,bool)`.
+
+The offline wrappers are `parse_setup_write_ack()`, `parse_motor_signal_setup_response()` and `parse_topflow_setup_response()` in `scripts/ftesc_responses.py`. The TopFlow decoder is ready for use when its XML metadata is recovered.
