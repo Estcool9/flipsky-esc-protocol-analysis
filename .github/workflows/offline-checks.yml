@@ -1,0 +1,39 @@
+name: Offline protocol analysis checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Restore compressed research artifacts
+        run: python scripts/restore_payloads.py --root .
+      - name: Rebuild parameter catalog
+        run: |
+          python scripts/build_parameter_catalog.py embedded-xml/original --out /tmp/catalog
+          cmp analysis-data/parameter-catalog.csv /tmp/catalog/parameter-catalog.csv
+          cmp analysis-data/parameter-catalog.json /tmp/catalog/parameter-catalog.json
+          cmp analysis-data/parameter-ids.json /tmp/catalog/parameter-ids.json
+      - name: Rebuild ordered setup profiles
+        run: |
+          python scripts/ftesc_profiles.py embedded-xml/original --out /tmp/profiles
+          cmp analysis-data/profile-order.csv /tmp/profiles/profile-order.csv
+          cmp analysis-data/profile-order.json /tmp/profiles/profile-order.json
+          cmp analysis-data/profile-order-summary.json /tmp/profiles/profile-order-summary.json
+      - name: Run offline tests
+        run: python -m unittest discover -s tests -v
+      - name: Compile Python sources
+        run: python -m compileall -q scripts tests
