@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 66%**  
+**Overall estimated progress: 68%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -171,3 +171,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Image validator `0x00485130` checks 0xE9 magic and structured segments; exact firmware format remains unidentified.
 - Added [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
 - Overall estimate: **66%**.
+
+
+## BLE transport — 2026-11-22
+
+- BLE receive callback feeds the same stream parser as UART.
+- BLE transmit fragments the same framed packet into 20-byte writes and waits for asynchronous completion.
+- Qt Bluetooth imports include `QLowEnergyService::writeCharacteristic`; characteristic UUIDs/write mode not yet mapped.
+- See [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
+- Overall estimate: **68%**.
