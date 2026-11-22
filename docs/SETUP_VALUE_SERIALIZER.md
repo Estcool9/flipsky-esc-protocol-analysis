@@ -58,12 +58,13 @@ Counts are across profile variants, so the same logical parameter may occur in s
 | 1 | 7 | `value_dou × evalScl`, rounded | `FUN_0049D1E0` → `FUN_0049CE50` | signed 16-bit BE |
 | 1 | 8 | `value_dou × evalScl`, rounded | `FUN_0049D150` → `FUN_0049CFB0` | signed 32-bit BE |
 | 1 | 9 | `value_dou` cast to float | `FUN_0049D270` → `FUN_0049D080` | IEEE-754 float32 BE |
-| 2 | 1 or 2 | `value_int` | `FUN_0049CE40` | one byte |
+| 2 | 1 | `value_int` | `FUN_0049CE40` | unsigned byte |
+| 2 | 2 | `value_int` | `FUN_0049CE40` | signed byte (native reader) |
 | 2 | 3 | `value_int` | `FUN_0049CF00` | unsigned 16-bit BE |
 | 2 | 4 | `value_int` | `FUN_0049CE50` | signed 16-bit BE |
 | 2 | 5 | `value_int` | `FUN_0049D080` | unsigned 32-bit BE |
 | 2 | 6 | `value_int` | `FUN_0049CFB0` | signed 32-bit BE |
-| 4, 6 or 7 | any observed | `value_int` byte | `FUN_0049CE30` | one byte |
+| 4, 6 or 7 | any observed | `value_int` byte | `FUN_0049CE30` | one byte; native reader interprets as signed byte |
 
 All multi-byte writers append most-significant byte first.
 
@@ -78,9 +79,9 @@ The XML contains no observed `valType=1,valueTET=8` records, but the native func
 ## 5. Offline implementation
 
 Added:
-- `scripts/ftesc_setup_serializer.py`: scalar encoder, marker-prefixed block builder, and `encode_profile_block()` using explicit XML sequence IDs;
+- `scripts/ftesc_setup_serializer.py`: scalar encoder, marker-prefixed block builder, `encode_profile_block()` and marker-validated `decode_profile_block()` using explicit XML sequence IDs;
 - `scripts/ftesc_profiles.py`: validates and extracts `ValueSeque` order and omitted values from each XML resource;
-- `tests/test_ftesc_setup_serializer.py`: tests for float32, scaled 16/32-bit values, integer widths, byte types, marker order, explicit profile order, unsupported types and range failures;
+- `tests/test_ftesc_setup_serializer.py`: tests for float32, scaled 16/32-bit values, signed/unsigned byte and integer widths, marker order, profile order, response decoding, unsupported types and range failures;
 - `tests/test_ftesc_profiles.py`: tests for sequence ordering, omissions, duplicate IDs and unknown IDs.
 
 The implementation is intentionally strict about numeric range and finite values. It does not connect to USB, serial, CAN or BLE and does not send data to a controller.
@@ -93,11 +94,15 @@ Across the 13 XML resources, `Values` contains 736 entries while `ValueSeque` co
 
 See [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md).
 
-## 7. Verification
+## 7. Setup response decoding
+
+The native response parser validates the 32-bit marker in `FUN_004A10C0`, then iterates the ValueSetup vector and decodes each value in `FUN_004A0B70`. `decode_profile_block()` implements the inverse type map using the same `ValueSeque` order and metadata; its `next_offset` supports the optional second CMD 0x1B block. See [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md). The setup marker is a fixed magic value and is separate from the UUID/TEA firmware authorization handshake.
+
+## 8. Verification
 
 The published GitHub tree was cloned afresh on REA, the compressed XML/catalog/profile-order artifacts were restored, and the scripts were tested:
 
-- **77 tests passed, 0 failed**;
+- **104 tests passed, 0 failed**;
 - Python `compileall` completed successfully;
 - tests include the existing frame parser, command codec, streaming decoder and new typed setup serializer.
 
