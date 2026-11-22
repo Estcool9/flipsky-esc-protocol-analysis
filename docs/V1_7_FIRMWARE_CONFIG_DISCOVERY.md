@@ -24,7 +24,7 @@ The function at `0x00492570` is a firmware-directory/configuration scanner. Its 
 - reports `Configurations not found in firmware directory` when the required tables/version metadata cannot be found;
 - separately reports `TopFlow setup configuration not found in firmware directory` when the TopFlow table is absent.
 
-The exact semantics of the two integer comparison parameters (hardware model, firmware version tuple, or another selector) have not yet been proven. They are left unnamed.
+Both call sites pass the values `(1, 7)`: startup helper `0x0047F530` and main-window constructor `0x0048E570`. These correspond to the major/minor firmware directory `ftesc/1.7`, and the loader compares the two parsed integers from `FirmwareVersionInf.xml` against those values. The selector is therefore the firmware version tuple (major=1, minor=7), not a hardware SKU.
 
 ## 3. Family classification of the 13 extracted ValueSetups resources
 
@@ -55,7 +55,7 @@ After restoring the compressed artifacts, the CSV/JSON files contain the exact o
 
 ## 5. Remaining selection work
 
-- Map the two `0x00492570` selector parameters to actual firmware/hardware identifiers.
+- Map the 13 resource IDs to named files and actual controller/SKU variants.
 - Resolve the resource IDs to the named XML files/Qt resource paths.
 - Determine how the application chooses motor, control and motor-signal tables for a connected ESC.
 - Identify the independent TopFlow table schema and its marker/data sequence.
