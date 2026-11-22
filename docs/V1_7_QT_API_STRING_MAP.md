@@ -84,3 +84,8 @@ These strings are important leads for the existing firmware-update and TEA works
 ## Response-dispatch cross-reference update
 
 The V1.7 response dispatcher is now mapped separately in [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md). High-confidence V1.6 semantic correlations are CMD 0x00 (extended telemetry), 0x11 (firmware identity), 0x1A (periodic telemetry acknowledgement) and 0x1E (ESC ID enumeration). These are response-side correlations; outbound request builders and several setup-specific IDs remain under analysis.
+
+
+## UartComm request map update
+
+The UartComm Qt meta-object (58 methods) and static dispatcher are decoded. See [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md) for the native request methods and confirmed command bytes. The high-level API strings are now tied to native implementations; the remaining unknowns are the full structured payload layouts, CAN forwarding and CMD 0x02 one-shot path.
