@@ -698,3 +698,21 @@
 - Motor official pair counts: `(4,1)=9, (1,9)=61, (2,5)=1, (1,7)=13, (2,1)=9`.
 - The Values XML child order differs from ValueSeque in both profiles. The serializer must use ValueSeque; Values order is not a substitute. This independently validates the current vector-order approach and the metadata-only omission for `motor_rated_current`.
 - Whole-product progress remains **72.6%**; setup serializer work package remains 95% pending TopFlow metadata and live protocol validation.
+
+
+## 2026-11-22 — Native ValueSeque parser, primitive codec and firmware flow decompilation
+
+- Target: Android V1.6 ARM64 app library SHA-256 7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc; source APK SHA-256 26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e.
+- Decompiled ValueSetups::configValueStreamXml at 0x002539E8. It explicitly compares ValueSeque literal 0x00296BAA, then seque child literal 0x00296BB5; reads element text at 0x00254D08 and appends to QList<QString> at ValueSetups+0x28 via PLT 0x000F9C20, GOT 0x00886458. The later Clustering branch uses a separate list at +0x30 and incValueCluster; it is not the wire-order source.
+- Native valueArralize at 0x0025324C appends the supplied U32 marker then traverses the QList by index and calls obtainValuesArray. valueDeArralize at 0x002532F8 reads/validates the marker before traversing the same QList and calling setValuesArray.
+- Mapped all native ValueByteArr primitive compose/decompose methods for I8/U8/I16/U16/I32/U32/D16/D32/DA32. Integer fields use big-endian byte order; D16 and D32 are signed scaled integers; DA32 is IEEE-754 binary32. ValueSetup metadata fields include outer type +0x00, current int +0x20, TET +0x58, scale +0x60.
+- Native rounding helper 0x24DEBC confirms nearest, ties away from zero, including negatives. Python _round_away_from_zero already matches; added regression tests for negative TET7 and TET8 halfways and negative-zero binary32, plus missing decoded type6/type7 assertions.
+- Firmware functions recovered: encrypt @ 0x233048, tea_encrypt @ 0x232F08, firmwareUpdatePro @ 0x23316C, firmwareWriteToFtesc @ 0x2310B4, eraseFirmware @ 0x230BF0, UartComm::writeMcuEncrypt @ 0x24AFE0, UartComm::ftescEraseFirmware @ 0x24A558, UartComm::ftescWriteFirmware @ 0x24A640, block helper @ 0x231628.
+- Android firmware preflight calls 32-round TEA over a 16-byte input with embedded 128-bit key material (not published), then passes it to UartComm::writeMcuEncrypt. That method creates a request with prefix/type 0x22 and sends it through uartSendDataToFtesc. It waits up to 2,000 ms for ftescMotorSignalSecretKeyCheckAck(int); ValueSecretKeyCheckedSlot sets secret-valid only for ACK integer 0. The V1.6 UI includes a distinct Invalid SecretKey failure message.
+- Separate erase path builds 0x16, waits for ftescFirmwareEraseRespenseFlag(bool) up to 20,000 ms, returns timeout -10 on expiry.
+- Separate write path builds 0x18, applies a repeating 256-byte XOR lookup transform (table values not published), chunks source to max 240 bytes and calls a block helper. Helper attempts at most 3 times; response -10 retries; exhaustion returns -20. Block response wait uses a 2,000 ms timeout and signal ftescFirmwareWriteBlockSuccessFalg(bool).
+- These are Android V1.6 static observations. Windows V1.7 UUID/TEA evidence is version-specific; no assumption is made that its key provision and wire envelope match Android V1.6.
+- Firmware static reverse-engineering substream recorded at 75%; the weighted firmware package remains 55% pending full schema, device-side acceptance, model/key mapping, integrity/recovery and hardware testing. Whole-product score unchanged at 72.6% (79.9 / 110).
+- GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed 162 tests, 0 failures; catalog/profile restore/regeneration and compileall passed. Follow-on report commit [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143) also succeeded.
+- Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
+- No APK execution, handset access, BLE/GATT, UART/CAN, ESC command, bootloader or firmware-flash operation was performed.
