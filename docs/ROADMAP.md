@@ -111,7 +111,7 @@
 4. **Desktop application:** no serial/BLE UI or device integration has been implemented yet.
 5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, negotiated ATT MTU, retries and live behavior remain unknown; the static application-level chunk stride is 20 bytes.
 6. **Hardware:** no live controller validation has occurred.
-7. **V1.6 binary comparison / Android BLE cross-check:** all four artifacts are staged and hash-verified; Android native BLE and Qt bridge are mapped, and Windows marker-level comparison is complete. Function-level diffs, QML resource decoding and app-selected GATT values remain open.
+7. **V1.6 binary comparison / Android BLE cross-check:** all four artifacts are staged and hash-verified; Android QML/FTESC/firmware resource collections are extracted; both Android ABIs prove 20-byte chunking, WriteWithoutResponse and shared parser routing. Windows marker-level comparison is complete, but function-level PE diffs and the protected Windows write edge remain open.
 
 ## Safety boundary
 
@@ -193,3 +193,10 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Resolve all remaining QML/native method bindings, full firmware image/model mapping and cryptographic/integrity scheme.
 - Android application UI/resource static sub-workstream: 0% → 80%. Whole-product weighted score remains **72.6%** (79.9 / 110).
 - Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
+
+
+## 2026-11-22 — CI confirmation after Android resource documentation
+
+- [x] GitHub Actions run #195: 159 passed, 0 failed; profile/catalog regeneration and compileall passed.
+- [x] Corrected README/STATUS/ROADMAP to distinguish the V1.6 Android embedded firmware images from the still-unresolved V1.7 firmware update image/container.
+- Overall weighted project score remains 72.6%.
