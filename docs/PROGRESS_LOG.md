@@ -716,3 +716,12 @@
 - GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed 162 tests, 0 failures; catalog/profile restore/regeneration and compileall passed. Follow-on report commit [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143) also succeeded.
 - Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
 - No APK execution, handset access, BLE/GATT, UART/CAN, ESC command, bootloader or firmware-flash operation was performed.
+
+
+## 2026-11-22 — Reprise Gateway / infrastructure helper
+
+- Vérifié via Gateway que le serveur Open Terminal `LXC-openterminal-192.168.10.53` est `ready`, Linux, compte SSH `root`, port 7845 ; l'identité SSH gérée est active et vérifiée (empreinte publique seulement).
+- Consulté les capacités hôte : Debian 13 amd64, kernel 6.14.11-4-pve, LXC, session root ; aucun changement système effectué.
+- Inventorié `/` puis `/root` en lecture seule, sans suivre les liens symboliques.
+- Lu `/root/infrastructure-helper-skill.md` (SHA-256 `fe43566ffb397cb45f7a08fb54c3742b4f98e94710087cc58119094ac439b69b`). Le helper identifie le CT REA 107 à `192.168.10.107:22`, SSH public-key only, service `rea-mcp`, MCP `:8765` réservé à MCPHub. Connexion SSH prescrite : `ssh -o BatchMode=yes -o ConnectTimeout=5 root@192.168.10.107 'hostname; systemctl is-active rea-mcp'`.
+- Prochaine action : exécuter uniquement cette vérification SSH passive, puis réutiliser REA pour analyser les fonctions existantes. Aucun binaire Flipsky, firmware ou ESC n'a été exécuté/commandé.
