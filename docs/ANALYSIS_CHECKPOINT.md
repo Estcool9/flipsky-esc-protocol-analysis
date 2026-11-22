@@ -245,3 +245,11 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added profile order extractor, profile-aware setup block encoder, compressed full CSV/JSON artifacts and summary.
 - Fresh clone restore + generation succeeded; **77 tests passed, 0 failed**.
 - Overall estimate: **77%**.
+
+
+## CMD 0x00 telemetry signal correlation — 2026-11-22
+
+- `0x004BC060` copies `FTESC_REALTIME_DATA` and emits UartComm signal index 13 `ftescGetRealtimeDataOnce(...)`.
+- The CMD 0x00 response branch calls this wrapper.
+- This signal is response-side, not a CMD 0x02 request builder.
+- CMD 0x02 remains unresolved; progress remains **77%**.
