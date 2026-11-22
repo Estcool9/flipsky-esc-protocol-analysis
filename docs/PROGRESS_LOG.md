@@ -522,3 +522,15 @@
 - Updated compressed ValueSeque catalog payloads and summary after adding the Values-vs-ValueSeque ordering flag.
 - Recalibrated the project-completion metric from earlier offline-only 90–92% figures to **72%** for the full open-source desktop replacement. The weighted scoring model is published in README/STATUS; UI, live transports and hardware validation remain incomplete.
 - No physical ESC was connected and no UART/CAN/BLE command or firmware update was transmitted.
+
+
+## 2026-11-22 — Incremental VESC UART stream decoder
+
+- Added `scripts/vesc_stream.py` with a stateful `VescStreamDecoder` and immutable statistics snapshot.
+- Parser handles fragmented and concatenated 02/03/04 frames, noise, invalid CRC/terminators, configurable INFO-size ceiling and byte-wise recovery.
+- Added 7 tests in `tests/test_vesc_stream.py` for fragmentation, concatenation, leading noise, CRC recovery, medium/long frames, oversized candidates and reset.
+- Corrected test fixtures to use actual byte values and direct imports.
+- GitHub commits: decoder `b69ff63dbe657936f50508caa3824f4163e91ca5`; initial tests `89dc55d720cb2eeea0b53c588774cfbefd3e92fa`; test-fixture correction `b07efe968b54c4692ee02f36b767805042bcddc1`.
+- Updated README, STATUS and ROADMAP. VESC/FSESC package estimate: 80% → 85%; weighted total: 71.9% → 72.4%, displayed as 72%.
+- New tests have not yet been executed; previous REA baseline is 148 passing tests. CI must confirm the new tests before counting them as verified.
+- No hardware or transport interface was used.
