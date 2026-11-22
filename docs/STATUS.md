@@ -28,8 +28,8 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - 1,152 metadata rows, 286 distinct XML IDs, 1,135 `ValueSeque` entries and 17 values omitted from transmission sequences.
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
-- Latest REA verification before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; these new tests have not yet been executed by CI in this session.
+- Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
+- Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; GitHub Actions run #225 now verifies the complete suite: **162 tests passed, 0 failed**, catalog/profile regeneration passed and `compileall` passed.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -425,3 +425,9 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - This is a marker-level comparison only; the V1.6-to-V1.7 function-level diff remains open. No codec changes or tests were warranted from string metadata alone.
 - Detailed evidence: [WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md](WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md).
 - Weighted project progress remains **72.6% (79.9 / 110)**; no desktop, live transport, firmware recovery or hardware-validation milestone was completed.
+
+
+### Latest GitHub Actions verification — run #225
+- Head commit: `68f1c61b2e2dbe8be63803c75d7dceacd68a8b95`.
+- Job `verify`: success; 162 tests passed, 0 failed; research artifact restoration, parameter catalog regeneration, ordered setup profile regeneration and Python compileall all passed.
+- Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45040895498
