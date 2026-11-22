@@ -583,3 +583,19 @@
 - BLE reverse-engineering sub-workstream rises 55% to 60%. Whole-product weighted score remains 72.2% unrounded / 72% rounded.
 - Updated README/STATUS/ROADMAP/BLE report. No transport interface or device was used.
 - Evidence: assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21; signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f; slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962; string inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
+
+
+## 2026-11-22 — BLE shared receive parser and outbound chunk queue
+
+- Rechecked the V1.7 target in REA/Ghidra 12.2; target SHA-256 remains `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- Decompiled native BLE receive callback `FUN_004828D0`, mapped as Qt `bleDataRx` index 24. It forwards the received `QByteArray` to `FUN_0049CA30`, the already recovered incremental AA/BB stream parser used by UART. BLE receive therefore shares the same application frame parser as UART.
+- Decompiled shared lower-level send slot `FUN_00481850`: when the BLE-connected predicate `FUN_00401680` is true, it routes the same framed byte array to `FUN_004050C0`.
+- Decompiled `FUN_004050C0`: it slices the buffer in successive `0x14`-byte (20-byte) chunks and feeds asynchronous queue pump `FUN_00404E80`.
+- `FUN_00404E80` dequeues one fragment, marks the sender busy, and constructs a completion callback to continue the queue. The final Qt GATT write call and write mode remain unresolved.
+- Found the mangled `QLowEnergyService::writeCharacteristic(..., WriteMode)` string in the binary, but PE import inspection is partial because descriptor RVA `0xB9F000` has ambiguous/non-contiguous mapping. Do not infer the call boundary or write mode from the symbol string alone.
+- BLE static sub-workstream: 60% → 75%. Whole-product progress remains **72.2%** (79.4 / 110 points), because no UI/live transport or hardware validation was added.
+- Verified REA Android tools: Apktool 3.0.3 at `/usr/local/bin/apktool`; ADB 34.0.5-debian at `/usr/bin/adb`. No Android device was contacted. User reports JADX 1.5.7 and Temurin JDK 25 installed; the JADX MCP JAR binding remains unverified.
+- User authorized temporary Nextcloud checkout for the V1.6 Android APK and three Windows builds. Transfer to REA is still blocked because the only registered Gateway host is a different LXC and cannot reach the REA CT 107 workspace or MCP endpoint. No source file was modified in Nextcloud.
+- Updated: [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md), [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md), STATUS, ROADMAP, README and TOOLING_AUDIT.
+- No BLE scan, pairing, BLE connection, GATT read/write, UART/CAN operation, ESC command or firmware update was performed.
+- Evidence: `ev_0b96fa9d9daca6528da735c37d6a4fa85f5cede2be619f08d07cfa494e6da22b`, `ev_0863f4b9c9cbaa26854a9389f1d2d4f01af0cd11963bc5043a68b1b315c57def`, `ev_26f4ad2230070fd6a96d3322a1e2c2fb5985d8d1c5709c228825789f669a36d1`, `ev_14bbb5c07a7e3c24e7f64e40abe36d4c543e0a8939b2ffd966061e649720f728`, `ev_64791b4adf0065ca2f544059fa314ba5862bbfd4c675fb96244f53cd84e50c5e`.
