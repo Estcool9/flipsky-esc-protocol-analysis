@@ -103,7 +103,7 @@ The ESC sends these messages automatically on the CAN bus every 10 ms, according
 | 4–5 | Battery voltage | signed 16-bit BE ÷100 V |
 | 6–7 | CRC16 | high byte, low byte |
 
-The decoder uses signed 24-bit sign extension for the current and eRPM fields. The sample C helper in the PDF assembles 24-bit values into a 32-bit integer without an obvious sign-extension step; that sample-code detail is not copied as protocol semantics.
+The decoder uses signed 24-bit sign extension for current and eRPM fields. For command 0x0D, the PDF frame table specifies three signed 16-bit values (six data bytes plus two CRC bytes), while the sample C parser appears to call a 24-bit compose helper three times. Three 24-bit values cannot fit in the documented 8-byte CAN frame with a two-byte CRC. The implementation follows the frame table and records the sample-code inconsistency.
 
 ## 5. Control-command cadence
 
@@ -112,10 +112,10 @@ The V1.4 document says control commands should be refreshed at least every 450 m
 ## 6. Offline implementation
 
 The repository now contains:
-- `scripts/ftesc_can.py`: extended-ID decode/encode helpers, generic CAN frame parser, CRC validation for the documented CRC-bearing command ranges, and read-only telemetry decoding for 0x0B, 0x0C and 0x0D;
-- `tests/test_ftesc_can.py`: tests for ID prefix, ESC ID and command extraction, signed 24-bit telemetry, scaling, CRC failure and malformed lengths.
+- `scripts/ftesc_can.py`: fixed 29-bit ID codec, generic CAN frame parser, CRC validation, read-only telemetry decoders for 0x0B/0x0C/0x0D, and offline encoders for all documented CRC and no-CRC control command families;
+- `tests/test_ftesc_can.py`: tests for ID prefix, ESC ID and command extraction, signed 24-bit telemetry, scaling, CRC failure, control command payloads and malformed lengths.
 
-The implementation does not open a CAN interface, transmit frames, or generate motor-control commands.
+The implementation does not open a CAN interface or transmit frames. The command builders only produce offline byte structures; they do not apply safety limits or select operating values. V1.4 float-to-integer scaling uses truncation toward zero to match the sample C conversion behavior.
 
 ## 7. Relationship to UART and V1.7
 
