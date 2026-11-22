@@ -158,6 +158,14 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         self.assertEqual(parse_text_response(bytes((0x14,)) + b"ready", 0x14).text, "ready")
         self.assertEqual(parse_text_response(bytes((0x24,)) + b"sample", 0x24).text, "sample")
 
+    def test_terminal_text_stops_at_native_nul_but_samples_preserve_bytes(self):
+        terminal = parse_text_response(b"\\x14ready\\x00ignored", 0x14)
+        self.assertEqual(terminal.raw, b"ready")
+        self.assertEqual(terminal.text, "ready")
+        samples = parse_text_response(b"\\x24ready\\x00tail", 0x24)
+        self.assertEqual(samples.raw, b"ready\\x00tail")
+        self.assertEqual(samples.text, "ready\\x00tail")
+
     def test_uuid_response_preserves_raw_key_bytes(self):
         uuid = bytes(range(16))
         self.assertEqual(parse_uuid_response(bytes((0x21,)) + uuid), uuid)
