@@ -59,6 +59,16 @@ def _scaled_i32(value: int | float, scale: int) -> bytes:
     return scaled.to_bytes(4, "big", signed=True)
 
 
+def _scaled_i16(value: int | float, scale: int, label: str) -> bytes:
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise SetupValueError(f"{label} must be finite")
+    scaled = _round_away_from_zero(numeric * scale)
+    if not -(1 << 15) <= scaled < (1 << 15):
+        raise SetupValueError(f"{label} does not fit signed int16")
+    return scaled.to_bytes(2, "big", signed=True)
+
+
 def _u16(value: int, label: str) -> bytes:
     if not isinstance(value, int) or not 0 <= value <= 0xFFFF:
         raise SetupValueError(f"{label} must fit unsigned 16-bit")
@@ -153,6 +163,28 @@ def build_control_position_info(value: int | float) -> bytes:
 
 def build_control_speed_info(value: int | float) -> bytes:
     return build_info(CMD_SET_SPEED, _scaled_i32(value, 1))
+
+
+def build_identify_motor_over_can_info(
+    arg1_byte: int,
+    arg2_byte: int,
+    arg3_scaled_100: int | float,
+    arg4_rounded_int16: int | float,
+    arg5_byte: int,
+) -> bytes:
+    """Build CMD 0x0F using the native argument order and field widths.
+
+    The native method serializes arg2, low byte of arg1, rounded arg4,
+    rounded arg3*100, then arg5. Semantic field names are not established.
+    """
+    data = (
+        _u8(arg2_byte, "arg2_byte")
+        + _u8(arg1_byte, "arg1_byte")
+        + _scaled_i16(arg4_rounded_int16, 1, "arg4_rounded_int16")
+        + _scaled_i16(arg3_scaled_100, 100, "arg3_scaled_100")
+        + _u8(arg5_byte, "arg5_byte")
+    )
+    return build_info(CMD_IDENTIFY_MOTOR_OVER_CAN, data)
 
 
 def build_imu_calibration_info(value: int | float) -> bytes:
