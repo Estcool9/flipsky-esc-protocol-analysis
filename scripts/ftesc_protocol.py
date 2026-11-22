@@ -247,7 +247,7 @@ def parse_all_esc_ids(info: bytes | bytearray | memoryview) -> tuple[int, tuple[
 
 
 def parse_auto_realtime_config(info: bytes | bytearray | memoryview) -> tuple[int, int, int]:
-    """Parse CMD 1AH response as (enable_marker, frequency_hz, function_address)."""
+    """Parse the V1.4/V1.6 CMD 1AH response (marker, frequency, function address).\n\n    The V1.7 desktop binary response dispatcher instead emits a no-DATA\n    acknowledgement for CMD 0x1A; use parse_auto_realtime_ack() for that\n    V1.7-native response shape.\n    """
     message = parse_info(info)
     if message.command != CommandId.SET_AUTO_OBTAIN_REALTIME_DATA:
         raise ValueError(f"expected CMD 0x1A, got 0x{message.command:02X}")
