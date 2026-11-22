@@ -41,39 +41,39 @@ The meta-object string table near \`0x00F24080\` names the helper object \`uartP
 
 The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes tentatively labelled a second component as UartComm; refine that interpretation: the framing/parser helper is the \`uartPackData\` object. Keep \`UartComm\` distinct.
 
-## Workstream progress estimates
+## Whole-product workstream estimate
 
-| Workstream | Progress |
-|---|---:|
-| Binary inventory and integrity | 100% |
-| Embedded XML extraction and validation | 100% |
-| Parameter catalog generation | 100% |
-| Qt/QML architecture and class ownership | 90% |
-| UART/Qt event and meta-object mapping | 100% |
-| Outer frame and CRC reconstruction | 100% |
-| Inner command IDs and payload layouts | 65% |
-| Firmware update / TEA relationship | 55% |
-| VESC compatibility assessment | 25% |
-| Offline frame/parser/stream tests | 100% (36 tests passing on published tree) |
-| Hardware validation | 0% |
+| Workstream | Weight | Progress |
+|---|---:|---:|
+| Binary inventory and static application mapping | 10% | 100% |
+| FTESC UART framing, parser and stream handling | 10% | 100% |
+| V1.7 request/response command coverage | 20% | 87% |
+| Setup metadata, ValueSeque ordering and typed serializer | 10% | 95% |
+| Direct CAN and V1.7 gateway/slave routing | 10% | 60% |
+| Firmware authorization, transfer and bootloader flow | 10% | 55% |
+| Separate VESC/FSESC profile and source comparison | 10% | 80% |
+| Open-source desktop UI and real serial/BLE integration | 15% | 20% |
+| Reproducible extraction, tests and CI | 10% | 95% |
+| Hardware validation | 5% | 0% |
+| **Weighted overall estimate** | **100%** | **72%** |
 
-Overall progress is a milestone-weighted estimate toward an evidenced protocol specification and offline client, not a measure of certainty or commercial-app feature completion.
+This is an estimate toward a working open-source desktop replacement, not only static protocol reconstruction. Offline codecs are substantially ahead of the desktop application and hardware validation.
 
 ## Next tasks
 
-1. Run the new offline test suite and record exact results.
-2. Trace receive buffering in \`0x0049CA30\`, including incomplete and concatenated frames.
-3. Map inner response IDs in the dispatch table inside \`0x004997A0\` to acknowledgement slots.
-4. Trace outgoing payload builders from \`ftescObtain*\` methods into the frame builder.
-5. Document payload numeric types/scaling from their reader helpers.
-6. Continue TEA call-site analysis; do not claim ordinary UART payload encryption without proof.
-7. Compare only confirmed framing with VESC; do not infer compatibility from UI similarity.
+1. Recover and map the V1.7 TopFlow XML/profile to exact ESC SKUs.
+2. Resolve the selected CAN target path against the external FTESC Gateway and complete slave response routing.
+3. Complete firmware image/container, retries, bootloader transitions and recovery state machine.
+4. Implement the desktop UI shell and safe read-only serial session/telemetry workflow.
+5. Recover FTESC BLE UUIDs, MTU/chunk and write/notify behaviour; then implement transport.
+6. Compare the available V1.6 binary against V1.7 using the same artifact-hash and function-diff process.
+7. Add authorized passive capture replay and controlled bench validation before enabling any writes or firmware operations.
 
 ## Tooling and constraints
 
 - Rizin 0.9.1 and Ghidra 12.2 are already available in REA; no install needed for static work.
 - Original EXE remains on REA (50,611,200 bytes); its identity is recorded in \`docs/ARTIFACT_INVENTORY.md\`.
-- All 13 XML resources and derived catalogs are published as gzip/base64; restore with \`python scripts/restore_payloads.py --root .\`.
+- All 19 unique XML resources and derived catalogs are published as gzip/base64; restore with \`python scripts/restore_payloads.py --root .\`.
 - No firmware image or passive serial capture was obtained in this session.
 - No packets were sent to physical ESC hardware.
 
@@ -84,7 +84,7 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - The receive handler distinguishes parser results -1, -2 and positive consumed length. -1 triggers one-byte cursor advance; positive values advance by frame length and the loop continues.
 - Test command: \`python3 -m unittest discover -s tests -v\`.
 - Result on REA using the published GitHub versions: **13 passed, 0 failures**.
-- Current overall estimate: **40%**.
+- Historical milestone estimate: 40% at that point in time.
 
 
 ## Official V1.6 reference milestone — 2026-11-22
