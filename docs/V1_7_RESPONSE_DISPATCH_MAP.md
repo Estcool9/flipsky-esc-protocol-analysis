@@ -15,7 +15,7 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 | `0x00` | Parses MCU ID, error, voltage, currents, eRPM, duty, temperatures, CPU load, encoder angle, three additional scaled angular values and PAS RPM; calls telemetry callback `0x004BC060`, which emits UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`. | **High.** Field order and lengths match V1.6's extended automatic telemetry response (45-byte INFO/DLEN, 44 DATA bytes). Extra angular-field semantics are not documented by the V1.6 PDF. |
 | `0x01` | Enters a large variable-length response path; iterates over payload bytes and calls callback/dispatch helper `0x004BC200`. | Unknown. Do not equate this with V1.6 CMD 0x02. |
 | `0x0D` | Reads a 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | Unknown response schema. |
-| `0x0E` | Reads five 32-bit values scaled by 1,000,000; calls `0x004BC120`. | Unknown response schema. |
+| `0x0E` | Reads six signed 32-bit values with scales 1,000,000; 1,000,000; 1; 1; 1; 1,000,000; calls `0x004BC120`. | Six-value ADC response; semantic channel labels remain unknown. |
 | `0x0F` | Handles a variable-length byte/string-like payload; calls `0x004BC010`. | Unknown response schema. |
 | `0x11` | Parses firmware-version-related bytes and a variable-length text/identity field; invokes `0x004BBE10` and `0x004BBDD0`. | **High semantic correlation** with V1.6 `UART_OBTAIN_FIRMWARE_VERSION`; exact V1.7 field interpretation still needs full type mapping. |
 | `0x14` | Parses a string-like payload and calls `0x004BBF50`. | Unknown. |
@@ -150,3 +150,15 @@ A third-party Python/Arduino FTESC UART V1.4 implementation was inspected at pin
 The V1.7 response handler additionally interprets the 12 bytes labelled reserved in V1.6 as three signed micro-radian angular values and reads PAS RPM at DATA offset 40. The parser and tests now cover all four extension values. See [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md).
 
 The third-party implementation's FT85BD hardware compatibility claims remain attributed to its author; no hardware was tested in this project.
+
+
+## 9. Offline response decoders added
+
+`scripts/ftesc_responses.py` now decodes the response layouts that are fully established:
+- CMD 0x0D: one signed int32 scaled by 1,000,000 (PPM response);
+- CMD 0x0E: six signed int32 values with scales [1e6, 1e6, 1, 1, 1, 1e6];
+- CMD 0x16, 0x18 and 0x22: one-byte boolean acknowledgements;
+- CMD 0x1A: no-DATA acknowledgement;
+- CMD 0x29: nine signed int32 values, each scaled by 1,000,000.
+
+The six CMD 0x0E values and nine CMD 0x29 calibration values retain generic names until the UI/API semantics are mapped. See the tests in `tests/test_ftesc_responses.py`.
