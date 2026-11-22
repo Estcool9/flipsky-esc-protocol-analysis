@@ -240,3 +240,19 @@
 - Updated [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
 - Overall estimate updated from **66% to 68%**. BLE transport framing rises to 60%; service/characteristic identification and runtime validation remain open.
 - No BLE connection or characteristic write was performed.
+
+
+## 2026-11-22 — Independent UART implementation cross-check and V1.7 telemetry extension
+
+- Inspected the public third-party repository `adamivie/flipsky-ft85bd` at pinned commit `49989ac0cde531a68799284d1de9efdd7ba14c7f`, including its Python and Arduino frame/telemetry implementations.
+- Confirmed the common short-frame envelope against the V1.7 binary: AA, one-byte INFO length, CMD+DATA payload, CRC-16/MODBUS, high-byte-first CRC, DD terminator.
+- Reproduced its example INFO command 0x11 frame exactly: `AA 01 11 4C 7F DD`. Added a regression test for that byte vector.
+- Reconfirmed standard CRC check vector `123456789 → 0x4B37`.
+- Compared common 28-byte telemetry field order and scales. The external V1.4 driver parses the base layout and calls out a 16-byte extension; V1.7 code decodes offsets 28/32/36 as signed micro-radian values converted to degrees and offset 40 as signed PAS RPM.
+- Added `RealtimeDataV17Extension` and `parse_realtime_data_00_v17_extension`, plus tests for positive, negative, zero, PAS RPM and wrong command.
+- Initial test run found a fixture escaping error; fixed the fixture and reran from a fresh public GitHub clone.
+- Final result on REA: **51 tests passed, 0 failures**; `compileall` succeeded.
+- Added [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md). No third-party implementation source was copied into this repository.
+- The third-party README's claims of FT85BD hardware testing and V1.4 compatibility are attributed to that project's author, not independently verified here.
+- Overall estimate updated from **68% to 70%**. V1.7 telemetry extension decoder and independent short-frame cross-check are now implemented; extended-frame cross-model coverage, CAN, command schemas, firmware update and hardware remain open.
+- No ESC was connected and no bytes were transmitted to hardware.
