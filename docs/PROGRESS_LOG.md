@@ -227,3 +227,16 @@
 - Added timer details to [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md): parser reset timer, TopFlow timeout signal and ID-list timeout signal.
 - Overall estimate updated from **64% to 66%**. Firmware authorization preflight rises to 85%; full flashing state machine remains unfinished.
 - No firmware was flashed and no ESC command was sent.
+
+
+## 2026-11-22 — BLE shares the UART frame layer
+
+- Mapped UartComm `bleDataRx(QByteArray)` (meta-object index 24, native `0x004828D0`) to the same stream handler `FUN_0049CA30` used by UART.
+- The low-level send slot checks a BLE-connected flag via `FUN_00401680` and invokes `FUN_004050C0` when BLE is active.
+- `FUN_004050C0` slices the already-framed byte array into 20-byte chunks (0, 20, 40, …), invokes an indirect BLE-write function for each chunk and waits for asynchronous completion before the next.
+- The PE import set contains Qt Bluetooth APIs including `QLowEnergyService::writeCharacteristic`, service discovery, characteristic-change signals and controller connection.
+- Binary diagnostics confirm distinct BLE TX and RX characteristic lookup paths.
+- Conclusion: BLE RX definitely feeds the same AA/BB stream parser; BLE TX strongly indicates the same framed packet is sent in 20-byte GATT writes. Exact characteristic UUIDs and write mode remain unresolved.
+- Updated [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
+- Overall estimate updated from **66% to 68%**. BLE transport framing rises to 60%; service/characteristic identification and runtime validation remain open.
+- No BLE connection or characteristic write was performed.
