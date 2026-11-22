@@ -21,11 +21,13 @@ The V1.7 response dispatcher at `0x004997A0` has a large switch on the first INF
 
 The `UartComm` Qt meta-object has 58 methods. Its decoded request methods (indexes 22–57) map to the outbound methods in [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md). None of the mapped methods is an explicit CMD 0x02 request builder.
 
+The similarly named signal is now tied to the **CMD 0x00 response path**: the CMD 0x00 branch calls callback wrapper `0x004BC060`, which copies the `FTESC_REALTIME_DATA` structure and activates the UartComm signal corresponding to `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` (meta-object index 13). This makes the signal response-side telemetry evidence, not an outbound CMD 0x02 builder.
+
 ## 3. The similarly named Qt signal is not a request builder
 
 The UartComm signal `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists in the meta-object as signal index 13. Its Qt signature strings are referenced by the connection-setup function at `0x0040B220`, alongside `ftescSignalReadAckToRtData(QString,bool)`.
 
-The evidence establishes a Qt signal and a connection path. It does not establish that this signal constructs or sends UART command 0x02. The signal's name alone must not be treated as proof of the request opcode.
+The evidence establishes that CMD 0x00 response handling emits this Qt signal and that the signal is connected into the app's realtime-data path. It does not establish that the signal constructs or sends UART command 0x02.
 
 ## 4. Current conclusion
 
