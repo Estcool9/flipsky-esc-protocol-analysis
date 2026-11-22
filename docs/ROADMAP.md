@@ -151,7 +151,9 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Recover Flipsky ARM64 symbol map for BleUart, FtescLowLevelFace, UartComm, frameFwUpdate, ftescValueTable and firmware/CAN functions.
 - [x] Compare targeted PE32 identity/marker strings across V1.6 builds and V1.7.
 - [ ] Decompile application-level Android BLE method bodies and compare ARM64/ARMv7 behavior.
-- [ ] Decode Qt `.rcc` QML resources and find the app's actual characteristic writes/CCCD/MTU arguments.
+- [x] Decode Android application-owned Qt QML/FTESC/firmware/icon RCC resources; recover screens, setup tables and firmware UI flow.
+- [x] Recover app-selected BLE write mode, CCCD notifications and shared parser on both Android ABIs.
+- [ ] Resolve the exact Qt signal/slot connection edge and all remaining QML/native UI bindings.
 - [ ] Complete function-level Windows V1.6/V1.7 diffs; PE import descriptors are currently unreadable in the import workflow.
 - BLE static sub-workstream: 80% → 95% (Android V1.6 ARM64/ARMv7 exact write mode and shared parser); V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
 - Detailed reports: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
@@ -177,3 +179,17 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Confirm ARMv7 `FtescLowLevelFace::bleDataRx` invokes `uartPackData::uartPackDataHandle` after copying the input QByteArray.
 - [ ] Resolve Qt constructor signal/slot connection, negotiated MTU and runtime behavior.
 - Android/BLE static sub-workstream: 90% → 95%; whole-product score remains 72.6%.
+
+
+## 2026-11-22 — V1.6 Android application resources and UI flow
+
+- [x] Parse the four native Qt RCC version-3 tables registered by `qInitResources_qml`, `qInitResources_ftesc`, `qInitResources_ftescFw` and `qInitResources_ftescIcon`.
+- [x] Extract 28 QML files, 24 XML resources, 31 firmware resource entries and 18 icon files (101 files total, zero extraction errors).
+- [x] Map the QML app objects: UartComm, motor/signal/firmware ValueSetups, BleUart, startup scan/reconnect, ESC ID → motor setup → signal setup read order and CAN master/slave selection.
+- [x] Enumerate FTESC ControlSetup ValueSeque sizes across embedded versions 1.0–1.6 (24, 24, 26, 36, 46, 67, 69).
+- [x] Confirm V1.6 official motor profile 94 metadata Values / 93 ValueSeque entries, with motor_rated_current omitted from serialization.
+- [x] Deduplicate firmware resources by SHA-256: 31 entries, 17 unique files, 165,880 bytes each; vector-table shape consistent with Cortex-M raw images.
+- [x] Recover firmware QML result codes, master-only restriction, bootloader warning, custom BIN path and native firmware-list/data API names.
+- [ ] Resolve all remaining QML/native method bindings, full firmware image/model mapping and cryptographic/integrity scheme.
+- Android application UI/resource static sub-workstream: 0% → 80%. Whole-product weighted score remains **72.6%** (79.9 / 110).
+- Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
