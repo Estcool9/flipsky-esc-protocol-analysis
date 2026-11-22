@@ -64,7 +64,7 @@ Still unresolved:
 
 ## Progress update
 
-The BLE reverse-engineering sub-workstream is now **80%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
+The BLE reverse-engineering sub-workstream is now **85%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
 
 The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
@@ -116,3 +116,14 @@ Evidence IDs:
 - Computed target: `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`
 - Protected target decompilation: `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`
 - [Detailed BLE transport note](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
+
+
+## Cross-platform V1.6 Android corroboration — 2026-11-22
+
+The V1.6 Android BLE APK embeds a native Flipsky ARM64 application library with the exported symbols `BleUart::writeData`, `BleUart::sendNextPacket`, `BleUart::dataRx`, `BleUart::updateData`, `BleUart::confirmedDescriptorWrite`, and `FtescLowLevelFace::lowLevelSendDataToFtesc`. The APK also includes Qt5Bluetooth for ARM64 and ARMv7. This confirms that the Android release has its own native BLE transport wrapper and the same major FTESC application family as Windows.
+
+The bundled Qt Android Java bridge gives concrete backend semantics: its `writeCharacteristic(handle, bytes, type)` maps `type=1` to Android `WRITE_TYPE_DEFAULT`, `type=2` to `WRITE_TYPE_NO_RESPONSE`, and other values to `WRITE_TYPE_SIGNED`. It attempts an ATT MTU request of 512 and falls back to 23 on failure. Asynchronous operations are serialized with a 3-second timeout. For the client-characteristic-configuration descriptor, notification handling checks the first byte's bit 0 or bit 1 before calling Android's local `setCharacteristicNotification`.
+
+These facts describe the Qt Android backend included in the APK. The application-selected type value, actual MTU, exact CCCD payload and notification/indication choice are not yet proven. They must not be inferred from the Windows protected indirect-call candidate.
+
+Detailed report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md). The BLE static sub-workstream rises from 80% to **85%**; overall weighted project score remains 72.6%.
