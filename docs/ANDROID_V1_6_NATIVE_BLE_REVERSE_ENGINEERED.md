@@ -87,7 +87,57 @@ The Qt Android bridge also:
 - Schedules an MTU job that attempts `requestMtu(512)` on supported Android API levels; on failure it records the default MTU as 23 bytes.
 - For a descriptor matching its client-characteristic-configuration UUID, interprets bit 0 or bit 1 in the first descriptor byte as enabling local characteristic notifications before writing the descriptor.
 
-These are Qt backend capabilities and decision rules. The app's actual MTU result, write type, CCCD payload and notification selection remain unverified.
+The native Flipsky application code resolves two of the application-selected values directly (see the next section). The negotiated MTU and actual connection result remain runtime facts and are still unverified.
+
+## Application-level Android BLE transport — exact V1.6 values
+
+This section is based on direct Rizin disassembly and ELF dynamic relocation resolution in the extracted ARM64 app library (SHA-256 `7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc`). These are application-level choices, not merely Qt backend capabilities.
+
+### TX segmentation: fixed 20-byte application chunks
+
+In `BleUart::writeData(QByteArray)` at `0x000FE09C`:
+
+- `0x000FE0BC` loads the constant `0x14` (20) into the chunk-size local.
+- The loop calls `QByteArray::mid(int, int)` at `0x000FE10C` for successive slices.
+- `0x000FE138` advances the offset by the stored 20-byte stride.
+- Each slice is added to the outgoing queue and the send routine is scheduled.
+
+This is an explicit 20-byte application chunk size; it is not itself proof of the actual negotiated ATT MTU.
+
+### TX GATT mode: WriteWithoutResponse
+
+In `BleUart::sendNextPacket()` at `0x000FE1A8`:
+
+- The routine resolves the target `QLowEnergyCharacteristic` from the configured UUID.
+- `0x000FE2A8` loads integer `1`.
+- `0x000FE2C0` places that value in the fourth AArch64 argument register (`w3`) for the C++ member call.
+- `0x000FE2C4` directly calls the resolved `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)` symbol.
+
+For the Qt 5.15 C++ enum, `WriteMode=1` is `WriteWithoutResponse` (the zero value is `WriteWithResponse`). Thus the V1.6 Android Flipsky code explicitly requests **WriteWithoutResponse** for its queued 20-byte slices. This direct call and constant remove the uncertainty left by the Windows V1.7 protected indirect-call candidate, for Android V1.6 only.
+
+### CCCD: notifications selected with payload 0x0100
+
+In `BleUart::serviceStateChanged` at `0x000FF648`:
+
+- The code constructs the Bluetooth descriptor UUID `0x2902` and retrieves that descriptor from the characteristic.
+- It loads the string literal `"0100"` at virtual address `0x002851C9`.
+- It converts that string using `QByteArray::fromHex` and calls `QLowEnergyService::writeDescriptor`.
+
+The actual descriptor bytes are therefore `01 00` (CCCD value `0x0001` in little-endian byte order). This selects **notifications** (bit 0), not indications (bit 1). This is the app's direct payload, not the generic Qt bridge's description of both possible bits.
+
+### Receive: BLE callback feeds the shared FTESC stream parser
+
+- `BleUart::updateData(QLowEnergyCharacteristic const&, QByteArray const&)` at `0x000FFB8C` checks the characteristic UUID and calls the PLT entry at `0x000EFE60`.
+- The ELF `R_AARCH64_JUMP_SLOT` relocation at GOT slot `0x00881578` resolves that entry to `BleUart::dataRx(QByteArray)`.
+- `BleUart::dataRx(QByteArray)` at `0x0025ACD8` invokes `QMetaObject::activate`, emitting the Qt signal.
+- The application slot `FtescLowLevelFace::bleDataRx(QByteArray)` exists at `0x00234730`. Its first PLT call at `0x000EA080` resolves via GOT slot `0x0087E688` to `QByteArray::QByteArray(QByteArray const&)`, copying the incoming bytes.
+- Its second PLT call at `0x000E81C0` resolves via GOT slot `0x0087D728` to `uartPackData::uartPackDataHandle(QByteArray)`. The receiver object is the `uartPackData` member at `FtescLowLevelFace+0x30`.
+
+This shows the Flipsky BLE slot routes the received byte array into the application's shared `uartPackDataHandle` stream parser, rather than implementing a distinct BLE frame parser. The Qt metaobject metadata contains `2dataRx(QByteArray)` and `1bleDataRx(QByteArray)`; the exact constructor-level `QObject::connect` call site between those methods remains to be mapped, so the signal emission and slot body are established separately from the connection edge.
+
+### Evidence quality and remaining runtime unknowns
+
+The function bodies, literal, and relocation targets above were recovered from the hash-identified extracted library. The APK is not executed and no device was contacted. Still unknown: negotiated ATT MTU, controller-specific behavior, queue retry/timeout outcomes on real links, actual notifications observed over the air, and whether other APK versions use identical values.
 
 ## Windows V1.6 and V1.7 marker comparison
 
@@ -135,7 +185,7 @@ Static ELF inspection reported: NX enabled, full RELRO, stack canary present, PI
 6. Complete static diffs of all three V1.6 builds, especially the 2025-10-14 Win32 Qt BLE symbol delta.
 7. Verify manifest service implementation and signature cryptographically.
 
-The V1.6 BLE static workstream advances from 0% to **85%** for package inventory, Qt BLE bridge semantics, native application BLE/protocol/firmware symbol map and cross-platform marker comparison. The complete-product score remains **72.6%** (79.9 / 110 points): no desktop or live transport feature was implemented and no hardware validation was performed.
+The V1.6 Android BLE static workstream advances from 85% to **95%**: exact 20-byte chunking, C++ WriteWithoutResponse mode, CCCD notifications payload, and BLE receive handoff into the shared FTESC stream parser are now recovered. Remaining work is the Qt signal connection edge, negotiated MTU/runtime outcomes, ARMv7 cross-check and resource/UI mapping. The complete-product score remains **72.6%** (79.9 / 110 points): no desktop or live transport feature was implemented and no hardware validation was performed.
 
 ## Safety / execution record
 
