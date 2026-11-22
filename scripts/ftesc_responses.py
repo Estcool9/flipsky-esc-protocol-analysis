@@ -371,6 +371,21 @@ def parse_topflow_setup_response(
     return TopFlowSetupResponse(block=block, secret_key_status=0, success=True)
 
 
+def parse_unclassified_id_vector_response(
+    info: bytes | bytearray | memoryview,
+) -> tuple[int, ...]:
+    """Return the raw CMD 0x01 ID byte vector without semantic interpretation.
+
+    Windows V1.6 converts all DATA bytes to a QVector<int>, but CMD 0x01 is
+    absent from the public V1.6 command table. Do not label its elements as
+    master/slave IDs until the command's semantics are independently proven.
+    """
+    message = parse_info(info)
+    if message.command != 0x01:
+        raise ValueError(f"expected CMD 0x01, got 0x{message.command:02X}")
+    return tuple(message.data)
+
+
 def parse_esc_id_enumeration_response(
     info: bytes | bytearray | memoryview,
 ) -> EscIdEnumerationResponse:
