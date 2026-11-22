@@ -637,3 +637,19 @@
 - Open WebUI/Qwen recommendation recorded: Qwen3.8-27B as first planner trial, Qwen3.6-35B-A3B as alternative, Qwen3.5-9B as restricted evidence/report helper; see [LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md](LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md). No Open WebUI, Ollama, Gateway credential or MCP server configuration was changed.
 - Detailed Android report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md).
 - Safety: no APK/EXE executed, no Android device contacted, no BLE scan/pair/connect/GATT read/write, no UART/CAN transmission, no ESC command, and no firmware operation. Nextcloud originals unchanged.
+
+
+## 2026-11-22 — Exact Android V1.6 BLE transport semantics and shared RX parser
+
+- Continued static analysis of the extracted ARM64 native application library:
+  `/data/analysis/extracted/v1.6_ble_native/lib/arm64-v8a/libFilpsky_ESC_Tool_V1.6_20251014_arm64-v8a.so`, SHA-256 `7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc`.
+- `BleUart::writeData` at `0x000FE09C`: instruction `0x000FE0BC` sets chunk stride `0x14` (20); the loop calls `QByteArray::mid(int,int)` at `0x000FE10C` and advances the byte offset by 20 at `0x000FE138`.
+- `BleUart::sendNextPacket` at `0x000FE1A8`: resolves the characteristic, loads constant 1 at `0x000FE2A8`, moves it into `w3` at `0x000FE2C0`, and directly calls `QLowEnergyService::writeCharacteristic` at `0x000FE2C4`. Qt 5.15 C++ enum value 1 is `WriteWithoutResponse`. This is direct V1.6 Android application code, not only the Java backend.
+- `BleUart::serviceStateChanged` at `0x000FF648`: looks up descriptor UUID `0x2902`, uses string literal `0100` at VA `0x002851C9`, converts via `QByteArray::fromHex` and passes the bytes to `QLowEnergyService::writeDescriptor`. The app writes bytes `01 00`, CCCD value 0x0001, enabling notifications (bit 0), not indications (bit 1).
+- `BleUart::updateData` at `0x000FFB8C` calls PLT `0x000EFE60`; ELF relocation at GOT `0x00881578` resolves it to `BleUart::dataRx(QByteArray)`. The signal thunk at `0x0025ACD8` calls `QMetaObject::activate`.
+- `FtescLowLevelFace::bleDataRx(QByteArray)` at `0x00234730`: PLT `0x000EA080` resolves by GOT `0x0087E688` to `QByteArray::QByteArray(QByteArray const&)`; PLT `0x000E81C0` resolves by GOT `0x0087D728` to `uartPackData::uartPackDataHandle(QByteArray)`. Thus the app-level BLE receive slot feeds the same FTESC stream parser, not a separate BLE decoder.
+- Qt metadata strings `2dataRx(QByteArray)` and `1bleDataRx(QByteArray)` are present; the exact constructor-level `QObject::connect` call site between the signal and slot remains unresolved. Record the event emission and slot implementation as separate proven observations.
+- Android/BLE static sub-workstream: 85% → 90%. The Windows V1.7 indirect write call remains protected and not conclusively tied to the Qt symbol; the Android V1.6 result is a strong cross-platform reference, not a substitute for that Windows call edge.
+- Whole-product weighted score unchanged at **72.6%** (79.9 / 110). Negotiated ATT MTU, live outcomes, retries/reconnect and hardware validation remain open.
+- Updated [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md), STATUS and ROADMAP.
+- No APK/EXE execution, ADB handset access, BLE scan/connection/GATT operation, UART/CAN transmission or ESC command was performed.
