@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, CMD09/CMD0A profile blocks and CMD1E ID enumeration) | 75% |
+| V1.6 executable comparison (PE identity, UART frame/parser, UartComm requests/ACKs, CMD09/CMD0A profiles and CMD01/CMD1E ID vectors) | 78% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -483,3 +483,11 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Added `EscIdEnumerationResponse` / `parse_esc_id_enumeration_response()` with raw-byte preservation and tests for master/slave split, empty vector and command validation. The secondary Qt boolean remains uninterpreted.
 - CMD `0x01` also constructs a raw ID byte vector in the Windows handler but is absent from the official V1.6 command table, so remains unclassified.
 - V1.6 comparison sub-workstream: **70% → 75%**; overall weighted progress remains **72.6% (79.9 / 110)**.
+
+
+## V1.6 ID response vectors — 2026-11-22
+
+- CMD `0x1E` offline decoder exposes the documented master ID and slave ID list; raw bytes are retained and the secondary Qt boolean is not guessed.
+- CMD `0x01` offline decoder preserves the native byte-vector as raw integer values only; its semantics are not documented in the official V1.6 command table.
+- GitHub Actions run #284: **172 tests passed, 0 failed**, including both CMD01 preservation tests; artifact/catalog/profile regeneration and compileall passed.
+- V1.6 comparison sub-workstream advances **75% → 78%**; overall weighted progress remains **72.6% (79.9 / 110)**.
