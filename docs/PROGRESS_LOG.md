@@ -824,3 +824,6 @@
 
 - Recoupement externe du vecteur ID V1.6 : `docs/FTESC_UART_PROTOCOL_V1.6.md` (source officielle intégrée au dépôt) spécifie CMD `0x1E` avec DATA D0 = ID master, D1..Dn = IDs slaves. Le handler Windows `FUN_004948d0` consomme tous les octets DATA en U8 et les place dans un QVector avant d'émettre `ftescGetIDResAck(QVector<int>,bool)`; le décodeur peut donc exposer master + slaves sans deviner le booléen secondaire du signal.
 - CMD `0x01` partage le chemin natif de construction de QVector, mais ce code n'apparaît pas dans la table des commandes du document officiel V1.6; ses sémantiques ne sont pas assimilées à CMD1E et restent volontairement brutes.
+
+- Implémenté `parse_esc_id_enumeration_response()` pour CMD `0x1E`, sur la base du protocole officiel V1.6 : D0 = master MCU ID, D1..Dn = slave IDs. Le parser conserve `raw_ids`, accepte proprement DATA vide (master_id=None) et ne déduit pas le booléen secondaire de `ftescGetIDResAck(QVector<int>,bool)`. Tests ajoutés pour le découpage, la liste vide et l'opcode incorrect.
+- Le chemin natif CMD `0x01` construit un vecteur de bytes comparable, mais il n'est pas listé dans la table officielle V1.6; il reste documenté comme vecteur brut non interprété, sans fusion avec CMD1E.
