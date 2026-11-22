@@ -101,7 +101,7 @@ class RealtimeTelemetryTests(unittest.TestCase):
         put_signed(d, 32, 4, -500_000)
         put_signed(d, 36, 4, 0)
         put_signed(d, 40, 4, 900)
-        parsed = parse_realtime_data_00_v17_extension(b"\\x00" + d)
+        parsed = parse_realtime_data_00_v17_extension(b"\x00" + d)
         self.assertAlmostEqual(parsed.angular_value_1_degrees, 57.295779513, places=8)
         self.assertAlmostEqual(parsed.angular_value_2_degrees, -28.647889756, places=8)
         self.assertEqual(parsed.angular_value_3_degrees, 0.0)
@@ -109,7 +109,7 @@ class RealtimeTelemetryTests(unittest.TestCase):
 
     def test_v17_extension_rejects_wrong_command(self):
         with self.assertRaises(ValueError):
-            parse_realtime_data_00_v17_extension(b"\\x01" + self.make_data(extended=True))
+            parse_realtime_data_00_v17_extension(b"\x01" + self.make_data(extended=True))
 
     def test_realtime_response_rejects_wrong_size(self):
         with self.assertRaises(ValueError):
