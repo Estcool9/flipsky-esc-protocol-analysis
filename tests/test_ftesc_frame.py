@@ -51,6 +51,13 @@ class FrameTests(unittest.TestCase):
         wire = bytearray(encode_frame(b"payload")); wire[-1] = 0
         with self.assertRaisesRegex(FrameError, "terminator"):
             decode_frame(wire)
+    def test_terminator_precedes_crc_error_like_native_parser(self):
+        wire = bytearray(encode_frame(b"payload"))
+        wire[-3] ^= 1
+        wire[-1] = 0
+        with self.assertRaisesRegex(FrameError, "terminator"):
+            decode_frame(wire)
+
     def test_truncated_frame_raises_need_more_data(self):
         with self.assertRaises(NeedMoreData):
             decode_frame(b"\xAA")
