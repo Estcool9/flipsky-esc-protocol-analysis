@@ -2,35 +2,25 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This public repository contains the evidence log, extracted application metadata, protocol documentation, offline codecs, reproducible scripts and test suite.
 
-> **Overall progress: 92% (estimated, 22 November 2026).** This is a milestone-weighted estimate for completing the documented offline protocol model. It is not a measure of certainty, commercial-app feature completeness, hardware safety, or live-device validation.
+> **Overall project progress: 72% (estimated, 22 November 2026).** This is a weighted estimate for a complete open-source desktop replacement, not merely the offline protocol codecs. It replaces the earlier 90–92% figures, which overstated readiness because the desktop UI, actual serial/BLE transports and hardware validation are not implemented.
 
-## Project status
+| Work package | Weight | Progress |
+|---|---:|---:|
+| Binary inventory and static application mapping | 10% | 100% |
+| FTESC UART framing, parser and stream handling | 10% | 100% |
+| V1.7 request/response command coverage | 20% | 87% |
+| Setup metadata, ValueSeque ordering and typed serializer | 10% | 95% |
+| Direct CAN and V1.7 gateway/slave routing | 10% | 60% |
+| Firmware authorization, transfer and bootloader flow | 10% | 55% |
+| Separate VESC/FSESC profile and source comparison | 10% | 80% |
+| Open-source desktop UI and real serial/BLE integration | 15% | 20% |
+| Reproducible extraction, unit tests and CI | 10% | 95% |
+| Hardware validation | 5% | 0% |
+| **Weighted overall estimate** | **100%** | **72%** |
 
-| Workstream | Progress |
-|---|---:|
-| Executable inventory and integrity | 100% |
-| Embedded XML extraction and validation | 100% |
-| Parameter catalog generation | 100% |
-| Qt/QML architecture and class ownership | 90% |
-| Qt meta-object, signal/slot and method dispatch | 100% |
-| UART outer frame and CRC reconstruction | 100% |
-| UART receive buffering and resynchronization | 95% |
-| V1.7 request payload builders | 90% |
-| V1.7 response dispatch and decoders | 95% |
-| ValueSetup serializer and response decoder | 98% |
-| Firmware authorization and block codec | 85% |
-| Direct CAN V1.4 identifier, CRC, telemetry and command codec | 95% |
-| UART CAN-over envelope codec | 90% |
-| V1.7 native CAN wrapper insertion and slave routing | 40% |
-| BLE transport static analysis | 75% |
-| VESC compatibility assessment | 75% |
-| Reproducible extraction, catalog and CI | 95% |
-| TopFlow XML and SKU/profile mapping | 40% |
-| V1.6 executable comparison | 0% |
-| Hardware validation | 0% |
-| **Overall estimate** | **92%** |
+The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. A 72% project score does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
-See [STATUS](docs/STATUS.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [ROADMAP](docs/ROADMAP.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for the current checkpoint and detailed work history.
+See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for the scoring model, evidence and remaining blockers.
 
 ## Artifact under analysis
 
@@ -79,11 +69,15 @@ The receive parser distinguishes valid consumed frames, invalid candidates and i
 
 ## Parameter resources
 
-Thirteen compressed Zlib XML resources were recovered and validated. The derived parameter catalog contains:
+**Nineteen unique Zlib XML resources** were recovered from 20 candidate offsets (one duplicate). The derived parameter catalog now contains:
 
-- 736 rows across profile variants;
-- 222 distinct parameter IDs;
-- 13 profile/resource variants.
+- 1,152 metadata rows across profile variants;
+- 286 distinct XML parameter IDs;
+- 19 profile/resource variants;
+- 1,135 parameters listed in `ValueSeque` transmission order;
+- 17 metadata entries omitted from `ValueSeque` (preserved as omitted, not serialized).
+
+Families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder profile. Only 1 of 19 profiles has its `Values` XML order identical to `ValueSeque`; the serializer therefore uses the explicit sequence, never document order.
 
 Families include CAN, UART, PPM, ADC, PAS, battery and motor current, eRPM, phase resistance and inductance, flux, FOC gains, encoders, PWM, thermal sensing and battery cutoffs.
 
@@ -99,7 +93,7 @@ Rebuild the catalog and ordered profiles with `scripts/build_parameter_catalog.p
 
 ## Offline protocol implementation
 
-The repository contains a standard-library-only Python codec. It builds and parses byte structures only; it does not open serial/CAN/BLE interfaces or transmit commands.
+The repository contains standard-library-only Python codecs for both protocol families. They build and parse byte structures only; they do not open serial/CAN/BLE interfaces or transmit commands.
 
 - `scripts/ftesc_frame.py`: CRC-16/MODBUS, short/extended frame encoder, frame decoder and concatenated-frame decoder.
 - `scripts/ftesc_stream.py`: incremental UART decoder, retaining incomplete frames and recovering after invalid candidates.
@@ -109,6 +103,8 @@ The repository contains a standard-library-only Python codec. It builds and pars
 - `scripts/ftesc_setup_serializer.py`: typed ValueSetup encoder and marker-validated ValueSeque response decoder.
 - `scripts/ftesc_firmware.py`: offline-only V1.7 firmware erase/write payload and 240-byte XOR block codec.
 - `scripts/ftesc_can.py`: direct FTESC CAN V1.4 extended-ID codec, CRC validation, periodic telemetry decoders and offline control-command encoders.
+- `scripts/vesc_uart.py`: VESC 0x02/0x03/0x04 UART frame codec and CRC-16/XMODEM-compatible checksum parameters.
+- `scripts/vesc_can.py`: VESC 29-bit extended CAN identifier composition and offline basic command encoders.
 - `scripts/extract_embedded_xml.py`, `scripts/build_parameter_catalog.py`, `scripts/ftesc_profiles.py`: reproducible XML extraction, catalog generation and ValueSeque ordering.
 - `tests/`: unit tests covering framing, streaming, requests, responses, setup encoding/decoding, firmware blocks and direct CAN.
 
@@ -119,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result on REA:** **124 tests passed, 0 failures**. The catalog and profile regeneration comparisons also passed. GitHub Actions is configured in [offline-checks.yml](.github/workflows/offline-checks.yml) to restore payloads, regenerate the catalog and profiles, compare them byte-for-byte, run the tests and compile Python sources.
+**Latest verified result on REA:** **148 tests passed, 0 failures**; `compileall` also passed. The catalog and profile regeneration comparisons also passed. GitHub Actions is configured in [offline-checks.yml](.github/workflows/offline-checks.yml) to restore payloads, regenerate the catalog and profiles, compare them byte-for-byte, run the tests and compile Python sources.
 
 ## Official V1.4/V1.6 protocol references
 
@@ -149,11 +145,18 @@ Separate native request methods implement boot mode (0x13), erase (0x16) and fir
 
 See [FIRMWARE_UPDATE_FLOW](docs/FIRMWARE_UPDATE_FLOW.md).
 
-## VESC compatibility
+## VESC / FSESC compatibility
 
-Flipsky's official product-family description distinguishes FT ESC (NON-VESC) from VESC-based FSESC products and says their tools are not interchangeable. Similar Qt technology, motor-control terminology or UI controls do not establish wire-protocol compatibility.
+The new Nextcloud source folder contained four Flipsky VESC V1.0 PDFs (UART and direct CAN, English and Chinese). They specify VESC firmware V3.00+ and match the pinned upstream VESC Tool/firmware source for UART framing, CRC, command IDs and basic CAN identifier composition.
 
-See [VESC_COMPARISON](docs/VESC_COMPARISON.md).
+This is a **different product family** from the FTESC binary analyzed here. Flipsky identifies FT ESC as NON-VESC and FSESC as VESC-based; their programming tools and CAN gateways are not interchangeable.
+
+New offline modules:
+- `scripts/vesc_uart.py`: VESC 02/03/04 framing and 0x1021 CRC.
+- `scripts/vesc_can.py`: VESC extended CAN identifiers and basic control-payload encoders.
+- `scripts/ftesc_*.py`: separate FTESC framing, commands and CRC.
+
+See [Flipsky VESC V1.0 analysis](docs/FLIPSKY_VESC_PROTOCOL_V1.0.md), [protocol-family matrix](docs/PROTOCOL_FAMILY_MATRIX.md) and [source-pinned comparison](docs/VESC_COMPARISON.md).
 
 ## What remains before 100%
 
