@@ -215,3 +215,14 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Compare equivalent auth/erase/write paths in Windows V1.6/V1.7 to establish version parity or differences.
 - Firmware static reverse-engineering sub-workstream: 75%; weighted firmware package stays 55%, overall weighted score remains 72.6% (79.9 / 110).
 - Detailed report: [ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md](ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
+
+
+## 2026-11-22 — Windows V1.6/V1.7 static marker comparison
+
+- [x] Run the same Ghidra 12.2 marker search on all three staged Windows V1.6 PE builds and the V1.7 PE.
+- [x] Record common BLE UART, FTESC erase/write/bootloader, CAN, uartPackData and Qt BLE writeCharacteristic markers with per-build addresses and SHA-256.
+- [x] Cross-check the latest V1.6 and V1.7 uartPackData string-loading stubs with Rizin and decompile their generic indirect thunks with Ghidra.
+- [ ] Continue from the Qt static-metacall tables into actual V1.6 firmware/BLE function bodies; the stubs and generic thunks are not the transport implementation.
+- [ ] Resolve the protected Windows BLE write target and compare its call arguments with the proven Android V1.6 WriteWithoutResponse path.
+- Detailed report: [WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md](WINDOWS_V1_6_V1_7_STATIC_COMPARISON.md).
+- Overall weighted progress remains **72.6%**; marker-only comparison does not complete a functional replacement milestone.
