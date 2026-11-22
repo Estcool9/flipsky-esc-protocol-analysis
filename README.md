@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This public repository contains the evidence log, extracted application metadata, protocol documentation, offline codecs, reproducible scripts and test suite.
 
-> **Overall project progress: 72.2% unrounded (displayed as 72%, estimated, 22 November 2026).** This is a weighted estimate for a complete open-source desktop replacement, not merely the offline protocol codecs. It replaces the earlier 90–92% figures, which overstated readiness because the desktop UI, actual serial/BLE transports and hardware validation are not implemented.
+> **Overall project progress: 72.6% unrounded (displayed as 73%, estimated, 22 November 2026).** This is a weighted estimate for a complete open-source desktop replacement, not merely the offline protocol codecs. It replaces the earlier 90–92% figures, which overstated readiness because the desktop UI, actual serial/BLE transports and hardware validation are not implemented.
 
 | Work package | Relative weight (points) | Progress |
 |---|---:|---:|
@@ -14,11 +14,11 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Firmware authorization, transfer and bootloader flow | 10% | 55% |
 | Separate VESC/FSESC profile and source comparison | 10% | 85% |
 | Open-source desktop UI and real serial/BLE integration | 15% | 20% |
-| Reproducible extraction, unit tests and CI | 10% | 95% |
+| Reproducible extraction, unit tests and CI | 10% | 100% |
 | Hardware validation | 5% | 0% |
-| **Weighted overall estimate** | **110 points** | **72.2%** |
+| **Weighted overall estimate** | **110 points** | **72.6%** |
 
-The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. The VESC UART profile now includes an incremental stream layer; the new stream tests are committed but await CI execution. A 72.2% project score (72% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
+The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. The VESC UART profile now includes an incremental stream layer; GitHub Actions run #156 validates the full **159-test** offline suite and Python compilation. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
 See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
 
@@ -175,7 +175,7 @@ The final `writeCharacteristic` call target, response/no-response mode, exact CC
 5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
 6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
 
-Hardware validation is still **0%**. The 72.2% weighted estimate reflects static evidence and offline implementation progress; it does not mean the protocol is safe or verified on a live ESC.
+Hardware validation is still **0%**. The 72.6% weighted estimate reflects static evidence, offline implementation and CI-verified tests; it does not mean the protocol is safe or verified on a live ESC.
 
 ## Safety and scope
 
