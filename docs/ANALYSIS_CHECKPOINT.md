@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 38%**  
+**Overall estimated progress: 50%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -41,12 +41,12 @@ The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes t
 | Embedded XML extraction and validation | 100% |
 | Parameter catalog generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
-| UART/Qt event and meta-object mapping | 80% |
-| Outer frame and CRC reconstruction | 85% |
-| Inner command IDs and payload layouts | 8% |
+| UART/Qt event and meta-object mapping | 85% |
+| Outer frame and CRC reconstruction | 100% |
+| Inner command IDs and payload layouts | 20% |
 | Firmware update / TEA relationship | 55% |
 | VESC compatibility assessment | 25% |
-| Offline frame parser and tests | 70% (implementation added; execution still pending) |
+| Offline frame/parser/stream tests | 100% (36 tests passing on published tree) |
 | Hardware validation | 0% |
 
 Overall progress is a milestone-weighted estimate toward an evidenced protocol specification and offline client, not a measure of certainty or commercial-app feature completion.
@@ -98,3 +98,17 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - The low-level uartPackData class remains distinct from the high-level FtescLowLevelFace façade.
 - Candidate V1.6 opcode relationships remain unconfirmed until call sites and payload bytes are traced.
 - Overall progress estimate: **48%**.
+
+
+## V1.7 receive-path deep dive — 2026-11-22
+
+- Detailed Ghidra pseudocode reviewed for parser `0x0049C830`, receive handler `0x0049CA30`, builder `0x0049C5C0`, and CRC helper `0x0049C7A0`.
+- Receive handler's countdown at object offset +0x1C is set by parser output on -2 and decremented for incoming bytes before retrying parse.
+- Invalid candidates advance one byte; complete frames advance by the returned consumed length; the loop can emit multiple frames per serial read callback.
+- Buffer compaction preserves the unconsumed suffix and is distinct from invalid-candidate resynchronization.
+- New report: [RECEIVE_PATH_DEEP_DIVE.md](RECEIVE_PATH_DEEP_DIVE.md).
+- New code: `scripts/ftesc_stream.py`; new tests: `tests/test_ftesc_stream.py`.
+- Published repository re-cloned and tested on REA: **36 passed, 0 failed**.
+- Overall estimate: **50%**. Receive-buffer analysis 90%; stream codec and tests 100%; V1.7 command-ID mapping 20%.
+- A memoryview lifetime issue discovered by negative tests was fixed by decoding from an immutable snapshot before mutating the receive buffer.
+- No hardware interaction or frame transmission.
