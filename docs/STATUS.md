@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 89%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 90%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **89%** |
+| **Overall estimate** | **90%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **107 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **110 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -220,3 +220,12 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Added CMD 0x14 terminal-print and CMD 0x24 samples-print text decoders.
 - CMD 0x11 string convention remains unvalidated against a live response; raw bytes are preserved.
 - 3 new tests; 107 passing tests.
+
+
+### Setup response acknowledgements
+- Corrected callback map using signal wrapper meta-object indexes: motor-signal read/status index7; motor-signal secret-key status index8; TopFlow read/status index9; TopFlow secret-key status index10.
+- CMD 0x1C requires both marker blocks and checks payload length; success emits secret-key status 0, failure -1.
+- CMD 0x3B/0x3C validates the TopFlow marker and payload length; success 0, failure -1.
+- Added high-level motor-signal and generic TopFlow response decoders, plus no-DATA setup ACK validation.
+- TopFlow XML metadata remains missing.
+- Fresh clone now has 110 passing tests.
