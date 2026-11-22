@@ -1,10 +1,12 @@
-"""Offline, read-only decoder for the public FTESC CAN V1.4 protocol.
+"""Offline codec for the public FTESC CAN V1.4 protocol.
 
-This module never opens a CAN interface and never transmits frames.
+This module builds/decodes byte structures only. It never opens a CAN
+interface and never transmits frames.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 
 from scripts.ftesc_frame import crc16_modbus
 
@@ -131,3 +133,183 @@ def decode_realtime_data(
             battery_voltage_v=int.from_bytes(d[4:6], "big", signed=True) / 100.0,
         )
     raise ValueError(f"unsupported FTESC CAN telemetry command 0x{cmd:02X}")
+
+
+# V1.4 direct-CAN control command identifiers.
+CAN_SET_CURRENT_GEAR_CRC16 = 0x00
+CAN_SET_BRAKE_CURRENT_CRC16 = 0x01
+CAN_SET_DUTY_GEAR_CRC16 = 0x02
+CAN_SET_CURRENT_PERCENT_CRC16 = 0x03
+CAN_SET_CURRENT_PERCENT_GEAR_CRC16 = 0x04
+CAN_SET_BRAKE_CURRENT_PERCENT_CRC16 = 0x05
+CAN_SET_ERPM_GEAR_CRC16 = 0x12
+CAN_SET_POSITION_GEAR_CRC16 = 0x13
+CAN_SET_ID_CURRENT_CRC16 = 0x14
+
+CAN_SET_CURRENT_GEAR = 0x15
+CAN_SET_CURRENT_PERCENT_GEAR = 0x16
+CAN_SET_DUTY_GEAR = 0x17
+CAN_SET_ERPM_GEAR = 0x18
+CAN_SET_POSITION_GEAR = 0x19
+CAN_SET_BRAKE_CURRENT = 0x1A
+CAN_SET_BRAKE_CURRENT_PERCENT = 0x1B
+
+
+def _can_i32(value: int) -> bytes:
+    if isinstance(value, bool) or not isinstance(value, int) or not -(1 << 31) <= value < (1 << 31):
+        raise ValueError("CAN scalar must fit signed int32")
+    return value.to_bytes(4, "big", signed=True)
+
+
+def _can_scaled_i32(value: int | float, scale: int, label: str) -> bytes:
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise ValueError(f"{label} must be finite")
+    # The V1.4 sample's float-to-integer helper uses a C integer cast
+    # (truncate toward zero), unlike the V1.7 UART scalar helpers.
+    return _can_i32(int(numeric * scale))
+
+
+def _can_gear(gear: int) -> bytes:
+    if isinstance(gear, bool) or not isinstance(gear, int) or not 0 <= gear <= 4:
+        raise ValueError("gear must be an integer in 0..4")
+    return bytes((gear,))
+
+
+def _build_crc_can_frame(esc_id: int, command: int, payload: bytes) -> CanFrame:
+    if len(payload) + 2 > 8:
+        raise ValueError("CAN payload plus CRC exceeds the 8-byte classic CAN limit")
+    crc = crc16_modbus(payload).to_bytes(2, "big")
+    raw_id = encode_can_identifier(esc_id, command)
+    ident = CanIdentifier(raw=raw_id, esc_id=esc_id, command=command)
+    return CanFrame(identifier=ident, data=payload + crc, crc_valid=True)
+
+
+def _build_plain_can_frame(esc_id: int, command: int, payload: bytes) -> CanFrame:
+    if len(payload) > 8:
+        raise ValueError("CAN payload exceeds the 8-byte classic CAN limit")
+    raw_id = encode_can_identifier(esc_id, command)
+    ident = CanIdentifier(raw=raw_id, esc_id=esc_id, command=command)
+    return CanFrame(identifier=ident, data=payload, crc_valid=None)
+
+
+def build_can_current_gear_crc16(esc_id: int, current: int | float, gear: int) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_CURRENT_GEAR_CRC16,
+        _can_scaled_i32(current, 100_000, "current") + _can_gear(gear),
+    )
+
+
+def build_can_brake_current_crc16(esc_id: int, current: int | float) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_BRAKE_CURRENT_CRC16,
+        _can_scaled_i32(current, 100_000, "brake current"),
+    )
+
+
+def build_can_duty_gear_crc16(esc_id: int, duty: int | float, gear: int) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_DUTY_GEAR_CRC16,
+        _can_scaled_i32(duty, 1_000_000, "duty") + _can_gear(gear),
+    )
+
+
+def build_can_current_percent_crc16(esc_id: int, percent: int | float) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_CURRENT_PERCENT_CRC16,
+        _can_scaled_i32(percent, 100_000, "current percent"),
+    )
+
+
+def build_can_current_percent_gear_crc16(
+    esc_id: int, percent: int | float, gear: int
+) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_CURRENT_PERCENT_GEAR_CRC16,
+        _can_scaled_i32(percent, 100_000, "current percent") + _can_gear(gear),
+    )
+
+
+def build_can_brake_current_percent_crc16(
+    esc_id: int, percent: int | float
+) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_BRAKE_CURRENT_PERCENT_CRC16,
+        _can_scaled_i32(percent, 100_000, "brake current percent"),
+    )
+
+
+def build_can_erpm_gear_crc16(esc_id: int, erpm: int, gear: int) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_ERPM_GEAR_CRC16, _can_i32(erpm) + _can_gear(gear)
+    )
+
+
+def build_can_position_gear_crc16(
+    esc_id: int, position: int | float, gear: int
+) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_POSITION_GEAR_CRC16,
+        _can_scaled_i32(position, 100_000, "position") + _can_gear(gear),
+    )
+
+
+def build_can_id_current_crc16(esc_id: int, current: int | float) -> CanFrame:
+    return _build_crc_can_frame(
+        esc_id, CAN_SET_ID_CURRENT_CRC16,
+        _can_scaled_i32(current, 100_000, "D-axis current") + bytes((0,)),
+    )
+
+
+def build_can_current_gear(esc_id: int, current: int | float, gear: int) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_CURRENT_GEAR,
+        _can_scaled_i32(current, 100_000, "current") + _can_gear(gear),
+    )
+
+
+def build_can_current_percent_gear(
+    esc_id: int, percent: int | float, gear: int
+) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_CURRENT_PERCENT_GEAR,
+        _can_scaled_i32(percent, 100_000, "current percent") + _can_gear(gear),
+    )
+
+
+def build_can_duty_gear(esc_id: int, duty: int | float, gear: int) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_DUTY_GEAR,
+        _can_scaled_i32(duty, 1_000_000, "duty") + _can_gear(gear),
+    )
+
+
+def build_can_erpm_gear(esc_id: int, erpm: int, gear: int) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_ERPM_GEAR, _can_i32(erpm) + _can_gear(gear)
+    )
+
+
+def build_can_position_gear(
+    esc_id: int, position: int | float, gear: int
+) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_POSITION_GEAR,
+        _can_scaled_i32(position, 100_000, "position") + _can_gear(gear),
+    )
+
+
+def build_can_brake_current(esc_id: int, current: int | float) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_BRAKE_CURRENT,
+        _can_scaled_i32(current, 100_000, "brake current"),
+    )
+
+
+def build_can_brake_current_percent(
+    esc_id: int, percent: int | float
+) -> CanFrame:
+    return _build_plain_can_frame(
+        esc_id, CAN_SET_BRAKE_CURRENT_PERCENT,
+        _can_scaled_i32(percent, 100_000, "brake current percent"),
+    )
