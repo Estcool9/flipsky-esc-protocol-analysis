@@ -85,3 +85,13 @@
 3. Confirm the V1.7 CMD 02 data offsets against the V1.4/V1.6 change.
 4. Stage a V1.6 Windows executable on REA and perform a binary-to-binary comparison.
 5. Inspect BLE transport separately from UART.
+
+
+## 2026-11-22 — V1.7 Qt API string map
+
+- Inspected the V1.7 .rdata Qt string/meta-object region around VAs 0x00F23A00-0x00F23FA5.
+- Identified high-level methods including ftescControlDuty, ftescControlCurrent, ftescControlBrakeCurrent, ftescControlIdCurrent, ftescControlSpeed, ftescControlPosition, ftescGetAutoRealtimeData, ftescObtainIdOverCan, ftescIdentifyMotorOverCan, ftescObtainFwVerSlot, ftescEraseFirmware, ftescWriteFirmware, ftescJPMBootMode, ftescObtainUuid and writeMcuEncrypt.
+- Confirmed that the high-level façade string group and the separate uartPackData meta-object string group are distinct.
+- Added docs/V1_7_QT_API_STRING_MAP.md with explicit confidence labels: names are evidence of API surface, but numeric opcodes are not proven until call paths and emitted bytes are traced.
+- Updated V1.7 command-ID/payload cross-reference workstream to 20%.
+- Re-evaluated overall progress to **48%**.
