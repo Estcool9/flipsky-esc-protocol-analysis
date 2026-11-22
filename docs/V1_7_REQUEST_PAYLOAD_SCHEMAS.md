@@ -8,7 +8,7 @@ This document describes INFO payloads (command byte + DATA). The outer UART AA/B
 
 ## 1. Scalar control requests
 
-All multi-byte values are big-endian signed 32-bit integers. The native code rounds the scaled float before serialization.
+All multi-byte values are big-endian signed 32-bit integers. The native code rounds the scaled float before serialization. The helpers at `0x0049D150` (signed int32) and `0x0049D1E0` (signed int16) use a 0.5 epsilon and x87 rounding-control changes to implement round-half-away-from-zero; the Python builders match this behavior.
 
 | CMD | UartComm method | DATA field | Scale |
 |---:|---|---|---:|
@@ -87,7 +87,22 @@ Native method `ftescObtainImuCalibration(float)` dispatches to `FUN_00499070`:
 
 The acknowledgement signal is `imuCalibrationReceived(int)`.
 
-## 6. No-DATA requests
+## 6. CMD 0x0F — identify motor over CAN
+
+Native method `ftescIdentifyMotorOverCan` dispatches to `FUN_00499180`. Instruction-level inspection confirms the exact serialized field order:
+
+| INFO offset | Field source | Encoding |
+|---:|---|---|
+| 0 | command | `0x0F` |
+| 1 | argument 2 | unsigned byte |
+| 2 | low byte of argument 1 | unsigned byte |
+| 3–4 | argument 4 | signed 16-bit BE, rounded |
+| 5–6 | argument 3 | signed 16-bit BE, argument ×100, rounded |
+| 7 | argument 5 | unsigned byte |
+
+The semantic names/units of the five API arguments are not established, so the offline builder keeps generic argument names. The method name says “over CAN”; this builder produces only the INFO payload. It does not implement the unresolved UART CMD 0x10 wrapper.
+
+## 7. No-DATA requests
 
 The following mapped methods construct a one-byte INFO payload (CMD only):
 
@@ -111,15 +126,15 @@ The following mapped methods construct a one-byte INFO payload (CMD only):
 
 Firmware erase/write commands 0x16/0x18 and authorization command 0x22 are covered separately in [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
 
-## 7. Unresolved/unsupported builders
+## 8. Unresolved/unsupported builders
 
 - CMD `0x02`: defined by V1.6, but no V1.7 outbound builder or response case has been established.
-- CMD `0x0F` motor identification over CAN: native method takes five arguments and serializes byte/16-bit/scaled fields, but argument roles and exact field names are not fully resolved.
+- CMD `0x0F` payload layout is now implemented; semantic names/units of its five API arguments remain unknown.
 - CMD `0x10` UART CAN-forward wrapper: enum exists in V1.6 source, but V1.7 wrapper insertion and slave response routing are not traced.
 - TopFlow table: marker and setter path are known; the actual TopFlow value schema remains unavailable.
 - Optional second CMD 0x1B marker block: condition is vector presence; product selection rule remains open.
 
-## 8. Offline implementation
+## 9. Offline implementation
 
 `scripts/ftesc_requests.py` implements the resolved scalar controls, auto-telemetry configuration, setup marker blocks, reset variants and no-DATA queries. It deliberately does not implement CMD 0x0F, CMD 0x02 or CMD 0x10.
 
