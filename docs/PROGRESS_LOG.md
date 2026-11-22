@@ -740,3 +740,5 @@
 - Découvert les syntaxes CLI REA `inspect-native-instruction <path> <address>` et `procedure-references <path> <procedure> --direction incoming|outgoing`. Ces commandes sont disponibles sans exécution de la cible et permettront de remonter des métadonnées Qt vers les fonctions propriétaires.
 
 - Sur V1.6, REA/Ghidra `inspect-native-instruction` a confirmé que `0xc1f1ea` est une donnée `/string` de 19 octets (texte `ftescEraseFirmware`), pas une fonction. Ghidra ne rapporte aucun xref actionnable vers cette adresse dans cette analyse ; ce résultat vide ne prouve pas l'absence de référence (limitation REA documentée). Il faut poursuivre par recherche de références dans les tables Qt/meta-object ou analyse d'assembleur des méthodes.
+
+- Recherche Ghidra de procédures V1.6 sur `ftesc|uartPack|BleUart|CanForward|Firmware` : inventaire complet retourné vide (`ev_c86c44a906bf72303faa65ed11e0a7edb1fd6505befda9cd1fb98e07ae4e5b45`). Les chaînes Qt observées ne sont donc pas des noms de fonctions Ghidra. Prochaine étape de corrélation : références statiques Rizin autour des données Qt.
