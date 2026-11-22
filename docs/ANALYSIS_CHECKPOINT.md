@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 62%**  
+**Overall estimated progress: 64%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -151,3 +151,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Offline serializer and 10 tests added; full published suite: **46 passed, 0 failed**.
 - See [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
 - Overall estimate: **62%**.
+
+
+## End-to-end transport pipeline — 2026-11-22
+
+- Identified FtescLowLevelFace, ToolLib, UartComm and uartPackData Qt meta-objects.
+- Linked UartComm raw INFO signal → FtescLowLevelFace frame builder → uartPackData framed signal → serial write slot.
+- Linked serial read handler → stream buffer/parser → uartPackData payload signal → response dispatcher.
+- Exact QObject connect argument order is still being checked; see [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
+- Added V1.7 telemetry extension decoder and two tests.
+- Full published test suite: **48 passed, 0 failed**.
+- Overall progress: **64%**.
