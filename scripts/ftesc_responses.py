@@ -23,6 +23,12 @@ class ImuCalibrationResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class CanForwardResponse:
+    slave_command: int
+    slave_data: bytes
+
+
+@dataclass(frozen=True, slots=True)
 class MotorSignalSetupResponse:
     first_block: DecodedSetupBlock
     second_block: DecodedSetupBlock
@@ -285,3 +291,16 @@ def parse_topflow_setup_response(
     if block.next_offset != len(message.data):
         raise SetupValueError("TopFlow response has unexpected trailing DATA")
     return TopFlowSetupResponse(block=block, secret_key_status=0, success=True)
+
+
+def parse_can_forward_response(
+    info: bytes | bytearray | memoryview, expected_slave_command: int | None = None
+) -> CanForwardResponse:
+    """Parse the UART bridge response: SlaveCMD becomes the INFO command byte."""
+    message = parse_info(info)
+    if expected_slave_command is not None and message.command != expected_slave_command:
+        raise ValueError(
+            f"expected slave response CMD 0x{expected_slave_command:02X}, "
+            f"got 0x{message.command:02X}"
+        )
+    return CanForwardResponse(slave_command=message.command, slave_data=bytes(message.data))
