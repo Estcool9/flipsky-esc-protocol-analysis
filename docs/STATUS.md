@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 68%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 70%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -18,13 +18,22 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | Receive-buffer and resynchronization analysis | 90% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 protocol comparison | 90% |
-| V1.7 command-ID and payload cross-reference | 82% |
+| V1.7 command-ID and payload cross-reference | 86% |
 | Offline frame and protocol codecs/tests | 100% |
 | Firmware update and TEA relationship | 85% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **68%** |
+| **Overall estimate** | **70% |
+
+## Confirmed evidence
+
+### Independent implementation cross-check
+- Inspected a separate public FTESC UART V1.4 implementation at pinned commit `49989ac0cde531a68799284d1de9efdd7ba14c7f`.
+- Its short AA frame, CRC-16/MODBUS, big-endian CRC trailer and 0xDD terminator match V1.7.
+- Independently reproduced the reference frame `AA 01 11 4C 7F DD` and standard CRC vector `123456789 → 0x4B37`.
+- The public implementation is a third-party project, not Flipsky source; its model/firmware compatibility claims are not independently validated.
+- V1.7 CMD 0x00 extension decoder now exposes three scaled angular values plus PAS RPM, with unknown semantic labels preserved as generic names.
 
 ## Confirmed evidence
 
@@ -71,7 +80,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **48 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **51 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
