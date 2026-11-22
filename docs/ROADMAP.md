@@ -341,3 +341,14 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Continue the firmware ACK/retry/timeout state machine and the Windows-versus-Android device-side differences.
 - Detailed report: [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).
 - V1.6 comparison sub-workstream: 84% → 85%; whole-product weighted score remains **72.6%**.
+
+
+## 2026-11-23 — Ghidra validation of shared CMD21/CMD22 helper targets
+
+- [x] Query each indirect-call target directly through Ghidra 12.2.
+- [x] Record the one-byte body extents and `bad instruction data` / `halt_baddata()` outcomes.
+- [x] Keep provider output classified as invalid, not as a recovered algorithm.
+- [ ] Recover a meaningful target body only from a provider view or unpacked/mapped source that yields valid instruction boundaries; retain the three-build call-site map meanwhile.
+- [ ] Continue the device-side UUID/TEA relationship and firmware ACK/retry/timeout reconstruction without conflating the Windows helper with Android TEA.
+- Latest CI run #300: **177 tests passed, 0 failed**; artifact restoration, catalog/profile generation and compileall passed.
+- V1.6 comparison sub-workstream remains **85%**; whole-product weighted progress remains **72.6%**.

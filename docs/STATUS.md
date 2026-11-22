@@ -29,7 +29,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
-- Latest GitHub Actions run #299 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #299 is a docs-only follow-on to the tested #298 code head.
+- Latest GitHub Actions run #300 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #300 is a docs-only follow-on to the tested #298 code head.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
@@ -521,3 +521,14 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Detailed evidence: [WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md](WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md).
 - V1.6 static comparison advances **84% → 85%**; weighted whole-product progress remains **72.6% (79.9 / 110)**.
 - Latest CI: run #299, **177 tests passed, 0 failed**, compileall and artifact/catalog/profile steps successful.
+
+
+### Ghidra target-body validation — V1.6 shared helper — 2026-11-23
+
+- Queried each resolved helper target independently through REA/Ghidra 12.2:
+  - `0x0077DA60` (2025-10-14): one-byte recovered body; decompilation reports invalid control-flow/data, implausible I/O/access expressions and terminates at `halt_baddata()`.
+  - `0x007DB110` (2026-08-06): one-byte recovered body; pseudocode is limited to an isolated register/memory expression, then `halt_baddata()`.
+  - `0x00855110` (2026-09-12): one-byte recovered body; pseudocode contains implausible I/O and calculated memory accesses, then `halt_baddata()`.
+- Decompiler text outside those one-byte extents is not treated as a valid native implementation. This documents an analysis/disassembly boundary failure; it does not identify Enigma or another specific protector.
+- The helper algorithm stays unresolved; reliable facts remain the two caller roles and CMD21 output QByteArray handoff.
+- CI #300: **177 tests passed, 0 failed**; compileall passed.

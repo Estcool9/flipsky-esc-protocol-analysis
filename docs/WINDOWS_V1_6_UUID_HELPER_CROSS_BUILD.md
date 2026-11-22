@@ -65,16 +65,34 @@ The offline `parse_uuid_response()` therefore continues to preserve the raw CMD2
 
 The existing Android V1.6 TEA evidence remains scoped to that APK; it is not transferred to these Windows PE builds. Do not infer a 16-byte UUID rule from the separate firmware preflight buffer size.
 
-## 6. Next static probes
+
+## 6. Ghidra target-body validation
+
+The three resolved target addresses were then queried independently through REA/Ghidra 12.2:
+
+| Build | Queried target | Ghidra function body | Observed decompiler outcome |
+|---|---|---|---|
+| 2025-10-14 | `0x0077DA60` | `0x0077DA60–0x0077DA60` (1 byte) | Invalid control-flow/data warnings, implausible I/O/access expressions and termination at `halt_baddata()` |
+| 2026-08-06 | `0x007DB110` | `0x007DB110–0x007DB110` (1 byte) | One isolated register/memory expression, then `halt_baddata()` |
+| 2026-09-12 | `0x00855110` | `0x00855110–0x00855110` (1 byte) | Implausible I/O and calculated memory accesses, then `halt_baddata()` |
+
+The recovered body extents are only one byte in all three sessions. The extra pseudocode emitted beyond those extents is **not** accepted as a decoded implementation. This is consistent with an unrecognized, virtualized, packed or otherwise non-standard code/data region, but the available evidence does not identify a specific protector or establish which mechanism caused the bad boundary.
+
+The practical conclusion remains unchanged: the cross-build call graph is established, the protected helper implementation is not. Do not translate these decompiler expressions into Python, and do not infer an encryption algorithm from the CMD22 method name alone.
+
+## 7. Next static probes
 
 1. Resolve each slot's relocation/protection region and the owning image section in its own PE, rather than reusing VAs across builds.
 2. Compare surrounding instruction windows and static data references at each target; keep unresolved indirect control flow explicit.
 3. Trace all callers of the output QByteArray constructors and the wrappers' argument ownership/copy boundaries.
 4. Only change `parse_uuid_response()` if a stable byte-level transform or length constraint becomes visible in a shipped artifact or official protocol evidence.
 
-## 7. Safety and provenance
+## 8. Safety and provenance
 
 - Static PE/Rizin analysis only; none of the three Windows applications was executed.
 - No UART, CAN or BLE command was transmitted.
 - No controller was connected and no firmware was flashed.
 - No keys, protected tables or secret device material are published.
+
+
+Latest repository verification: GitHub Actions run #300, **177 tests passed, 0 failed**; artifact restoration, catalog/profile rebuild and Python compileall passed. https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45065537376

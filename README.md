@@ -115,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result:** GitHub Actions [run #299](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591) passed **177 tests, 0 failures**. The same run successfully restored research payloads, rebuilt the parameter catalog and ordered setup profiles, ran all offline tests and compiled Python sources.
+**Latest verified result:** GitHub Actions [run #300](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45065537376) passed **177 tests, 0 failures**. The same run successfully restored research payloads, rebuilt the parameter catalog and ordered setup profiles, ran all offline tests and compiled Python sources.
 
 ## Official V1.4/V1.6 protocol references
 

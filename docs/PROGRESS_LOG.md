@@ -880,3 +880,15 @@
 - Created `docs/WINDOWS_V1_6_UUID_HELPER_CROSS_BUILD.md`; corrected the staged-binary inventory and linked the report from README, STATUS, ROADMAP, UART response-dispatch and UartComm reports.
 - Verified latest GitHub Actions run #299 (`45056653591`) is successful with **177 tests, 0 failures**; artifact restoration, catalogue/profile regeneration and `python -m compileall -q scripts tests` pass. Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45056653591
 - V1.6 static comparison sub-workstream advances **84% → 85%**. The weighted whole-product estimate remains **72.6% (79.9 / 110)** because the protected helper, live transports, desktop UI and hardware validation are still incomplete.
+
+
+## 2026-11-23 — Ghidra validation of the three V1.6 indirect-helper targets
+
+- Queried each target directly with REA/Ghidra 12.2 after resolving the per-build pointer values:
+  - `0x0077DA60` in the 2025-10-14 PE: Ghidra's recovered function body is one byte; its decompiler reports invalid control-flow/data, implausible I/O/access operations and `halt_baddata()`.
+  - `0x007DB110` in the 2026-08-06 PE: one-byte body; pseudocode stops after one isolated memory/register expression with `halt_baddata()`.
+  - `0x00855110` in the 2026-09-12 PE: one-byte body; pseudocode includes implausible I/O and calculated accesses and stops with `halt_baddata()`.
+- These body extents mean the emitted decompiler text is not a valid function implementation. Recorded it as an analysis/disassembly boundary failure; no specific protector is claimed.
+- Updated the three-build report. The helper algorithm remains open; the reliable facts are its two-call-site topology and the CMD21 QByteArray-to-signal handoff.
+- Updated README/STATUS to use latest CI #300 (`45065537376`), which passed **177 tests, 0 failures** and `python -m compileall -q scripts tests`.
+- V1.6 static comparison remains at **85%**; no extra progress credit is claimed for a failed decompilation. Whole-product progress remains **72.6% (79.9 / 110)**.
