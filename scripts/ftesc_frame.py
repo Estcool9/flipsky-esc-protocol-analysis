@@ -85,13 +85,14 @@ def decode_frame(data: bytes | bytearray | memoryview, *, offset: int = 0,
     pstart = offset + header_size
     pend = pstart + n
     payload = bytes(view[pstart:pend])
+    # Native V1.6/V1.7 parsers reject a bad terminator before checking CRC.
+    terminator = int(view[pend + 2])
+    if terminator != END_MARKER:
+        raise FrameError(f"invalid terminator 0x{terminator:02X}; expected 0x{END_MARKER:02X}")
     received = int.from_bytes(view[pend:pend + 2], "big")
     calculated = crc16_modbus(payload)
     if received != calculated:
         raise FrameError(f"CRC mismatch: received 0x{received:04X}, calculated 0x{calculated:04X}")
-    terminator = int(view[pend + 2])
-    if terminator != END_MARKER:
-        raise FrameError(f"invalid terminator 0x{terminator:02X}; expected 0x{END_MARKER:02X}")
     return Frame(marker, payload, received, total)
 
 def decode_frames(data: bytes | bytearray | memoryview, *,
