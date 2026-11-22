@@ -28,7 +28,7 @@
 - [x] Run synthetic test vectors (51 passed, 0 failed on a fresh public clone).
 - [x] Map most V1.7 outbound command IDs to UartComm request builders; full payload schemas remain open.
 - [ ] Map all V1.7 numeric response IDs to Qt acknowledgements and parsers (0x00, 0x01, 0x0F, 0x11, 0x16, 0x18, 0x1A, 0x1E, 0x29 and setup-family IDs are now correlated).
-- [ ] Trace the separate CMD 0x02 one-shot request path and confirm V1.7 offsets against V1.6.
+- [ ] Trace the separate CMD 0x02 one-shot request path and confirm V1.7 offsets against V1.6; current mapped response switch has no 0x02 branch and the signal index 13 is not a request builder. See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
 - [ ] Trace CAN forwarding and slave response dispatch.
 - [ ] Establish exact cross-callback fragmentation/reset behaviour.
 - [ ] Determine BLE's exact frame/envelope format.
