@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 75%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 77%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **75%** |
+| **Overall estimate** | **77%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **71 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **77 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -134,3 +134,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Recovered the 239-byte XOR mask and implemented an offline-only block codec.
 - The app's 150-Kbyte UI warning differs from its native 0x30F98-byte bound; exact intended limit remains unresolved.
 - See [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
+
+
+### Exact setup serialization order recovered
+- All 13 ValueSetups resources contain a `ValueSeque` list; its order differs from the `Values` order in all 13.
+- Total: 736 Values entries, 721 ordered transmit entries, 15 omitted entries; no duplicate or unknown sequence IDs.
+- Added `scripts/ftesc_profiles.py`, profile-aware serializer entry point, full compressed CSV/JSON order artifacts, summary JSON and tests.
+- Omitted keys are recorded, not guessed. Product/hardware resource selection and conditional second-block selection remain open.
+- See [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md).
