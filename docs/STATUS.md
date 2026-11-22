@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 78%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 79%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **78%** |
+| **Overall estimate** | **79%** |
 
 ## Confirmed evidence
 
@@ -156,3 +156,9 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - It matches two parsed integer fields to its input parameters; their exact meaning and the resource-ID-to-SKU mapping remain unresolved.
 - The 13 extracted resources classify as 4 control, 6 motor and 3 motor-signal/FOC variants.
 - See [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md).
+
+
+### Firmware-version selector resolved
+- Both call sites invoke `FUN_00492570(...,1,7)`.
+- These are the firmware major/minor selectors for the `ftesc/1.7` directory; the loader compares them with `FirmwareVersionInf.xml`.
+- Hardware/SKU mapping of the 13 ValueSetups resource IDs remains unresolved.
