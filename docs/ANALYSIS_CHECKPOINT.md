@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 71%**  
+**Overall estimated progress: 73%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -201,3 +201,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - The V1.7 code path that inserts CMD 0x10 + CAN ID into the outgoing payload and routes slave responses remains unresolved.
 - See [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
 - Overall estimate: **71%**.
+
+
+## Direct CAN V1.4 decoder — 2026-11-22
+
+- Read the official Flipsky FTESC CAN Protocol V1.4 PDF from Nextcloud.
+- Added read-only parser for 29-bit extended IDs, CRC-16/MODBUS and periodic telemetry commands 0x0B/0x0C/0x0D.
+- Signed 24-bit current/eRPM fields, signed 16-bit temperatures and voltage are decoded with documented scales.
+- Direct CAN command IDs are a separate namespace from UART INFO command IDs.
+- Added [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md) and [scripts/ftesc_can.py](../scripts/ftesc_can.py).
+- Fresh clone test suite: **60 passed, 0 failed**.
+- Overall estimate: **73%**.
