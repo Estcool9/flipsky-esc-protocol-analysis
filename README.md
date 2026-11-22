@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 48% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 50% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
 
 ## Project status
 
@@ -14,7 +14,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Qt/QML architecture and class ownership | 90% |
 | UART/Qt signal-slot and meta-object mapping | 85% |
 | Outer frame format and CRC reconstruction | 100% |
-| Receive-buffer and resynchronization analysis | 70% |
+| Receive-buffer and resynchronization analysis | 90% |
 | Inner command IDs and payload layouts | 12% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 documented comparison | 90% |
@@ -23,7 +23,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **48%** |
+| **Overall estimate** | **50%** |
 
 See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
@@ -94,6 +94,7 @@ These XML resources are application metadata. Values and limits found in them ar
 The repository contains a standard-library-only Python implementation:
 
 - `scripts/ftesc_frame.py`: CRC-16/MODBUS, frame encoder, single-frame decoder and concatenated-frame decoder.
+- `scripts/ftesc_stream.py`: incremental decoder retaining incomplete frames across chunks and recovering after invalid candidates.
 - `tests/test_ftesc_frame.py`: unit tests for checksum, both frame forms, boundary lengths, incomplete input, corruption and concatenated frames.
 
 Run the test suite from the repository root:
@@ -102,7 +103,7 @@ Run the test suite from the repository root:
 python -m unittest discover -s tests -v
 ```
 
-**Observed result on REA:** 13 tests passed, 0 failures.
+**Observed result on REA:** 36 tests passed, 0 failures, including incremental stream tests.
 
 This codec handles only the outer frame layer. It does not yet interpret inner command IDs, parameter payloads, authentication, firmware-update payloads or BLE-specific wrappers.
 
