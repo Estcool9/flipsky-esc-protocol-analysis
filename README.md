@@ -115,7 +115,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q scripts tests
 ```
 
-**Latest verified result:** GitHub Actions [run #195](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45018768452) passed **159 tests, 0 failures**; catalog/profile regeneration and `compileall` also passed. The offline workflow restores payloads, regenerates the catalog and profiles, validates deterministic outputs, runs the tests and compiles Python sources.
+**Latest verified result:** GitHub Actions [run #199](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022553516) passed **162 tests, 0 failures**; catalog/profile regeneration and `compileall` also passed. The follow-on documentation commit is also green in [run #200](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45022704143). The offline workflow restores payloads, regenerates the catalog and profiles, validates deterministic outputs, runs the tests and compiles Python sources.
 
 ## Official V1.4/V1.6 protocol references
 
@@ -135,13 +135,9 @@ Important version differences:
 
 ## Firmware update analysis
 
-The V1.7 application performs a UUID-based TEA authorization preflight:
-- requests the UUID with CMD 0x21;
-- uses a 16-byte challenge and a 32-round TEA block transform with the device UUID as key;
-- sends the encrypted challenge with CMD 0x22;
-- waits for an authorization acknowledgement.
+The Windows V1.7 analysis has a UUID-based TEA authorization hypothesis recorded separately in the V1.7 firmware report. The independent Android V1.6 native implementation now proves its own authorization preflight: it TEA-encrypts a 16-byte input using 32-round TEA and embedded key material, sends a 0x22-tagged request through UartComm::writeMcuEncrypt, and waits for an integer acknowledgement; only ACK value 0 is accepted. Do not assume the Android V1.6 key handling is identical to Windows V1.7.
 
-Separate native request methods implement boot mode (0x13), erase (0x16) and firmware block write (0x18). The write path uses a 240-byte block payload and a separate XOR transform. The complete UI/bootloader state machine, retry progression and exact V1.7 firmware image format remain unfinished. The V1.6 Android APK now provides 17 unique embedded firmware images (165,880 bytes each) with raw Cortex-M-like vector-table headers; this does not prove their MCU/SKU mapping or establish the V1.7 update image format. No firmware was flashed. See [Android V1.6 QML/ValueSetup/firmware resources](docs/ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
+Separate native request methods implement boot mode (0x13), erase (0x16) and firmware block write (0x18). The write path uses a 240-byte block payload and a separate XOR transform. The complete UI/bootloader state machine, retry progression and exact V1.7 firmware image format remain unfinished. The V1.6 Android APK now provides 17 unique embedded firmware images (165,880 bytes each) with raw Cortex-M-like vector-table headers; this does not prove their MCU/SKU mapping or establish the V1.7 update image format. No firmware was flashed. See [Android V1.6 QML/ValueSetup/firmware resources](docs/ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md). The Android V1.6 setup parser explicitly reads XML ValueSeque children into the same ordered native list traversed by valueArralize/valueDeArralize; all nine valueTET formats and big-endian marker/value encoding are mapped. See [native ValueSetup and firmware codec report](docs/ANDROID_V1_6_NATIVE_VALUESETUP_FIRMWARE_CODEC.md).
 
 See [FIRMWARE_UPDATE_FLOW](docs/FIRMWARE_UPDATE_FLOW.md).
 
