@@ -31,7 +31,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | INFO CMD | Parser/branch action observed | Qt signal or follow-up | Confidence / remaining question |
 |---:|---|---|---|
 | `0x00` | Reads a telemetry block: status/byte fields, scaled numeric fields and angular values; builds a structured set of values | `FUN_004b59a0`, index 11 `ftescGetRealtimeDataOnce` | Wrapper link confirmed; exact field-name/unit mapping should be cross-checked against the existing CMD00 schema |
-| `0x01` | Parses an ESC-ID/list response and manages the list object | `FUN_004b5b40`, index 17 `ftescGetIDResAck` | Signal link confirmed; full list element layout and duplicate/termination rules still need documentation |
+| `0x01` | Parses an ESC-ID byte vector and manages the list object | `FUN_004b5b40`, index 17 `ftescGetIDResAck(QVector<int>,bool)` | The native path reads all DATA bytes as unsigned integers; command semantics and the secondary boolean remain undocumented in the public V1.6 command table. Preserved as a raw vector only |
 | `0x09` | Validates marker `0xD2C6EF10`; on match iterates the configured profile's ValueSeque and decodes each property through `FUN_0049a5c0`; increments the setup progress counter by 1 | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck(QString, bool)` | One-block V1.6 motor-setup response; marker mismatch logs `Invalid SecretKey` and returns false. Offline decoder now added |
 | `0x0A` | Validates marker `0x4879187D`; on match iterates the configured profile's ValueSeque and decodes each property through `FUN_0049a5c0`; increments the setup progress counter by 2 | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck(QString, bool)` | One-block V1.6 motor-signal-setup response; marker mismatch logs `Invalid SecretKey` and returns false. Offline decoder now added |
 | `0x0D` | Parses PPM signal response, resets throttle at `this+0x30` | `FUN_004b5a10`, index 14 `signalPPMRecAck` | Wrapper method index 14 confirmed |
@@ -44,7 +44,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | `0x1A` | Auto-realtime status response | `FUN_004b55c0`, index 9 `ftescAutoGetRealtimeDataAck` | No-argument wrapper index 9 confirmed |
 | `0x1B` | Parses motor-signal/setup read response, including multiple values | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Shared signal index 7 confirmed; the branch's marker and field semantics need fuller annotation |
 | `0x1C` | Checks setup/secret-key acknowledgement path and produces an integer-like result; resets motor-signal related cooldown at `this+0x24` | `FUN_004b5910`, index 8 `ftescMotorSignalSecretKeyCheckAck` | Wrapper index 8 confirmed; do not infer cryptographic algorithm or key material from the ACK handler |
-| `0x1E` | Parses a second ESC-ID/list response variant; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck` | Signal link confirmed; exact relation to CMD01 and target-ID correlation remains open |
+| `0x1E` | Parses the master/slave ID vector; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck(QVector<int>,bool)` | Official V1.6 spec defines D0 as master ID and D1 onward as slave IDs; offline decoder added. The secondary signal boolean is not interpreted |
 | `0x21` | Parses UUID bytes; resets UUID throttle at `this+0x28` | `FUN_004b5670`, index 1 `ftescGetUuidAck` | Wrapper index 1 confirmed; exact UUID normalization/validation not asserted here |
 | `0x22` | Reads an encryption/write-success status byte; resets encryption throttle at `this+0x2c` | `FUN_004b56b0`, index 2 `writeEncryptSuccess` | Wrapper index 2 confirmed; no key or challenge bytes are exposed |
 | `0x24` | Converts a byte sequence to a textual/sample output | `FUN_004b5630`, index 13 `ftescSamplesPrint` | Wrapper index 13 directly confirmed; this is a sample/diagnostic output, not proven control telemetry |
@@ -158,4 +158,9 @@ The recovered V1.6 branches have the following existing or newly added offline d
 | `0x21` | `parse_uuid_response` | Raw UUID DATA preserved |
 | `0x29` | `parse_imu_calibration_response` | Nine signed int32 values, each scaled by 1e6 |
 
-CMD `0x01` and `0x1E` ESC ID-list responses still need an offline decoder; the native path iterates the returned bytes into a QVector-like container and emits the two-argument `ftescGetIDResAck` signal. The exact boolean meaning and element semantics should be recovered before implementation.
+CMD `0x1E` now has an offline decoder, `parse_esc_id_enumeration_response()`, which returns D0 as `master_id`, D1 onward as `slave_ids`, and preserves `raw_ids`. The native handler creates a QVector-like byte list and emits `ftescGetIDResAck(QVector<int>,bool)`; the secondary boolean is intentionally not inferred. CMD `0x01` follows a similar native byte-vector path but is not listed in the public V1.6 command table; no semantic interpretation is assigned to it yet.
+
+
+## 9. CMD1E offline codec coverage
+
+Added `EscIdEnumerationResponse` and `parse_esc_id_enumeration_response()` to `scripts/ftesc_responses.py`. The function validates CMD `0x1E`, preserves the raw DATA bytes, exposes D0 as the master ID and D1 onward as the slave IDs, and leaves the additional Qt signal boolean unspecified. The native case01 parser is kept as a raw/unknown vector because it is not documented in the official V1.6 command list.
