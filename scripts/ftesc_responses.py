@@ -37,6 +37,17 @@ class MotorSignalSetupResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class SingleSetupProfileResponse:
+    """One marker-prefixed V1.6 setup profile response.
+
+    Any bytes not consumed by the known ValueSeque are preserved verbatim.
+    """
+    command: int
+    block: DecodedSetupBlock
+    trailing_data: bytes
+
+
+@dataclass(frozen=True, slots=True)
 class TopFlowSetupResponse:
     block: DecodedSetupBlock
     secret_key_status: int
@@ -284,6 +295,49 @@ def parse_motor_signal_setup_response(
         raise SetupValueError("CMD 0x1C response has unexpected trailing DATA")
     return MotorSignalSetupResponse(
         first_block=first, second_block=second, secret_key_status=0, success=True
+    )
+
+
+def _parse_single_setup_profile_response(
+    info: bytes | bytearray | memoryview,
+    expected_command: int,
+    marker: int,
+    profile_order: Iterable[str],
+    metadata: Mapping[str, Mapping[str, Any]],
+) -> SingleSetupProfileResponse:
+    """Decode one V1.6 marker-prefixed setup block and preserve trailing bytes."""
+    message = parse_info(info)
+    if message.command != expected_command:
+        raise ValueError(
+            f"expected CMD 0x{expected_command:02X}, got 0x{message.command:02X}"
+        )
+    block = decode_profile_block(message.data, marker, profile_order, metadata)
+    return SingleSetupProfileResponse(
+        command=message.command,
+        block=block,
+        trailing_data=bytes(message.data[block.next_offset:]),
+    )
+
+
+def parse_v16_motor_setup_response(
+    info: bytes | bytearray | memoryview,
+    profile_order: Iterable[str],
+    metadata: Mapping[str, Mapping[str, Any]],
+) -> SingleSetupProfileResponse:
+    """Decode V1.6 CMD 0x09 using marker 0xD2C6EF10."""
+    return _parse_single_setup_profile_response(
+        info, 0x09, MOTOR_SETUP_MARKER, profile_order, metadata
+    )
+
+
+def parse_v16_motor_signal_setup_response(
+    info: bytes | bytearray | memoryview,
+    profile_order: Iterable[str],
+    metadata: Mapping[str, Mapping[str, Any]],
+) -> SingleSetupProfileResponse:
+    """Decode V1.6 CMD 0x0A using marker 0x4879187D."""
+    return _parse_single_setup_profile_response(
+        info, 0x0A, MOTOR_SIGNAL_SETUP_MARKER, profile_order, metadata
     )
 
 
