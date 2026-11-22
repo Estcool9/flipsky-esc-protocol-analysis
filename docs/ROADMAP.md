@@ -1,7 +1,7 @@
 # Technical roadmap — open-source Flipsky client
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72%** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md)).
+**Overall project progress: 72%** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); current unrounded estimate 72.4%).
 
 ## Phase A — Artifact intake and static reverse engineering
 
@@ -45,8 +45,10 @@
 - [x] Cross-check direct CAN command IDs and identifier composition against pinned VESC firmware.
 - [x] Add `scripts/vesc_uart.py` and tests for 02/03/04 framing and VESC CRC.
 - [x] Add `scripts/vesc_can.py` and tests for VESC target/command ID layout and basic scaling.
+- [x] Add `scripts/vesc_stream.py` for incremental VESC UART decoding, fragmentation, concatenation and resynchronization.
 - [x] Add explicit adapter-family matrix: FTESC NON-VESC vs FSESC VESC.
 - [ ] Expand VESC GET_VALUES response decoder and firmware-version compatibility profiles.
+- [ ] Run CI against the newly added 7 VESC stream tests (not yet verified in this checkpoint).
 - [ ] Add version negotiation and explicit user-selected protocol-profile UX; never infer protocol from brand alone.
 - [ ] Decide whether the open-source app will implement only the documented Flipsky V3.00 profile or multiple VESC firmware generations.
 
