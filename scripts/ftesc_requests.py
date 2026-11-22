@@ -246,3 +246,97 @@ def build_reset_motor_signal_setup_info(flag: int) -> bytes:
     not established, so the API deliberately calls it only 'flag'.
     """
     return build_info(CMD_RESET_TOPFLOW, _u8(flag, "flag"))
+
+
+# V1.4-compatible UART bridge/control commands. These are kept separate from
+# the V1.7-native request builders above because command 0x1D is version-overloaded.
+CMD_CAN_OVER = 0x10
+CMD_CONTROL_AND_OBTAIN_DATA_ONCE = 0x02
+CMD_CURRENT_GEAR_AND_OBTAIN_DATA = 0x20
+
+
+def _scaled_i32_trunc(value: int | float, scale: int, label: str) -> bytes:
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise SetupValueError(f"{label} must be finite")
+    scaled = int(numeric * scale)  # C cast semantics: truncate toward zero.
+    if not -(1 << 31) <= scaled < (1 << 31):
+        raise SetupValueError(f"{label} does not fit signed int32 after scaling")
+    return scaled.to_bytes(4, "big", signed=True)
+
+
+def _bool_byte(value: bool, label: str) -> bytes:
+    if not isinstance(value, bool):
+        raise SetupValueError(f"{label} must be bool")
+    return bytes((int(value),))
+
+
+def build_can_forward_info(
+    slave_id: int, slave_command: int, slave_data: bytes = b""
+) -> bytes:
+    """Build UART CMD 0x10: SlaveID, SlaveCMD, then SlaveDATA."""
+    if not isinstance(slave_data, (bytes, bytearray, memoryview)):
+        raise SetupValueError("slave_data must be bytes-like")
+    data = _u8(slave_id, "slave_id") + _u8(slave_command, "slave_command") + bytes(slave_data)
+    return build_info(CMD_CAN_OVER, data)
+
+
+def build_control_and_obtain_data_once_info(
+    current_code: int,
+    *,
+    direction_switch_enabled: bool = False,
+    rotation_direction: bool = False,
+    gear: int = 0,
+    horn: bool = False,
+    headlight: bool = False,
+    brake_light: bool = False,
+    cruise_enabled: bool = False,
+    cruise_on: bool = False,
+    multi_mode_enabled: bool = False,
+    multi_mode: int = 0,
+) -> bytes:
+    """Build the V1.4 CMD 0x02 14-byte esk8/esurf control payload.
+
+    current_code is the protocol's raw 0..1023 code, not amperes:
+    0..511 represents braking/negative current and 512..1023 driving current.
+    """
+    if isinstance(current_code, bool) or not isinstance(current_code, int) or not 0 <= current_code <= 1023:
+        raise SetupValueError("current_code must be an integer in 0..1023")
+    if isinstance(gear, bool) or not isinstance(gear, int) or not 0 <= gear <= 4:
+        raise SetupValueError("gear must be an integer in 0..4")
+    if isinstance(multi_mode, bool) or not isinstance(multi_mode, int) or not 0 <= multi_mode <= 2:
+        raise SetupValueError("multi_mode must be an integer in 0..2")
+    data = (
+        _u16(current_code, "current_code")
+        + b"\\x00\\x00"
+        + _bool_byte(direction_switch_enabled, "direction_switch_enabled")
+        + _bool_byte(rotation_direction, "rotation_direction")
+        + _u8(gear, "gear")
+        + _bool_byte(horn, "horn")
+        + _bool_byte(headlight, "headlight")
+        + _bool_byte(brake_light, "brake_light")
+        + _bool_byte(cruise_enabled, "cruise_enabled")
+        + _bool_byte(cruise_on, "cruise_on")
+        + _bool_byte(multi_mode_enabled, "multi_mode_enabled")
+        + _u8(multi_mode, "multi_mode")
+    )
+    if len(data) != 14:
+        raise AssertionError("V1.4 CMD 0x02 payload must be exactly 14 bytes")
+    return build_info(CMD_CONTROL_AND_OBTAIN_DATA_ONCE, data)
+
+
+def build_current_gear_and_obtain_data_info(
+    current: int | float, gear: int
+) -> bytes:
+    """Build V1.4 CMD 0x20: signed current*1000 followed by gear byte."""
+    data = _scaled_i32_trunc(current, 1_000, "current") + _u8(gear, "gear")
+    return build_info(CMD_CURRENT_GEAR_AND_OBTAIN_DATA, data)
+
+
+def build_v14_reset_reboot_info() -> bytes:
+    """Build the V1.4 CMD 0x1D reset/reboot request with reserved byte 0x00.
+
+    V1.7 reuses CMD 0x1D for TopFlow/motor-signal setup operations; do not
+    substitute this V1.4 variant for the V1.7-native reset builders.
+    """
+    return build_info(0x1D, b"\\x00")
