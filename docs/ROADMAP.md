@@ -1,7 +1,7 @@
 # Technical roadmap — open-source Flipsky client
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72%** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); current unrounded estimate 72.4%).
+**Overall project progress: 72.2% unrounded (72% rounded)** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); current unrounded estimate 72.4%).
 
 ## Phase A — Artifact intake and static reverse engineering
 
