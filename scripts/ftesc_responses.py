@@ -67,10 +67,26 @@ class MotorIdentifyResponse:
 class FirmwareVersionResponse:
     major: int
     minor: int
-    firmware_type: int
-    label_raw: bytes
-    label: str
-    suffix_byte: int
+    boot_mode_flag: int
+    hardware_name_raw: bytes
+    hardware_name: str
+    hardware_serial_number: int
+
+    @property
+    def firmware_type(self) -> int:
+        return self.boot_mode_flag
+
+    @property
+    def label_raw(self) -> bytes:
+        return self.hardware_name_raw
+
+    @property
+    def label(self) -> str:
+        return self.hardware_name
+
+    @property
+    def suffix_byte(self) -> int:
+        return self.hardware_serial_number
 
 
 @dataclass(frozen=True, slots=True)
@@ -202,28 +218,28 @@ def parse_motor_identify_response(
 def parse_firmware_version_response(
     info: bytes | bytearray | memoryview,
 ) -> FirmwareVersionResponse:
-    """Decode CMD 0x11 version tuple, UTF-8 label bytes and trailing type byte.
+    """Decode CMD 0x11 version, boot/app marker, ASCII hardware name and serial.
 
-    The native parser reads three leading bytes, converts the following
-    QByteArray to QString, then reads one trailing byte. The label bytes are
-    preserved as raw data because the exact vendor string convention is not
-    yet independently validated against a live response.
+    The V1.6 protocol defines D0 major, D1 minor, D2 mode marker (0xAC
+    bootloader, 0xEF application), D3..D(n+2) ASCII hardware name, and the
+    final byte as hardware serial number. The native V1.7 parser reads these
+    fields in the same order. Raw name bytes are preserved.
     """
     message = parse_info(info)
     if message.command != 0x11:
         raise ValueError(f"expected CMD 0x11, got 0x{message.command:02X}")
     if len(message.data) < 4:
         raise ValueError("CMD 0x11 response requires three header bytes and one suffix byte")
-    major, minor, firmware_type = message.data[:3]
-    label_raw = bytes(message.data[3:-1])
-    suffix = message.data[-1]
+    major, minor, boot_mode_flag = message.data[:3]
+    hardware_name_raw = bytes(message.data[3:-1])
+    serial_number = message.data[-1]
     return FirmwareVersionResponse(
         major=major,
         minor=minor,
-        firmware_type=firmware_type,
-        label_raw=label_raw,
-        label=label_raw.decode("utf-8", errors="replace"),
-        suffix_byte=suffix,
+        boot_mode_flag=boot_mode_flag,
+        hardware_name_raw=hardware_name_raw,
+        hardware_name=hardware_name_raw.decode("ascii", errors="replace"),
+        hardware_serial_number=serial_number,
     )
 
 
