@@ -46,3 +46,12 @@ Research checked on 2026-11-22. External references are used for product-family 
 
 - The official Flipsky V1.6 manual PDF linked from the product page was not accessible in the web research environment. The local extracted protocol document remains the basis for detailed V1.6 command cross-checks.
 - No external source was used to infer undocumented V1.7 payload fields; those are derived from the executable's native code.
+
+
+8. **Flipsky FTESC Gateway Interface Module — official product page**  
+   https://flipsky.net/collections/new-arrival/products/flipsky-ftesc-gateway-interface-module-multi-esc-networked-cooperative-control-for-ftesc-series  
+   Describes FTESC Gateway firmware V1.6+, USB/CAN/UART/PPM/ADC interfaces, USB passthrough to address a specific ESC by CAN ID, unique-ID and common-baud requirements. The linked V1.6 manual PDF was visible on the product page but could not be retrieved by the research browser in this session.
+
+9. **Flipsky FT110120A WP product page**  
+   https://flipsky.net/collections/non-vesc/products/flipsky-ft110120a-wp-ip68-waterproof-110v-120a-brushless-esc-speed-controller-for-e-foil-electric-surfboard-underwater-thruster-rc-boat-e-skateboard-e-bike  
+   Lists firmware V1.7 and above, Flipsky ESC Tool, and USB/CAN/UART/PPM/ADC communication ports. This is a product-specific example, not evidence that all FTESC SKUs use identical parameter tables.
