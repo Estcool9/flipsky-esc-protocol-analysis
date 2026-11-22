@@ -7,6 +7,8 @@ from scripts.ftesc_responses import (
     parse_auto_realtime_ack,
     parse_can_forward_response,
     parse_motor_signal_setup_response,
+    parse_v16_motor_setup_response,
+    parse_v16_motor_signal_setup_response,
     parse_setup_write_ack,
     parse_topflow_setup_response,
     parse_firmware_version_response,
@@ -73,6 +75,31 @@ class V17ResponseDecoderTests(unittest.TestCase):
         self.assertEqual(result.secret_key_status, 0)
         self.assertEqual(result.first_block.values["a"]["value_int"], 1)
         self.assertEqual(result.second_block.values["b"]["value_int"], 2)
+
+    def test_v16_motor_setup_response_single_marker_block(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        metadata = {"motor": {"valType": 2, "valueTET": 1, "value_int": 42}}
+        data = encode_profile_block(0xD2C6EF10, ["motor"], metadata)
+        result = parse_v16_motor_setup_response(bytes((0x09,)) + data + b"\xAA", ["motor"], metadata)
+        self.assertEqual(result.command, 0x09)
+        self.assertEqual(result.block.values["motor"]["value_int"], 42)
+        self.assertEqual(result.trailing_data, b"\xAA")
+
+    def test_v16_motor_signal_setup_response_single_marker_block(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        metadata = {"signal": {"valType": 2, "valueTET": 4, "value_int": -7}}
+        data = encode_profile_block(0x4879187D, ["signal"], metadata)
+        result = parse_v16_motor_signal_setup_response(bytes((0x0A,)) + data, ["signal"], metadata)
+        self.assertEqual(result.command, 0x0A)
+        self.assertEqual(result.block.values["signal"]["value_int"], -7)
+        self.assertEqual(result.trailing_data, b"")
+
+    def test_v16_single_setup_response_rejects_marker_mismatch(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block, SetupValueError
+        metadata = {"signal": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        wrong_marker = encode_profile_block(0xD2C6EF10, ["signal"], metadata)
+        with self.assertRaises(SetupValueError):
+            parse_v16_motor_signal_setup_response(bytes((0x0A,)) + wrong_marker, ["signal"], metadata)
 
     def test_topflow_setup_response_uses_generic_metadata(self):
         from scripts.ftesc_setup_serializer import encode_profile_block
