@@ -60,7 +60,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 exact write mode/CCCD and shared parser mapping | 90% |
+| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
 | V1.6 executable comparison (PE identity and marker-level pass; function diff pending) | 25% |
 | Hardware validation | 0% |
 
@@ -360,5 +360,15 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Direct call site `BleUart::sendNextPacket` places C++ `QLowEnergyService::WriteMode=1` in the third argument and calls `writeCharacteristic`; for Qt 5.15 this is `WriteWithoutResponse`.
 - Direct service-state code resolves CCCD UUID `0x2902`, converts literal `0100` into bytes `01 00`, and writes that descriptor. This enables notifications, not indications.
 - RX callback `BleUart::updateData` routes to `BleUart::dataRx` signal; `FtescLowLevelFace::bleDataRx` copies input and invokes `uartPackData::uartPackDataHandle(QByteArray)`, the shared FTESC stream parser. Exact QObject constructor connect edge is still open.
-- Android/BLE static sub-workstream: 85% → 90%. Windows V1.7 final write target remains protected/unresolved; Android V1.6 provides strong cross-platform corroboration but is not a substitute for the Windows call edge.
+- Android/BLE static sub-workstream: 90% → 95% after ARM64 and ARMv7 independently confirm 20-byte chunking, WriteWithoutResponse and common parser routing. Windows V1.7 final write target remains protected/unresolved; Android V1.6 provides strong cross-platform corroboration but is not a substitute for the Windows call edge.
 - Whole-product score stays **72.6%** (79.9 / 110). Negotiated MTU, live notification behavior, retries/reconnect, app-version differences and hardware validation remain unverified.
+
+
+## Android ARMv7 cross-ABI confirmation — 2026-11-22
+
+- ARMv7 `BleUart::writeData` sets the chunk stride to `0x14` (20) and calls `QByteArray::mid` in a loop.
+- ARMv7 `BleUart::sendNextPacket` sets C++ `WriteMode=1` and directly calls Qt `writeCharacteristic`; this is `WriteWithoutResponse`.
+- ARMv7 `serviceStateChanged` constructs descriptor `0x2902`, calls `QByteArray::fromHex` and then `writeDescriptor`. A unique `0100` literal exists in the ARMv7 image, but its direct cross-reference to the method was not recovered; ARM64 already directly proves the `01 00` payload.
+- ARMv7 `FtescLowLevelFace::bleDataRx` resolves to `QByteArray` copy then `uartPackData::uartPackDataHandle`, independently confirming the common parser route.
+- Android/BLE static workstream: 90% → 95%. Exact QObject signal/slot connection, runtime MTU/link outcomes, Windows V1.7 protected write edge, and hardware validation remain open.
+- Whole-product score remains **72.6%** (79.9 / 110).
