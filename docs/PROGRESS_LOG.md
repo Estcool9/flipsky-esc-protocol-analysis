@@ -610,3 +610,12 @@
 - Reproducibility/tests/CI package: 95% → 100%. Weighted project score: **79.9 / 110 = 72.64% ≈ 72.6%**, displayed as 73%. UI/live transport remains 20%; hardware validation remains 0%.
 - Commits in this CI correction: workflow change `b32a9803dbb250211566fdac5c29ccb0a4859079`, stale summary removal `e12fe4bb43ac84d9b309857ad60f0db39dc12136`, stream recovery `1e11a0d86585e58c64cfa7f89e32df17a2414b05`.
 - No hardware, BLE, UART or CAN transport was used.
+
+
+## 2026-11-22 — Candidate BLE GATT write call site
+
+- Examined the assembly of asynchronous BLE queue pump `FUN_00404E80`.
+- At call site `0x00404FEC`, ECX holds the BLE service object; three stack arguments are prepared: a characteristic-like object, the queued `QByteArray`, and integer `1`.
+- `resolve_native_call_targets` resolves the computed call reference to `0x00B5A1D0`. This address lies inside the protected Enigma region; its decompilation warns of bad instruction data and is not semantically reliable.
+- The argument shape and the mangled `QLowEnergyService::writeCharacteristic(..., WriteMode)` string are a strong match, but the call target cannot yet be mapped conclusively to that Qt method. The observed third argument `1` is therefore not interpreted as either write mode.
+- BLE static sub-workstream: 75% → 80%. Overall score unchanged at **72.6%** (79.9 / 110). Evidence IDs: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`, `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`, `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
