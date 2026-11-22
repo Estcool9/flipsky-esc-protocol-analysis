@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 50%**  
+**Overall estimated progress: 54%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -41,9 +41,9 @@ The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes t
 | Embedded XML extraction and validation | 100% |
 | Parameter catalog generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
-| UART/Qt event and meta-object mapping | 85% |
+| UART/Qt event and meta-object mapping | 100% |
 | Outer frame and CRC reconstruction | 100% |
-| Inner command IDs and payload layouts | 20% |
+| Inner command IDs and payload layouts | 35% |
 | Firmware update / TEA relationship | 55% |
 | VESC compatibility assessment | 25% |
 | Offline frame/parser/stream tests | 100% (36 tests passing on published tree) |
@@ -112,3 +112,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Overall estimate: **50%**. Receive-buffer analysis 90%; stream codec and tests 100%; V1.7 command-ID mapping 20%.
 - A memoryview lifetime issue discovered by negative tests was fixed by decoding from an immutable snapshot before mutating the receive buffer.
 - No hardware interaction or frame transmission.
+
+
+## Qt dispatch and response command map — 2026-11-22
+
+- Decoded all 64 Qt method records in the FtescLowLevelFace meta-object and matched them to the switch cases in `0x004B98D0`.
+- New report: [QT_METACALL_DISPATCH_MAP.md](QT_METACALL_DISPATCH_MAP.md).
+- Resolved TEA method indexes and direct firmware-update caller; encryption use in ordinary UART frames remains unproven.
+- Decompiled response dispatcher `0x004997A0`; high-confidence response correlations: CMD 0x00 telemetry, 0x11 firmware identity, 0x1A periodic telemetry ack, 0x1E ESC ID list.
+- CMD 0x00 V1.7 reads the 44-byte extended telemetry DATA layout, including three extra 32-bit angular values and PAS RPM.
+- New report: [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md).
+- Overall estimated progress: **54%**. FtescLowLevelFace Qt meta-call map 100%; V1.7 command cross-reference 35%.
