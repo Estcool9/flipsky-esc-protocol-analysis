@@ -387,3 +387,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Overall weighted product estimate unchanged: **72.6%** (79.9 / 110). No desktop UI implementation or hardware validation is claimed.
 - Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
 - No APK/native code execution, handset access, BLE/GATT operation, UART/CAN transmission or firmware flashing was performed.
+
+
+### ValueSetup serializer cross-check — 2026-11-22
+
+- Compared the embedded V1.6 ControlSetup and MotorSetup official XML metadata against the repository's existing typed serializer branches.
+- All 69 control and 93 ordered official motor entries have supported `valType`/`valueTET` combinations; no missing required `valueTET`/scale metadata or unsupported pair was observed.
+- Observed type pairs: Control `(2,1)=7, (4,1)=19, (1,9)=33, (2,3)=1, (1,7)=3, (6,1)=3, (7,1)=3`; Motor `(4,1)=9, (1,9)=61, (2,5)=1, (1,7)=13, (2,1)=9`.
+- In both V1.6 files, Values XML child order differs from ValueSeque; the existing encoder's explicit `ValueSeque`-ordered design is therefore essential. This is metadata compatibility evidence, not a live ESC round-trip.
