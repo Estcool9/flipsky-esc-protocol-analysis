@@ -481,3 +481,44 @@
 - Fresh public clone: **110 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **89% to 90%**. Motor-signal response decoding is covered; TopFlow metadata, SKU mapping and live validation remain open.
 - No hardware traffic was generated.
+
+
+## 2026-11-22 — Full resource scan and 19-profile ValueSetup catalogue
+
+- The original extractor tested 14 known offsets. A bounded, read-only scan of 3,876 zlib-looking headers found 19 unique, complete XML streams in the V1.7 PE.
+- Added six additional unique ValueSetup resources at offsets `0x1F78BA`, `0x1FED4A`, `0x204444`, `0x20CD8C`, `0x20FE7F` and `0x21F2BC`. Offset `0x1FDE78` is a duplicate.
+- Added all six offsets to the reproducible extractor and committed the compressed payloads and updated extraction manifest.
+- Added `encoder_setup` classification for the new encoder configuration profile.
+- Updated the profile generator to report whether XML `Values` order is identical to `ValueSeque` order. Only 1 of 19 profiles match; 18 do not. Serializers must use `ValueSeque`, not XML document order.
+- Current catalog: 1,152 rows, 286 distinct XML IDs, 19 profiles, 1,135 sequence entries and 17 omitted metadata entries.
+- Families: 7 control, 6 motor, 5 motor-signal/FOC, 1 encoder.
+- Published the profile-order CSV/JSON and summary payloads; a fresh clone restored the files from GitHub.
+- TopFlow remains missing: the full scan did not find a valid XML root/resource matching the missing TopFlow table path.
+
+## 2026-11-22 — V1.7 native UART transmit chain and CAN wrapper finding
+
+- Decoded the Qt meta-object records for `FtescLowLevelFace`, `UartComm` and `uartPackData`.
+- Mapped the normal request path: UartComm request builder → common logger `FUN_00495910` → UartComm signal `sendDataToESC` → FtescLowLevelFace slot `uartCommSendToFtesc` → AA/BB frame builder `FUN_0049C5C0` → uartPackData signal → low-level byte-array writer.
+- Found 29 request-method callers of `FUN_00495910`. The common helper logs CAN-forward state, target ID, payload length and bytes, then forwards the original QByteArray without prepending `0x10 | SlaveID | SlaveCMD`.
+- Added [V1_7_OUTBOUND_TRANSMIT_CHAIN.md](V1_7_OUTBOUND_TRANSMIT_CHAIN.md) with native addresses, meta-object indexes and REA evidence IDs.
+- Updated [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md). The conclusion is deliberately scoped: no CMD 0x10 prepend in the normal UartComm path observed; an alternate or external gateway path is not ruled out.
+- No frame was transmitted and no ESC was connected.
+
+## 2026-11-22 — Flipsky VESC V1.0 PDFs and separate VESC adapter
+
+- Read the four user-supplied PDFs in Nextcloud: English/Chinese UART and CAN V1.0, documents `VESC-CM-UART-20250331-01` and `VESC-CM-CAN-20250331-01`, dated 2025-04-15 and aimed at VESC firmware V3.00+.
+- Cross-checked VESC UART markers 02/03/04, end marker 03, CRC table (0x1021, init zero), big-endian trailer and command IDs with pinned VESC Tool source.
+- Cross-checked direct CAN ID composition and basic control scales with the C example in the Flipsky document and pinned `vedderb/bldc/comm/comm_can.c`.
+- Documented the stale English UART TOC and CAN identifier prose ambiguity in [FLIPSKY_VESC_PROTOCOL_V1.0.md](FLIPSKY_VESC_PROTOCOL_V1.0.md).
+- Added separate offline VESC modules `scripts/vesc_uart.py` and `scripts/vesc_can.py`, plus 16 unit tests. The Flipsky VESC GET_VALUES request vector is `02 01 04 40 84 03`.
+- Added [PROTOCOL_FAMILY_MATRIX.md](PROTOCOL_FAMILY_MATRIX.md); FTESC and FSESC/VESC remain explicit separate adapters.
+- Updated [VESC_COMPARISON.md](VESC_COMPARISON.md) and [EXTERNAL_REFERENCES.md](EXTERNAL_REFERENCES.md), including Flipsky's 20 November 2026 separate-gateway article.
+
+## 2026-11-22 — Reusable REA workflow and clean test run
+
+- Verified REA host toolchain: Ghidra 12.2, Rizin/rz-bin 0.9.1, Python 3.13.5 and OpenJDK 25.
+- Added [RE_WORKFLOW.md](RE_WORKFLOW.md) for future binary intake, hash identity, Rizin/Ghidra triage, Qt meta-object mapping, bounded resource extraction, evidence confidence, tests and GitHub hygiene.
+- Re-ran the full unit test suite on a fresh GitHub pull on REA: **148 tests passed, 0 failed**; `compileall` succeeded.
+- Updated compressed ValueSeque catalog payloads and summary after adding the Values-vs-ValueSeque ordering flag.
+- Recalibrated the project-completion metric from earlier offline-only 90–92% figures to **72%** for the full open-source desktop replacement. The weighted scoring model is published in README/STATUS; UI, live transports and hardware validation remain incomplete.
+- No physical ESC was connected and no UART/CAN/BLE command or firmware update was transmitted.
