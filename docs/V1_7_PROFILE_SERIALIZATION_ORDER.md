@@ -14,7 +14,11 @@ The V1.7 native setup serializer iterates a vector in its existing order and doe
 
 The order differs from the `Values` order in all 13 extracted resource files.
 
-## 2. Recovered counts
+## 2. Resource families
+
+The 13 resources classify by parameter names into 4 control-setup resources, 6 motor-setup resources and 3 motor-signal/FOC resources. Their counts are 173/273/290 Values entries and 173/261/287 ValueSeque entries respectively. These are family labels, not hardware SKU mappings. See [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md).
+
+## 3. Recovered counts
 
 | Metric | Count |
 |---|---:|
@@ -27,7 +31,7 @@ The order differs from the `Values` order in all 13 extracted resource files.
 
 Per-resource counts and SHA-256 fingerprints are stored in [profile-order-summary.json](../analysis-data/profile-order-summary.json).
 
-## 3. Values present in XML but omitted from ValueSeque
+## 4. Values present in XML but omitted from ValueSeque
 
 | XML ID | Name | Omission count | Notes |
 |---|---|---:|---|
@@ -37,7 +41,7 @@ Per-resource counts and SHA-256 fingerprints are stored in [profile-order-summar
 
 These are **not in the transmit sequence** for those resource variants. The analysis does not infer whether they are display-only, derived, read-only, or intentionally excluded for another reason.
 
-## 4. Why this matters
+## 5. Why this matters
 
 The XML `Values` order is not safe to use as a wire-order substitute. For example:
 - resource 01 first diverges at sequence index 46: the `Values` order has `pas_min_pedal_rpm`, while `ValueSeque` has `pas_current_throttle`;
@@ -45,7 +49,7 @@ The XML `Values` order is not safe to use as a wire-order substitute. For exampl
 
 A client that serializes the entire `Values` collection or sorts parameter IDs will produce a different byte stream.
 
-## 5. Reproducible tooling
+## 6. Reproducible tooling
 
 Added:
 - `scripts/ftesc_profiles.py`: parses each XML resource, validates that sequence IDs are unique and exist in `Values`, preserves exact sequence order, and records omitted values;
@@ -65,7 +69,7 @@ This produces:
 - `analysis-data/profile-order.csv`;
 - `analysis-data/profile-order-summary.json`.
 
-## 6. Remaining work
+## 7. Remaining work
 
 - Map each resource file to the corresponding product/firmware/hardware selection logic in the Qt/QML application.
 - Determine how the two marker blocks and optional second motor-signal block are selected per UI operation.
