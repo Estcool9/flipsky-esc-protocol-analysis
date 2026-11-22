@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-22",
+  "purpose": "Source-pinned comparative reference only; no VESC source code is copied into this repository.",
+  "target_flipsky": {
+    "artifact": "Flipsky_ESC_Tool_V1.7_20261029.exe",
+    "size_bytes": 50611200,
+    "sha256": "dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38"
+  },
+  "references": [
+    {
+      "project": "VESC Tool",
+      "repository": "https://github.com/vedderb/vesc_tool",
+      "default_branch": "master",
+      "commit": "04614bf50909b78f23716af694bf19ab9745e7df",
+      "commit_url": "https://github.com/vedderb/vesc_tool/commit/04614bf50909b78f23716af694bf19ab9745e7df",
+      "commit_date": "2026-11-21T11:57:18Z",
+      "license": "GPL-3.0",
+      "files": [
+        {
+          "path": "packet.cpp",
+          "blob_sha": "ce2d626f19367d2132c2beaca4f6a0c5a3b065a2",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/packet.cpp"
+        },
+        {
+          "path": "packet.h",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/packet.h"
+        },
+        {
+          "path": "commands.cpp",
+          "blob_sha": "7dac973739b4864a209909baeae63b53b52d1b33",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/commands.cpp"
+        },
+        {
+          "path": "datatypes.h",
+          "blob_sha": "43714d017f799639817e5daaa672accfd38cdf78",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/datatypes.h"
+        },
+        {
+          "path": "bleuart.cpp",
+          "blob_sha": "9007b7634dcc46d35fac8a0895820cf706dc58af",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/bleuart.cpp"
+        },
+        {
+          "path": "LICENSE",
+          "blob_sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+          "url": "https://github.com/vedderb/vesc_tool/blob/04614bf50909b78f23716af694bf19ab9745e7df/LICENSE"
+        }
+      ]
+    },
+    {
+      "project": "VESC firmware",
+      "repository": "https://github.com/vedderb/bldc",
+      "default_branch": "master",
+      "commit": "6fda11c299a475d5e6a6d1c5f5efd2539643d70b",
+      "commit_url": "https://github.com/vedderb/bldc/commit/6fda11c299a475d5e6a6d1c5f5efd2539643d70b",
+      "commit_date": "2026-11-21T15:18:16Z",
+      "files": [
+        {
+          "path": "datatypes.h",
+          "blob_sha": "a2e16325690a26bca3cebed90ffdd77136c8bf43",
+          "url": "https://github.com/vedderb/bldc/blob/6fda11c299a475d5e6a6d1c5f5efd2539643d70b/datatypes.h"
+        },
+        {
+          "path": "comm/comm_can.c",
+          "blob_sha": "49cf723839a26ffa34bc1de1d5f67506b3d49f90",
+          "url": "https://github.com/vedderb/bldc/blob/6fda11c299a475d5e6a6d1c5f5efd2539643d70b/comm/comm_can.c"
+        },
+        {
+          "path": "comm/commands.c",
+          "blob_sha": "28e1b3bf8ce47cfc7ed17c3565b46a9c6fb6da2f",
+          "url": "https://github.com/vedderb/bldc/blob/6fda11c299a475d5e6a6d1c5f5efd2539643d70b/comm/commands.c"
+        },
+        {
+          "path": "documentation/comm_can.md",
+          "blob_sha": "7a5b38c46af758d4098f3e7101a4f1d414614140",
+          "url": "https://github.com/vedderb/bldc/blob/6fda11c299a475d5e6a6d1c5f5efd2539643d70b/documentation/comm_can.md"
+        }
+      ]
+    }
+  ],
+  "research_scope": [
+    "No VESC code was copied or vendored.",
+    "Protocol comparisons were derived from pinned public source files and the user-supplied FTESC protocol documents.",
+    "No VESC or FTESC controller was connected; no commands were transmitted.",
+    "The FTESC BLE service UUID was not recovered from the current Ghidra-defined string inventory."
+  ]
+}
