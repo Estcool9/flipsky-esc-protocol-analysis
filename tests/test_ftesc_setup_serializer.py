@@ -1,7 +1,7 @@
 import struct
 import unittest
 
-from scripts.ftesc_setup_serializer import SetupValueError, encode_setup_block, encode_setup_value
+from scripts.ftesc_setup_serializer import SetupValueError, encode_profile_block, encode_setup_block, encode_setup_value
 
 
 class SetupValueSerializerTests(unittest.TestCase):
