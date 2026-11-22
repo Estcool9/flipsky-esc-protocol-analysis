@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 60%**  
+**Overall estimated progress: 62%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -142,3 +142,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Native callback wrappers now mapped to exact Qt signal indexes through their immediate arguments and UartComm meta-object pointer.
 - See [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md), section 8.
 - Overall estimated progress: **60%**.
+
+
+## Typed setup serializer — 2026-11-22
+
+- Static code path `0x004A0B00 → 0x004A0790` recovered; marker + ordered typed values.
+- XML `valType`/`valueTET`/ `evalScl` correlation documented.
+- Offline serializer and 10 tests added; full published suite: **46 passed, 0 failed**.
+- See [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
+- Overall estimate: **62%**.
