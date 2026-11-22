@@ -261,7 +261,7 @@ def build_can_position_gear_crc16(
 def build_can_id_current_crc16(esc_id: int, current: int | float) -> CanFrame:
     return _build_crc_can_frame(
         esc_id, CAN_SET_ID_CURRENT_CRC16,
-        _can_scaled_i32(current, 100_000, "D-axis current") + bytes((0,)),
+        _can_scaled_i32(current, 100_000, "D-axis current"),
     )
 
 
