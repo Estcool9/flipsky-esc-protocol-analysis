@@ -5,6 +5,9 @@ from scripts.ftesc_requests import (
     MOTOR_SIGNAL_SETUP_MARKER,
     TOPFLOW_SETUP_MARKER,
     build_auto_realtime_info,
+    build_can_forward_info,
+    build_control_and_obtain_data_once_info,
+    build_current_gear_and_obtain_data_info,
     build_control_brake_current_info,
     build_control_current_info,
     build_control_duty_info,
@@ -19,6 +22,7 @@ from scripts.ftesc_requests import (
     build_reset_motor_signal_setup_info,
     build_reset_topflow_info,
     build_topflow_setup_info,
+    build_v14_reset_reboot_info,
 )
 from scripts.ftesc_setup_serializer import SetupValueError
 
@@ -91,3 +95,49 @@ class V17RequestBuilderTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class V14CompatibilityRequestBuilderTests(unittest.TestCase):
+    def test_uart_can_over_envelope(self):
+        self.assertEqual(
+            build_can_forward_info(0x2A, 0x04, bytes((0x01, 0x02))),
+            bytes.fromhex("10 2A 04 01 02"),
+        )
+
+    def test_control_and_obtain_data_once_14_byte_payload(self):
+        info = build_control_and_obtain_data_once_info(
+            512,
+            direction_switch_enabled=True,
+            rotation_direction=False,
+            gear=2,
+            horn=True,
+            headlight=False,
+            brake_light=True,
+            cruise_enabled=True,
+            cruise_on=False,
+            multi_mode_enabled=True,
+            multi_mode=2,
+        )
+        self.assertEqual(
+            info,
+            bytes.fromhex("02 02 00 00 00 01 00 02 01 00 01 01 00 01 02"),
+        )
+        self.assertEqual(len(info) - 1, 14)
+
+    def test_current_gear_and_obtain_data_uses_truncation(self):
+        self.assertEqual(
+            build_current_gear_and_obtain_data_info(1.2349, 3),
+            bytes.fromhex("20 00 00 04 D2 03"),
+        )
+
+    def test_v14_reset_reboot_reserved_zero_is_distinct(self):
+        self.assertEqual(build_v14_reset_reboot_info(), bytes.fromhex("1D 00"))
+
+    def test_v14_control_ranges(self):
+        with self.assertRaises(SetupValueError):
+            build_control_and_obtain_data_once_info(1024)
+        with self.assertRaises(SetupValueError):
+            build_control_and_obtain_data_once_info(100, gear=5)
+        with self.assertRaises(SetupValueError):
+            build_control_and_obtain_data_once_info(100, multi_mode=3)
