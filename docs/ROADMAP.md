@@ -1,6 +1,6 @@
 # Technical roadmap
 
-**Overall estimated progress: 48% (2026-11-22).**
+**Overall estimated progress: 50% (2026-11-22).**
 
 ## Phase A — Static application mapping
 
@@ -25,7 +25,7 @@
 - [x] Extract public V1.6 command IDs and main payload layouts.
 - [x] Compare public V1.4 and V1.6 protocol revisions.
 - [x] Build offline frame and selected command/telemetry codecs.
-- [x] Run synthetic test vectors (26 passed).
+- [x] Run synthetic test vectors (36 passed).
 - [ ] Map V1.7 numeric command IDs to outbound request builders using the new Qt API string map.
 - [ ] Map V1.7 numeric response IDs to Qt acknowledgements and parsers.
 - [ ] Confirm V1.7 CMD 02 offsets against the V1.6 spec.
@@ -54,7 +54,8 @@
 - [x] Implement parser and encoder for confirmed outer frame layout.
 - [x] Implement selected V1.6 command and telemetry decoders.
 - [x] Create synthetic test vectors and unit tests.
-- [ ] Add offline capture replay and stream-chunking tests.
+- [x] Add offline stream-chunking, partial-frame retention and resynchronization tests (synthetic data only).
+- [ ] Add offline capture replay using authorized passive captures.
 - [ ] Add a simulator for benign, read-only responses.
 - [ ] Add command-schema validation once V1.7 request builders are mapped.
 
