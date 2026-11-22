@@ -5,7 +5,8 @@
     "source_sha256": "3bd75125f48c39a12e47184fcdcff8f143e9066ff03f06f4c5cbcd97338665f7",
     "value_count": 67,
     "sequence_count": 67,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_02_001e8420.xml",
@@ -13,7 +14,8 @@
     "source_sha256": "217ccf2b0d11c0c92032c9fc6f585b8058771a7ec870eebc63493d92e6e12edb",
     "value_count": 80,
     "sequence_count": 79,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_03_001eab68.xml",
@@ -21,7 +23,8 @@
     "source_sha256": "a6aee37f394c14c39531301c372149d83d33c0ff1e27aecdb7bab9e566bca95d",
     "value_count": 94,
     "sequence_count": 93,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_04_001edb48.xml",
@@ -29,7 +32,8 @@
     "source_sha256": "729177495616b87105dbff87eb76dfff8ce06f97da3a3ef9d2d380c4effe3746",
     "value_count": 46,
     "sequence_count": 46,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_05_001f0530.xml",
@@ -37,7 +41,8 @@
     "source_sha256": "77661c7e8c5caea40d4bc3603327f4e188eb048d0a46b3bd8508b20cae8bc0e7",
     "value_count": 60,
     "sequence_count": 59,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_06_001f263d.xml",
@@ -45,7 +50,8 @@
     "source_sha256": "a1cab3ee0f0839c13450ba5f90bc52c88bfa1a61b845cf84e946a268f531b50c",
     "value_count": 60,
     "sequence_count": 59,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_07_001f4767.xml",
@@ -53,7 +59,8 @@
     "source_sha256": "ee6844f1c8c022a2b966a41f39a0ec67ad2232e84d82eb003bb314c90919adf3",
     "value_count": 36,
     "sequence_count": 36,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_08_001f68f3.xml",
@@ -61,7 +68,8 @@
     "source_sha256": "447603096775a9cf74af27a59751dcb51f3cee9b2ba038c957da1b9b45b15fe7",
     "value_count": 25,
     "sequence_count": 22,
-    "omitted_count": 3
+    "omitted_count": 3,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_09_001f9273.xml",
@@ -69,7 +77,8 @@
     "source_sha256": "f8d19ad975e44fe90da8d7408bccf1a253f99b18eb189694772a0dfee9cadff0",
     "value_count": 24,
     "sequence_count": 21,
-    "omitted_count": 3
+    "omitted_count": 3,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_10_001fa14c.xml",
@@ -77,7 +86,8 @@
     "source_sha256": "83c9b84975be63af5238163d4ae56f755e6b148d85b6a11909cbc852958368fc",
     "value_count": 24,
     "sequence_count": 24,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_11_001fb879.xml",
@@ -85,7 +95,8 @@
     "source_sha256": "a20aabef0c16f5842ca2136dd686cd9c313e37251a1b402f2e9afba0d77eb69a",
     "value_count": 24,
     "sequence_count": 21,
-    "omitted_count": 3
+    "omitted_count": 3,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_13_00209c88.xml",
@@ -93,7 +104,8 @@
     "source_sha256": "9174a70828c6145c46f01b55200a8c28d86d78020969165fee2ff987707f3e25",
     "value_count": 99,
     "sequence_count": 98,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_14_0021c2bb.xml",
@@ -101,7 +113,8 @@
     "source_sha256": "71467575ef14cf0499d578b2445d9b32ec41daf6657a26f102aad5ed1fdf2be0",
     "value_count": 97,
     "sequence_count": 96,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_15_001f78ba.xml",
@@ -109,7 +122,8 @@
     "source_sha256": "fa1b2970603ce1681190888cfab6b753a2cdd3b42609da11919fe91383a70257",
     "value_count": 26,
     "sequence_count": 26,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_16_001fed4a.xml",
@@ -117,7 +131,8 @@
     "source_sha256": "148d4564a7e1bf5e5d8e33937b67321fb186566d79d1007ef21b030e541384d9",
     "value_count": 69,
     "sequence_count": 69,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_17_00204444.xml",
@@ -125,7 +140,8 @@
     "source_sha256": "45172ce2ba57f30b5ec6b71296f013bb05d75986ba6030c4e3f7b29e57904fa4",
     "value_count": 69,
     "sequence_count": 69,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_18_0020cd8c.xml",
@@ -133,7 +149,8 @@
     "source_sha256": "666e78c3326268730fc281023fcadc4e4281909fdca7cdfd53529a2edde3c0d0",
     "value_count": 96,
     "sequence_count": 95,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   },
   {
     "profile_file": "resource_19_0020fe7f.xml",
@@ -141,7 +158,8 @@
     "source_sha256": "0e3f2d99e64222b9cfdcb6dbb7446ea21cae4824d8f90977220ca88a688bcf57",
     "value_count": 62,
     "sequence_count": 62,
-    "omitted_count": 0
+    "omitted_count": 0,
+    "values_order_matches_sequence": true
   },
   {
     "profile_file": "resource_20_0021f2bc.xml",
@@ -149,6 +167,7 @@
     "source_sha256": "5d3a06b3f9dcbebbe7f94ab49eb0c2a5cf5675f490d7da51f09522da6186f9da",
     "value_count": 94,
     "sequence_count": 93,
-    "omitted_count": 1
+    "omitted_count": 1,
+    "values_order_matches_sequence": false
   }
 ]
