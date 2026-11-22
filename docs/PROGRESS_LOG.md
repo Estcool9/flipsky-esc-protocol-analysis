@@ -738,3 +738,5 @@
 - Une première tentative sans `GHIDRA_INSTALL_DIR` a échoué avant analyse (`provider_unavailable`); une tentative avec la variable de session a ensuite réussi. Aucun binaire n'a été exécuté.
 
 - Découvert les syntaxes CLI REA `inspect-native-instruction <path> <address>` et `procedure-references <path> <procedure> --direction incoming|outgoing`. Ces commandes sont disponibles sans exécution de la cible et permettront de remonter des métadonnées Qt vers les fonctions propriétaires.
+
+- Sur V1.6, REA/Ghidra `inspect-native-instruction` a confirmé que `0xc1f1ea` est une donnée `/string` de 19 octets (texte `ftescEraseFirmware`), pas une fonction. Ghidra ne rapporte aucun xref actionnable vers cette adresse dans cette analyse ; ce résultat vide ne prouve pas l'absence de référence (limitation REA documentée). Il faut poursuivre par recherche de références dans les tables Qt/meta-object ou analyse d'assembleur des méthodes.
