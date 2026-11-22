@@ -744,3 +744,5 @@
 - Recherche Ghidra de procédures V1.6 sur `ftesc|uartPack|BleUart|CanForward|Firmware` : inventaire complet retourné vide (`ev_c86c44a906bf72303faa65ed11e0a7edb1fd6505befda9cd1fb98e07ae4e5b45`). Les chaînes Qt observées ne sont donc pas des noms de fonctions Ghidra. Prochaine étape de corrélation : références statiques Rizin autour des données Qt.
 
 - Recoupement Rizin 0.9.1 sur le PE Windows V1.6 : `axt` vers les chaînes Qt ciblées a trouvé un seul accès concret dans la sortie : `0x4b74bc` référence la chaîne `uartPackData` via un chargement de donnée. Aucun xref Rizin n'a été affiché pour les autres adresses ciblées (résultat limité par l'analyse et l'avertissement Rizin de zone de chaînes > 10 MiB sautée). Il faut inspecter le bloc/fonction autour de `0x4b74bc` avant de conclure sur la sérialisation.
+
+- Inspection Rizin du xref `0x4b74bc` : fonction auto-nommée `fcn.004b74bc` contient un chargement de `0xc1f630` (`uartPackData`), un appel à `fcn.004bc0dc` puis un saut indirect via `[0xc53474]`. Il s'agit d'un stub/chemin de dispatch à qualifier ; ce n'est pas encore le codec UART lui-même. Analyse Ghidra de cette adresse à suivre.
