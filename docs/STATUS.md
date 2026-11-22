@@ -1,11 +1,11 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72%** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
+**Overall project progress: 72.2% unrounded (72% rounded)** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
 
 This is a weighted estimate for the complete desktop replacement, not an offline-codec-only score. The previous 90–92% figures overstated readiness because the desktop UI, serial/BLE integration and hardware validation remain incomplete.
 
-| Work package | Weight | Progress | Weighted contribution |
+| Work package | Relative weight (points) | Progress | Weighted contribution (points) |
 |---|---:|---:|---:|
 | Binary inventory and static application mapping | 10 | 100 | 10.0 |
 | FTESC UART framing, parser and stream handling | 10 | 100 | 10.0 |
@@ -17,7 +17,7 @@ This is a weighted estimate for the complete desktop replacement, not an offline
 | Open-source desktop UI and real serial/BLE integration | 15 | 20 | 3.0 |
 | Reproducible extraction, tests and CI | 10 | 95 | 9.5 |
 | Hardware validation | 5 | 0 | 0.0 |
-| **Total** | **100** | | **72.4 ≈ 72%** |
+| **Total relative weight** | **110** | | **79.4 / 110 = 72.18% ≈ 72.2%** |
 
 The score does not mean safe or hardware-validated operation. All encoders are offline-only.
 
@@ -71,7 +71,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Mapped controller/service setup, service discovery, service-state checks, characteristic-change callback and disconnect/error handlers across `FUN_00402ED0`, `FUN_004016B0`, `FUN_004023D0`, `FUN_00401920`, `FUN_00402000`, `FUN_00401810`, `FUN_00402120`, `FUN_00401EB0` and `FUN_00402A30`.
 - Located lookup of descriptor UUID `0x2902` in the service-state path. The precise descriptor value and write mode remain unknown pending instruction-level completion/passive capture.
 - The `BleUart` metadata includes `writeData`, `sendNextPacket` and `dataRx(QByteArray)`. Their full caller-to-`writeCharacteristic` and receive-parser paths are not yet closed.
-- Updated BLE reverse-engineering sub-workstream from 40% to 55%; no change to whole-product weighted progress (72.4% ≈ 72%) because no live transport or desktop functionality was implemented.
+- Updated BLE reverse-engineering sub-workstream from 40% to 55%; no change to whole-product weighted progress (72.2% ≈ 72%) because no live transport or desktop functionality was implemented.
 - See [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
 
 ### Official direct CAN V1.4 protocol and decoder
@@ -301,6 +301,6 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Added `scripts/vesc_stream.py`, an incremental offline decoder for VESC 0x02/0x03/0x04 frames.
 - Handles fragmented and concatenated frames, leading noise, CRC/terminator failures, configurable INFO-length limits and byte-wise resynchronization.
 - Added 7 tests covering fragmentation, concatenation, noise, CRC recovery, medium/long frames, size limits and reset.
-- The VESC/FSESC protocol work package moves from 80% to 85%; weighted total changes from 71.9% to 72.4%, still **72%** when rounded to a whole percent.
+- The VESC/FSESC protocol work package moves from 80% to 85%; weighted total changes from 71.9% to 72.2%, still **72%** when rounded to a whole percent.
 - The 7 new tests are committed but pending a fresh CI run; the previously verified baseline remains 148 passing tests.
 - No serial/CAN/BLE interface was opened and no ESC command was transmitted.
