@@ -32,6 +32,7 @@ class VescStreamDecoderTests(unittest.TestCase):
         decoded = decoder.feed(bytes(bad) + good)
         self.assertEqual([item.info for item in decoded], [b"\x05"])
         self.assertGreater(decoder.stats.discarded_bytes, 0)
+        self.assertEqual(decoder.buffered_bytes, 0)
 
     def test_medium_and_long_frames(self):
         medium = encode_frame(b"\x20" + bytes(255))
