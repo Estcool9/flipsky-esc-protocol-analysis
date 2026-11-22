@@ -97,3 +97,20 @@ There are two distinct timer-related paths:
 - `UartComm::uartCommTimerSlot` (meta-object index 53) dispatches to `FUN_00499540`. It decrements multiple request/response counters. When the counter at `+0x44` expires, it logs `TopFlow setup read timeout` and emits signal index 9 `ftescTopFlowSetupReadAck(QString,bool)` with the text `TopFlow Read Timeout`. When the counter at `+0x40` expires, it emits signal index 19 `ftescGetIDResAck(QVector<int>,bool)` with an empty vector and a flag value of 1.
 
 The remaining counter offsets are observed but not yet mapped to named request types. This is separate from the 2-second local event-loop waits in the firmware-update preflight.
+
+
+## 8. BLE transport: same frame parser, 20-byte GATT writes
+
+The BLE path is now partially linked:
+
+- UartComm method index 24 is `bleDataRx(QByteArray)`, native `0x004828D0`.
+- `FUN_004828D0` forwards the received QByteArray to the same `FUN_0049CA30` stream handler used by the UART path.
+- The low-level send slot `FUN_00481850` checks the serial-port path and separately checks a BLE-connected flag through `FUN_00401680`.
+- When the BLE flag is set, it calls `FUN_004050C0`.
+- `FUN_004050C0` divides the already-framed byte array into successive 20-byte chunks (offsets 0, 20, 40, …), calls an indirect BLE-write function for each chunk, and waits for the corresponding asynchronous completion before proceeding.
+- The import table contains Qt Bluetooth APIs including `QLowEnergyService::writeCharacteristic`, characteristic-change signals, service discovery and controller connection APIs. The indirect writer is consistent with the characteristic-write path, though the exact import-thunk resolution is not yet proven.
+- The binary contains separate diagnostics for missing BLE TX and RX characteristics.
+
+**Conclusion:** BLE receive definitely reuses the same AA/BB frame stream parser. BLE transmit receives the same framed packet from the shared low-level send slot and fragments it into 20-byte writes. This strongly indicates the same outer framing and CRC are used over BLE, with GATT-level chunking. The TX/RX characteristic UUIDs, write mode (with/without response), and BLE service UUID remain unresolved.
+
+No BLE connection was opened and no characteristic write was performed.
