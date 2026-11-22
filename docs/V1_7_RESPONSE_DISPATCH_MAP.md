@@ -16,9 +16,9 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 | `0x01` | Enters a large variable-length response path; iterates over payload bytes and calls callback/dispatch helper `0x004BC200`. | Unknown. Do not equate this with V1.6 CMD 0x02. |
 | `0x0D` | Reads one signed 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | PPM response; offline decoder added. |
 | `0x0E` | Reads six signed 32-bit values with scales 1,000,000; 1,000,000; 1; 1; 1; 1,000,000; calls `0x004BC120`. | Six-value ADC response; semantic channel labels remain unknown. |
-| `0x0F` | Handles a variable-length byte/string-like payload; calls `0x004BC010`. | Unknown response schema. |
-| `0x11` | Parses firmware-version-related bytes and a variable-length text/identity field; invokes `0x004BBE10` and `0x004BBDD0`. | **High semantic correlation** with V1.6 `UART_OBTAIN_FIRMWARE_VERSION`; exact V1.7 field interpretation still needs full type mapping. |
-| `0x14` | Parses a string-like payload and calls `0x004BBF50`. | Unknown. |
+| `0x0F` | Converts the payload's string field to QString, reads a trailing status byte, and calls `0x004BC010`. | Motor-identification response: UTF-8-like label plus boolean status; offline decoder added. |
+| `0x11` | Reads three leading bytes, converts the following byte array to QString, reads a trailing byte, and invokes `0x004BBE10` and `0x004BBDD0`. | Major, minor, separate firmware-type byte, label text and trailing suffix byte; offline raw-preserving decoder added. |
+| `0x14` | Converts response DATA to QString and calls `0x004BBF50`. | Terminal-print UTF-8 text; offline decoder added. |
 | `0x16` | Reads one byte as boolean and calls `0x004BBD30`. | Firmware erase acknowledgement; offline decoder added. |
 | `0x18` | Reads one byte as boolean and calls `0x004BBD80`. | Firmware write-block acknowledgement; offline decoder added. |
 | `0x1A` | Calls no-argument callback wrapper `0x004BBBF0`. | Auto-realtime acknowledgement with no DATA; offline decoder added. |
@@ -28,7 +28,7 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 | `0x1E` | Iterates over remaining payload bytes into a vector-like container and calls `0x004BC200`. | **High.** Matches V1.6 `UART_OBTAIN_ALL_FTESC_ID`: master ID followed by slave IDs. |
 | `0x21` | Calls parser helper `0x0049CE00`, then callback wrapper `0x004BBCA0`. | Unknown. |
 | `0x22` | Reads one byte as boolean and calls `0x004BBCE0`. | Firmware authorization acknowledgement; offline decoder added. |
-| `0x24` | Calls callback wrapper `0x004BBC60` with a vector/container-like argument. | Unknown. |
+| `0x24` | Converts response DATA to QString and calls `0x004BBC60`. | Samples-print UTF-8 text; offline decoder added. |
 | `0x29` | Reads nine signed 32-bit values, each scaled by 1,000,000; calls `0x004BC250`. | IMU calibration response; offline decoder added, semantic labels remain unknown. |
 | `0x3A` | Calls callback wrapper `0x004BBEB0` with a byte value. | Setup-frame family; exact schema unknown. |
 | `0x3B`, `0x3C` | Share a setup-frame parsing path. The handler checks a marker `0x54464346` in one branch. | Vendor-specific setup-frame path; meaning of marker and payload unresolved. |
@@ -73,7 +73,7 @@ The V1.7 case:
 - reads another status byte;
 - passes the parsed values to callback wrappers `0x004BBE10` and `0x004BBDD0`.
 
-The V1.6 protocol describes CMD 0x11 as firmware/hardware identity, including major/minor version, bootloader/application mode marker, hardware name and serial number. This is a strong semantic match. More work is needed to map each V1.7 local variable to the exact public field and determine whether the V1.7 parser consumes the serial number in this function or in a subsequent callback.
+The V1.6 protocol describes CMD 0x11 as firmware/hardware identity, including major/minor version, bootloader/application mode marker, hardware name and serial number. This is a strong semantic match. The native branch reads three bytes, converts the intervening byte-array field to QString, then reads a trailing byte. The third leading byte is emitted separately through `ftescFirmwareVerRecType`; the remaining fields are preserved by the offline decoder without assigning unsupported meanings to the suffix byte.
 
 ## 4. Command 0x1E: ESC ID enumeration
 
@@ -165,3 +165,14 @@ The six CMD 0x0E values and nine CMD 0x29 calibration values retain generic name
 
 
 CMD 0x21 raw UUID DATA is decoded by `parse_uuid_response()` in `scripts/ftesc_responses.py`. The decoder preserves the raw length; the firmware preflight expects a 16-byte TEA key but the response dispatcher itself does not visibly validate that length.
+
+
+## 10. Offline variable-text decoders
+
+`scripts/ftesc_responses.py` now includes:
+- CMD 0x0F: label bytes converted as UTF-8 plus trailing boolean status;
+- CMD 0x11: major, minor, separate firmware-type byte, raw label bytes/UTF-8 text and trailing suffix byte;
+- CMD 0x14: terminal-print text;
+- CMD 0x24: samples-print text.
+
+The CMD 0x11 decoder preserves the raw label bytes because the exact string convention has not been validated against a live response. These decoders are based on the native parser's field-read order, not a hardware capture.
