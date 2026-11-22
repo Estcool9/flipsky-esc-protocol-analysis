@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 77%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 78%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **77%** |
+| **Overall estimate** | **78%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **77 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **80 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -148,3 +148,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - The CMD 0x00 response branch calls callback wrapper `0x004BC060`, corresponding to UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`.
 - This is response-side telemetry. It is not evidence of a CMD 0x02 outbound request.
 - CMD 0x02 remains unresolved; see [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
+
+
+### V1.7 firmware configuration discovery
+- `0x00488010` selects embedded V1.7 table paths for TopFlow vs Motor+Control setup.
+- `0x00492570` scans firmware directories and reads MotorSetupValueTable_official.xml, ControlSetupValueTable.xml, TopFlowSetupValueTable.xml and FirmwareVersionInf.xml.
+- It matches two parsed integer fields to its input parameters; their exact meaning and the resource-ID-to-SKU mapping remain unresolved.
+- The 13 extracted resources classify as 4 control, 6 motor and 3 motor-signal/FOC variants.
+- See [V1_7_FIRMWARE_CONFIG_DISCOVERY.md](V1_7_FIRMWARE_CONFIG_DISCOVERY.md).
