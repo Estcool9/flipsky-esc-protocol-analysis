@@ -251,3 +251,15 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Complete transfer block, ACK, retry/timeout, and recovery/resume state transitions.
 - Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
 - V1.6 comparison sub-workstream: 45% → 55%; overall weighted project progress remains **72.6%**.
+
+
+## 2026-11-22 — V1.6 firmware/CAN request-byte parity
+
+- [x] Trace the command byte emitted by `ftescObtainFwVerSlot`, `ftescEraseFirmware`, `ftescWriteFirmware`, `ftescJPMBootMode`, `ftescObtainUuid` and `ftescObtainIdOverCan`.
+- [x] Recover the V1.6 `ftescIdentifyMotorOverCan` CMD 0x0F DATA order and primitive writers.
+- [x] Correct CMD 0x0F Python parity: arg4 truncates toward zero; arg3×100 rounds nearest/ties-away-from-zero.
+- [x] Verify regression tests in GitHub Actions run #252: 164 passed, 0 failed.
+- [ ] Trace incoming response dispatch and ACK layouts for ID/CAN discovery and firmware erase/write/UUID/encryption.
+- [ ] Resolve the protected `writeMcuEncrypt` helper and firmware challenge/key provisioning without publishing secrets.
+- Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
+- V1.6 comparison sub-workstream: 55% → 60%; overall weighted project progress remains **72.6%**.
