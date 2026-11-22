@@ -175,7 +175,7 @@ The final `writeCharacteristic` call target, response/no-response mode, exact CC
 5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
 6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
 
-Hardware validation is still **0%**. The 92% estimate means the static evidence and offline implementation are substantially complete; it does not mean the protocol is safe or verified on a live ESC.
+Hardware validation is still **0%**. The 72.2% weighted estimate reflects static evidence and offline implementation progress; it does not mean the protocol is safe or verified on a live ESC.
 
 ## Safety and scope
 
