@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 64%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 66%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -20,11 +20,11 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | V1.4-to-V1.6 protocol comparison | 90% |
 | V1.7 command-ID and payload cross-reference | 82% |
 | Offline frame and protocol codecs/tests | 100% |
-| Firmware update and TEA relationship | 75% |
+| Firmware update and TEA relationship | 85% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **64%** |
+| **Overall estimate** | **66%** |
 
 ## Confirmed evidence
 
