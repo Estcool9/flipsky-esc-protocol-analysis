@@ -20,13 +20,14 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | V1.4-to-V1.6 documented comparison | 90% |
 | V1.6 Windows binary comparison | 0% |
 | Firmware-update and TEA relationship | 85% |
-| CAN forwarding and target routing | 40% |
+| Direct CAN V1.4 decoder and telemetry | 100% |
+| V1.7 UART CAN-forward wrapper and slave routing | 40% |
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **71%** |
+| **Overall estimate** | **73%** |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [docs/CAN_FORWARDING_STATE.md](docs/CAN_FORWARDING_STATE.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
+See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [docs/CAN_FORWARDING_STATE.md](docs/CAN_FORWARDING_STATE.md), [docs/FTESC_CAN_PROTOCOL_V1.4.md](docs/FTESC_CAN_PROTOCOL_V1.4.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -98,6 +99,7 @@ The repository contains a standard-library-only Python implementation:
 
 - `scripts/ftesc_frame.py`: CRC-16/MODBUS, frame encoder, single-frame decoder and concatenated-frame decoder.
 - `scripts/ftesc_stream.py`: incremental decoder retaining incomplete frames across chunks and recovering after invalid candidates.
+- `scripts/ftesc_can.py`: read-only decoder for FTESC V1.4 29-bit CAN identifiers and three periodic telemetry messages.
 - `tests/test_ftesc_frame.py`: unit tests for checksum, both frame forms, boundary lengths, incomplete input, corruption and concatenated frames.
 
 Run the test suite from the repository root:
@@ -106,7 +108,7 @@ Run the test suite from the repository root:
 python -m unittest discover -s tests -v
 ```
 
-**Observed result on REA:** 51 tests passed, 0 failures, including frame, telemetry, setup-serializer and incremental-stream tests.
+**Observed result on REA:** 60 tests passed, 0 failures, including UART framing, V1.7 telemetry, direct CAN telemetry, setup serialization and incremental-stream tests.
 
 This codec handles only the outer frame layer. It does not yet interpret inner command IDs, parameter payloads, authentication, firmware-update payloads or BLE-specific wrappers.
 
