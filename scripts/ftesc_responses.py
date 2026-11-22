@@ -218,7 +218,7 @@ def parse_text_response(
     # the first NUL byte. CMD 0x24 is passed as a QByteArray and keeps
     # its full length, including any embedded NUL bytes.
     if expected_command == 0x14:
-        raw = raw.split(b"\\x00", 1)[0]
+        raw = raw.split(bytes((0,)), 1)[0]
     return TextResponse(command=message.command, raw=raw, text=raw.decode("utf-8", errors="replace"))
 
 
