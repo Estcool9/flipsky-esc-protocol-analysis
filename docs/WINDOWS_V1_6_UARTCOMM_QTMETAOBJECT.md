@@ -90,7 +90,7 @@ Function-handler addresses are recovered from the switch in `FUN_004b5bf0`. The 
 
 ## 3. Shared UartComm outbound signal
 
-`FUN_00492ab0` is the common send/log wrapper used by the firmware methods inspected here. The function:
+`FUN_00492ab0` is the common send/log wrapper used by the methods inspected here. The function:
 
 1. Checks the UartComm CAN-forward flag at object offset `+0x0c` and, when enabled, logs the selected ID at `+0x10`.
 2. Builds a debug message beginning `Sending to ESC:`.
@@ -99,33 +99,63 @@ Function-handler addresses are recovered from the switch in `FUN_004b5bf0`. The 
 
 `FUN_004b55f0` is a short Qt signal activation stub. Its instructions pass QMetaObject address `0x00519248` and method index `0` to the Qt activation helper. Index 0 is the decoded `sendDataToESC(QByteArray&)` signal.
 
-This connects the UartComm firmware methods to the common Qt send signal. The lower V1.6 path already mapped in [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md) then passes this QByteArray through the `FtescLowLevelFace` transport wrapper and outer frame builder as appropriate.
+This connects the UartComm methods to the common Qt send signal. The lower V1.6 path already mapped in [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md) then passes this QByteArray through the `FtescLowLevelFace` transport wrapper and outer frame builder as appropriate.
 
-## 4. Firmware-related slot bodies
+### Qt stream append helpers
+
+- `FUN_00496880` and `FUN_00496890` both sign-extend one input byte and tail-jump to the Qt stream byte-insertion target at `PTR_FUN_00c53300`. They are byte writers; calls such as `FUN_00496880(0x11)` append a real INFO command byte.
+- `FUN_004968a0` writes a 16-bit value as high byte followed by low byte (big-endian).
+- `FUN_00496ad0` writes a 32-bit value high byte first.
+- `FUN_00496c30` multiplies its floating input by its scale argument, then rounds to nearest with half-values away from zero before writing a signed 16-bit big-endian value. The observed command-0x0F caller passes scale 100.
+- The command byte is part of the same QByteArray before the common signal; the command/data split below follows the native call order.
+
+## 4. Firmware and CAN-related slot bodies
 
 ### Firmware-version request — index 20, `FUN_00492d00`
 
-The method checks a throttle/state field at `this+0x20`. If the cooldown is not active it copies `this+0x1c` into that field and invokes the common send wrapper with an empty QByteArray. It therefore acts as a rate-limited no-argument send request. The method's meta-object name is `ftescObtainFwVerSlot`.
+The method checks a throttle/state field at `this+0x20`. If the cooldown has expired it copies `this+0x1c` into that field, initializes its output stream and appends command byte `0x11` via `FUN_00496880`, then calls `FUN_00492ab0`. The INFO request is therefore `11` with no DATA, not an empty INFO QByteArray.
 
 ### Erase firmware — index 21, `FUN_00492e00`
 
-The method takes one integer-like argument and calls `FUN_00496ad0`. That helper appends the four bytes of the value in high-byte-first order to a QByteArray. The resulting four-byte payload is passed to `FUN_00492ab0`, which emits the common `sendDataToESC` signal.
+The method initializes an INFO stream, appends command byte `0x16`, then passes its one integer-like argument to `FUN_00496ad0`. That helper appends the four bytes high-byte-first (big-endian). The common sender then emits `16 | ARG32_BE` through `sendDataToESC`.
 
-This establishes the local payload construction and outbound Qt signal, but does not alone identify the numeric firmware command byte or the device-side erase ACK state machine.
+The exact device-side erase ACK/state-machine and any device-specific preconditions remain open.
 
 ### Write firmware — index 22, `FUN_00492f00`
 
-The method takes a QByteArray-like argument, writes a debug representation of its bytes, and then passes the original input object to `FUN_00492ab0`. The per-byte XOR expression visible in this function belongs to the debug-output path: the function reads the source byte array and sends the original QByteArray pointer; no in-place mutation of the input buffer is visible in the decompiled body.
+The method initializes an INFO stream, appends command byte `0x18`, then appends the input QByteArray and sends it through `FUN_00492ab0`. Its per-byte XOR expression belongs to the debug-output path: the function reads the source byte array for a log string and passes the original input object to the common sender; no in-place mutation of the payload is visible.
 
 Do not interpret that debug formatting as a firmware payload transform. Do not publish the associated debug-table bytes as a firmware key or protocol constant.
 
 ### Boot-mode command — index 23, `FUN_004930a0`
 
-This no-argument method creates an empty QByteArray and sends it through `FUN_00492ab0`, which activates `sendDataToESC`. The method name is `ftescJPMBootMode`; the exact command byte and controller-side state transition require tracing the downstream consumer/ACK.
+This no-argument method initializes an INFO stream, appends command byte `0x13` and sends it through `FUN_00492ab0`. It is a one-byte INFO command, not an empty INFO payload. The controller-side state transition and ACK handling remain open.
+
+### Obtain UUID — index 31, `FUN_004937f0`
+
+The method checks a throttle field at `this+0x28`; after expiry it copies the interval from `this+0x1c`, appends command byte `0x21`, then sends through the common wrapper. The INFO request is the single byte `21`.
 
 ### MCU encryption writer — index 32, `FUN_004938f0`
 
-This method has one argument and a throttle field at `this+0x2c). Its body invokes an unresolved Qt/helper function with arguments shaped as `(1, 0x10, param_1)`, then passes the resulting QByteArray-like object to `FUN_00492ab0`. The helper target and exact byte semantics are not yet established here. No key bytes or secret material are included in this report.
+The method has one argument and a throttle field at `this+0x2c`. It appends command byte `0x22`, then calls a helper pointer with arguments shaped as `(1, 0x10, param_1)`, and sends the resulting QByteArray through `FUN_00492ab0`. The pointer resolves into an opaque/protected area around `0x00855110`; Ghidra does not identify an ordinary function there and Rizin reports no function at the address. The helper's exact byte semantics, key/challenge selection and secret material remain unresolved. No key bytes or protected tables are included in this report.
+
+### Obtain ESC ID over CAN — index 44, `FUN_004945b0`
+
+The method has a throttle counter at `this+0x38`; once expired it sets the counter to `200`, initializes the output stream, appends command byte `0x01`, then sends through `FUN_00492ab0`. The observed request INFO is `01` with no DATA. The unit of the 200 counter and the response mapping are not established here.
+
+### Identify motor over CAN — index 43, `FUN_00494440`
+
+The five-argument method constructs INFO command `0x0F` and appends seven DATA bytes in this exact order:
+
+| Field position | Native source | Wire encoding |
+|---:|---|---|
+| DATA[0] | second formal argument | one byte |
+| DATA[1] | low byte of first formal argument | one byte |
+| DATA[2:4] | fourth formal float argument | signed int16, truncated toward zero, big-endian |
+| DATA[4:6] | third formal float argument | multiplied by 100, rounded nearest / ties away from zero, signed int16 big-endian |
+| DATA[6] | fifth formal argument | one byte |
+
+The five arguments' semantic names and units are not proven by this method body. The offline Python builder `build_identify_motor_over_can_info` uses neutral argument names; it now matches the native distinction between truncation for formal arg4 and scaled half-away rounding for formal arg3. The INFO content is `0F | 7-byte DATA`.
 
 ## 5. Related firmware response signals
 
