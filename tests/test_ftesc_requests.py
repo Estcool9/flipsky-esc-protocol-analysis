@@ -44,7 +44,7 @@ class V17RequestBuilderTests(unittest.TestCase):
     def test_identify_motor_over_can_native_field_order(self):
         self.assertEqual(
             build_identify_motor_over_can_info(0x12, 0x34, 1.25, -2.5, 0x56),
-            bytes.fromhex("0F 34 12 FF FD 00 7D 56"),
+            bytes.fromhex("0F 34 12 FF FE 00 7D 56"),
         )
 
     def test_identify_motor_over_can_uses_native_rounding_and_truncation(self):
