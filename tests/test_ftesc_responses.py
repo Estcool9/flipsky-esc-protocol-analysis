@@ -9,6 +9,7 @@ from scripts.ftesc_responses import (
     parse_imu_calibration_response,
     parse_signal_adc_response,
     parse_signal_ppm_response,
+    parse_uuid_response,
 )
 
 
@@ -48,6 +49,10 @@ class V17ResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_uuid_response_preserves_raw_key_bytes(self):
+        uuid = bytes(range(16))
+        self.assertEqual(parse_uuid_response(bytes((0x21,)) + uuid), uuid)
 
     def test_imu_calibration_rejects_bad_length(self):
         with self.assertRaises(ValueError):
