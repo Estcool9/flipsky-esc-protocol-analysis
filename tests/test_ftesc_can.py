@@ -46,9 +46,17 @@ class CanIdentifierTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             decode_can_identifier(0x20000000)
 
+    def test_rejects_boolean_identifier(self):
+        with self.assertRaises(ValueError):
+            decode_can_identifier(True)
+
     def test_rejects_wrong_fixed_identifier_prefix(self):
         with self.assertRaises(ValueError):
             decode_can_identifier(0x00002A0B)
+
+    def test_rejects_payload_over_classic_can_limit(self):
+        with self.assertRaises(ValueError):
+            parse_can_frame(encode_can_identifier(1, 0x15), bytes(9))
 
     def test_unchecksummed_command_is_marked_unknown(self):
         frame = parse_can_frame(encode_can_identifier(1, 0x15), b"12345")
