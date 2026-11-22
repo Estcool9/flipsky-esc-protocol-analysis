@@ -413,3 +413,14 @@
 - Fresh public clone: payload restoration succeeded, **99 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **83% to 84%**. Basic numeric/boolean responses are 70%; firmware version, variable strings, setup payloads and UUID details remain open.
 - No response was captured from hardware.
+
+
+## 2026-11-22 — UUID response decoder added
+
+- Traced CMD 0x21 response branch: it copies remaining DATA into a QByteArray and emits the UUID acknowledgement signal.
+- The firmware-update TEA preflight consumes a 16-byte key, but the response dispatcher does not visibly enforce the 16-byte length.
+- Added `parse_uuid_response()` preserving raw bytes and a test for a 16-byte key.
+- Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) and [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
+- Fresh public clone: **100 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **84% to 85%**. UUID raw response is covered; firmware-version and variable-string responses remain open.
+- No UUID was requested from hardware.
