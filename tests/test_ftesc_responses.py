@@ -102,6 +102,48 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         self.assertEqual(result.first_block.values["a"]["value_int"], 1)
         self.assertEqual(result.second_block.values["b"]["value_int"], 2)
 
+    def test_cmd1c_wrong_first_marker_returns_native_failure_status(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        first = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        second = {"b": {"valType": 2, "valueTET": 1, "value_int": 2}}
+        data = encode_profile_block(0x01020304, ["a"], first)
+        data += encode_profile_block(0x4879187D, ["b"], second)
+        result = parse_motor_signal_setup_response(
+            bytes((0x1C,)) + data, ["a"], first, ["b"], second
+        )
+        self.assertFalse(result.success)
+        self.assertEqual(result.secret_key_status, -1)
+        self.assertIsNone(result.first_block)
+        self.assertIsNone(result.second_block)
+        self.assertIn("marker mismatch", result.error)
+
+    def test_cmd1c_wrong_second_marker_preserves_first_block_and_fails(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        first = {"a": {"valType": 2, "valueTET": 1, "value_int": 11}}
+        second = {"b": {"valType": 2, "valueTET": 1, "value_int": 22}}
+        data = encode_profile_block(0xD2C6EF10, ["a"], first)
+        data += encode_profile_block(0x01020304, ["b"], second)
+        result = parse_motor_signal_setup_response(
+            bytes((0x1C,)) + data, ["a"], first, ["b"], second
+        )
+        self.assertFalse(result.success)
+        self.assertEqual(result.secret_key_status, -1)
+        self.assertEqual(result.first_block.values["a"]["value_int"], 11)
+        self.assertIsNone(result.second_block)
+
+    def test_cmd1c_extra_trailing_data_returns_native_length_failure(self):
+        from scripts.ftesc_setup_serializer import encode_profile_block
+        first = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
+        second = {"b": {"valType": 2, "valueTET": 1, "value_int": 2}}
+        data = encode_profile_block(0xD2C6EF10, ["a"], first)
+        data += encode_profile_block(0x4879187D, ["b"], second)
+        result = parse_motor_signal_setup_response(
+            bytes((0x1C,)) + data + b"\\x99", ["a"], first, ["b"], second
+        )
+        self.assertFalse(result.success)
+        self.assertEqual(result.secret_key_status, -1)
+        self.assertIn("complete INFO DATA", result.error)
+
     def test_v16_motor_setup_response_single_marker_block(self):
         from scripts.ftesc_setup_serializer import encode_profile_block
         metadata = {"motor": {"valType": 2, "valueTET": 1, "value_int": 42}}
