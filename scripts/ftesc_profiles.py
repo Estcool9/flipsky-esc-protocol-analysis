@@ -27,12 +27,12 @@ def _text_map(element: ET.Element) -> dict[str, str]:
 
 def classify_family(values: dict[str, dict[str, str]]) -> str:
     names = {fields.get("valName", "") for fields in values.values()}
-    if "Input Signal Type" in names or "Throttle Response Level" in names:
-        return "control_setup"
-    if "Motor Current(A)" in names:
-        return "motor_setup"
     if "FOC Current Kp" in names:
         return "motor_signal_setup"
+    if "Motor Current(A)" in names:
+        return "motor_setup"
+    if "Input Signal Type" in names or "Throttle Response Level" in names:
+        return "control_setup"
     return "unknown"
 
 
