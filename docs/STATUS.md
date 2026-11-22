@@ -60,7 +60,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress and TX chunking | 75% |
+| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, TX chunking and candidate write call | 80% |
 | V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
 
@@ -331,3 +331,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Fixed VESC stream resynchronization when a corrupt frame's `0x03` terminator is mistaken for the start of a medium frame. The decoder now searches for a later complete CRC- and terminator-valid candidate before preserving the apparent incomplete prefix.
 - CI no longer compares the stale checked-in generated `profile-order-summary.json`; it validates the regenerated summary's profile/value/omission counts. The stale summary snapshot was removed.
 - Reproducibility/tests/CI work package: 95% → 100%. New total: **79.9 / 110 = 72.64% ≈ 72.6%**.
+
+
+### BLE GATT write-call narrowing — 2026-11-22
+
+- Recovered the queue-pump indirect call at `0x00404FEC`: BLE service object in ECX, characteristic-like object, queued QByteArray and third argument integer `1`.
+- Ghidra resolves the computed call to `0x00B5A1D0` in protected Enigma code. The argument shape strongly matches Qt `writeCharacteristic(..., WriteMode)`, and its mangled symbol string is present, but the target-to-symbol edge is not proven because target decompilation is invalid.
+- BLE static sub-workstream advances 75% → 80%; the whole-product score remains 72.6%. The exact write mode remains unresolved.
+- Evidence: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`, `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`, `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
