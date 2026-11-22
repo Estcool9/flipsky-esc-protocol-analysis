@@ -1,62 +1,96 @@
-# Comparaison : Flipsky ESC Tool et VESC Tool
+# VESC Tool comparison: functional similarity, protocol divergence
 
-**Conclusion actuelle :** l'application examinée ressemble à VESC Tool par sa fonction, son environnement Qt/C++/QML et ses vues de paramètres. Cela ne suffit pas à conclure que le protocole série est identique.
+**Conclusion:** the Flipsky application resembles VESC Tool at the product/UI level, but the analyzed V1.7 binary implements a distinct FTESC command and frame protocol. It must not be treated as a drop-in VESC Tool protocol implementation.
 
-## 1. Distinction publiée par Flipsky
+## 1. Flipsky's official product distinction
 
-Dans un article daté du **9 janvier 2026**, Flipsky distingue deux familles :
+Flipsky's own article, dated 9 January 2026, divides its controllers into:
+- **FSESC / VESC**: VESC-based controllers configured with VESC Tool.
+- **FT ESC / NON-VESC**: independently developed by Flipsky and intended to work with Flipsky ESC Tool.
 
-- **FSESC / VESC** : contrôleurs basés sur VESC, configurés avec VESC Tool et dépendants de la version de firmware correspondante.
-- **FT ESC / NON-VESC** : gamme développée indépendamment par les ingénieurs Flipsky, annoncée comme compatible uniquement avec Flipsky ESC Tool.
+Flipsky explicitly says the product families and programming tools are not interchangeable:
+- [Flipsky — Differences Between FT ESC and FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc)
 
-L'article indique que ces gammes et leurs outils ne sont pas interchangeables : [Flipsky — Differences Between FT ESC and FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc).
+Flipsky's March 2026 FT-series firmware update guide also directs users to the Flipsky ESC Tool and describes the FT-series bootloader/update sequence:
+- [Flipsky — How to Update FT Series ESC to V1.6](https://flipsky.net/blogs/vesc-tool/how-to-update-ft-series-esc-to-v16)
 
-Flipsky publiait déjà en septembre 2024 des consignes de correspondance entre versions de firmware FSESC et versions VESC Tool : [Flipsky — Tips for compatible FSESC and VESC Tool versions](https://flipsky.net/blogs/vesc-tool/tips-for-compatible-fsesc-and-vesc_tool-version).
+## 2. Evidence from the analyzed V1.7 executable
 
-## 2. Indices dans notre binaire
-
-Le binaire analysé contient les modules et signatures préfixés par `ftesc`, notamment :
-
+The binary contains FTESC-specific Qt modules and methods:
 - `Flipsky.ftesc.FtescLowLevelFace`
 - `Flipsky.ftesc.uartcomm`
 - `Flipsky.ftesc.valuesetups`
 - `ftescMotorSignalReadAck(...)`
 - `ftescGetRealtimeDataOnce(...)`
 
-C'est un indice fort en faveur d'une application de la famille FTESC. Le modèle exact du contrôleur visé reste à confirmer.
+More importantly, the binary's actual frame and command bytes diverge from the standard VESC protocol.
 
-## 3. Similarités et niveaux de preuve
+## 3. Outer frame comparison
 
-| Domaine | Observation | Preuve |
+| Field | FTESC V1.7 binary | Standard VESC UART |
 |---|---|---|
-| Rôle utilisateur | Configuration d'un contrôleur ESC | Élevée |
-| Interface | Application Qt avec paramètres | Élevée |
-| Transport | Liaison série et Bluetooth repérées | Élevée |
-| Lecture de paramètres | Signaux/slots de lecture et ACK | Élevée |
-| Données realtime | Méthodes de demande/réception | Élevée |
-| FOC et paramètres moteur | Familles de paramètres présentes | Élevée |
-| Format de paquet identique à VESC | Non démontré | Aucune |
-| IDs de commande VESC identiques | Non démontré | Aucune |
-| CRC / structure de trame VESC identiques | Non démontré | Aucune |
+| Short-frame start | `0xAA` | `0x02` |
+| Long-frame start | `0xBB` | `0x03` |
+| Length | 1 byte for short; 2-byte big-endian for long | 1 byte for short; 2-byte big-endian for long |
+| CRC coverage | INFO payload | Payload |
+| CRC | CRC-16/MODBUS as implemented in the FTESC binary | VESC CRC16 implementation |
+| Stop byte | `0xDD` | `0x03` |
 
-## 4. Références VESC ouvertes
+VESC's public UART packet documentation describes start byte 2/3, length, payload, CRC and stop byte 3:
+- [Benjamin Vedder — Communicating with the VESC using UART](https://vedder.se/2015/10/communicating-with-the-vesc-using-uart/)
+- [VESC Tool — packet.h](https://github.com/vedderb/vesc_tool/blob/master/packet.h)
 
-Le code public VESC Tool et le firmware VESC servent de **références de comparaison**, pas de substituts aux preuves tirées du binaire Flipsky :
+The FTESC framing is therefore not the standard VESC UART frame, even though both use a length-prefixed payload and CRC.
 
-- [VESC Tool — vescinterface.cpp](https://github.com/vedderb/vesc_tool/blob/master/vescinterface.cpp) : orchestration de connexion et de fonctionnalités selon le firmware détecté.
-- [VESC firmware — comm/commands.c](https://github.com/vedderb/bldc/blob/master/comm/commands.c) : traitement des commandes firmware, dont la lecture des valeurs.
-- [VESC Tool — dépôt complet](https://github.com/vedderb/vesc_tool).
-- [VESC firmware — dépôt complet](https://github.com/vedderb/bldc).
+## 4. Command-ID comparison
 
-## 5. Test rigoureux de l'hypothèse
+The following are observed request command bytes in the FTESC V1.7 binary and standard VESC command IDs from the open-source VESC firmware `datatypes.h`.
 
-1. Identifier le modèle ESC exact auquel l'application est destinée.
-2. Analyser le corps de `uartPackDataFromESC` et les fonctions qui l'appellent.
-3. Rechercher les constantes de framing et les routines CRC/checksum.
-4. Rechercher explicitement les IDs et structures du protocole VESC dans les chemins d'envoi/réception.
-5. Comparer les octets construits par l'application avec le code VESC correspondant.
-6. Si une capture passive est disponible, comparer des requêtes connues sans injecter de commandes inconnues.
+| Operation | FTESC V1.7 | Standard VESC |
+|---|---:|---:|
+| Telemetry / values | `0x00` (FTESC realtime response) | `0x04` COMM_GET_VALUES |
+| Firmware version | `0x11` | `0x00` COMM_FW_VERSION |
+| Bootloader | `0x13` | `0x01` COMM_JUMP_TO_BOOTLOADER |
+| Erase application | `0x16` | `0x02` COMM_ERASE_NEW_APP |
+| Write firmware block | `0x18` | `0x03` COMM_WRITE_NEW_APP_DATA |
+| Duty | `0x03` | `0x05` COMM_SET_DUTY |
+| Current | `0x04` | `0x06` COMM_SET_CURRENT |
+| Brake current | `0x06` | `0x07` COMM_SET_CURRENT_BRAKE |
+| Speed / RPM | `0x27` | `0x08` COMM_SET_RPM |
+| Position | `0x26` | `0x09` COMM_SET_POS |
 
-## 6. Conclusion provisoire
+This creates dangerous numeric collisions: for example, FTESC `0x04` is a current-control request, while standard VESC `0x04` is COMM_GET_VALUES. Never send a command based only on its numeric ID without the correct protocol and controller family.
 
-L'analogie avec VESC Tool est utile pour guider l'analyse de l'interface et de l'architecture. Elle ne permet pas de supposer la compatibilité du protocole. Si le binaire correspond bien à l'outil FT ESC, les informations publiées par Flipsky suggèrent au contraire un firmware et un protocole distincts de la famille FSESC/VESC.
+Primary VESC command source:
+- [vedderb/bldc — datatypes.h](https://github.com/vedderb/bldc/blob/master/datatypes.h)
+
+## 5. Similarities that remain useful
+
+The two ecosystems still share high-level concepts:
+- Qt/C++ application architecture and parameter editors;
+- motor control modes such as duty, current, speed and position;
+- FOC, motor identification, encoder and thermal configuration;
+- real-time telemetry;
+- UART, BLE and multi-controller/CAN workflows;
+- firmware update and bootloader concepts.
+
+These similarities can guide the architecture of a new client, but not the low-level wire protocol.
+
+## 6. Practical recommendation
+
+Build the independent client around the FTESC evidence recovered from V1.7:
+1. FTESC AA/BB framing and CRC implementation.
+2. FTESC command IDs and payload schemas.
+3. FTESC `ValueSetup` typed serializer and profile ordering.
+4. FTESC UART/BLE transport and CAN forwarding.
+5. FTESC-specific firmware authorization/update workflow.
+
+Reuse VESC Tool only as a conceptual reference for UI patterns, motor-control terminology and general engineering practices. Do not reuse its command IDs or packet codec for FTESC.
+
+## 7. References
+
+- [Flipsky — Differences Between FT ESC and FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc)
+- [Flipsky — How to Update FT Series ESC to V1.6](https://flipsky.net/blogs/vesc-tool/how-to-update-ft-series-esc-to-v16)
+- [Benjamin Vedder — Communicating with the VESC using UART](https://vedder.se/2015/10/communicating-with-the-vesc-using-uart/)
+- [VESC Tool — packet.h](https://github.com/vedderb/vesc_tool/blob/master/packet.h)
+- [VESC firmware — datatypes.h](https://github.com/vedderb/bldc/blob/master/datatypes.h)
