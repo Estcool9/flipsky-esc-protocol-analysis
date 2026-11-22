@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 46% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 48% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
 
 ## Project status
 
@@ -23,7 +23,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **46%** |
+| **Overall estimate** | **48%** |
 
 See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
@@ -171,3 +171,10 @@ See [docs/FTESC_UART_PROTOCOL_V1.6.md](docs/FTESC_UART_PROTOCOL_V1.6.md), [docs/
 ## More offline protocol tooling
 
 scripts/ftesc_protocol.py now builds command INFO fields and complete outer frames, and parses selected V1.6 telemetry responses for CMD 00, CMD 02/CMD 20, CMD 1A and CMD 1E. The combined frame and command test suite has **26 passing tests** on REA.
+
+
+## V1.7 Qt API string map
+
+A new static map records high-level methods found in the V1.7 Qt string/meta-object data, including controls for duty, current, D-axis current, speed, position and brake current; automatic telemetry; CAN ID/identification flows; firmware version and firmware update methods; and encryption-related names. Candidate V1.6 opcode relationships are marked as hypotheses until their call paths and emitted bytes are confirmed.
+
+See [docs/V1_7_QT_API_STRING_MAP.md](docs/V1_7_QT_API_STRING_MAP.md).
