@@ -162,3 +162,6 @@ The third-party implementation's FT85BD hardware compatibility claims remain att
 - CMD 0x29: nine signed int32 values, each scaled by 1,000,000.
 
 The six CMD 0x0E values and nine CMD 0x29 calibration values retain generic names until the UI/API semantics are mapped. See the tests in `tests/test_ftesc_responses.py`.
+
+
+CMD 0x21 raw UUID DATA is decoded by `parse_uuid_response()` in `scripts/ftesc_responses.py`. The decoder preserves the raw length; the firmware preflight expects a 16-byte TEA key but the response dispatcher itself does not visibly validate that length.
