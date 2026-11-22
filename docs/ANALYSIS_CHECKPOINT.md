@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 75%**  
+**Overall estimated progress: 77%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -235,3 +235,13 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Earlier claim of an 0xE9 firmware magic check at 0x00485130 withdrawn; that function is the flash loop.
 - Fresh clone test suite: **71 passed, 0 failed**.
 - Overall estimate: **75%**.
+
+
+## ValueSeque order — 2026-11-22
+
+- All 13 XML resources restored and parsed.
+- 736 values, 721 ordered entries, 15 omitted values; no duplicate/unknown sequence IDs.
+- ValueSeque order differs from Values order in all 13 resources.
+- Added profile order extractor, profile-aware setup block encoder, compressed full CSV/JSON artifacts and summary.
+- Fresh clone restore + generation succeeded; **77 tests passed, 0 failed**.
+- Overall estimate: **77%**.
