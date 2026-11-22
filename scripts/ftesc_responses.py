@@ -214,6 +214,11 @@ def parse_text_response(
             f"expected CMD 0x{expected_command:02X}, got 0x{message.command:02X}"
         )
     raw = bytes(message.data)
+    # The native V1.6 CMD 0x14 path scans a C-style string only up to
+    # the first NUL byte. CMD 0x24 is passed as a QByteArray and keeps
+    # its full length, including any embedded NUL bytes.
+    if expected_command == 0x14:
+        raw = raw.split(b"\\x00", 1)[0]
     return TextResponse(command=message.command, raw=raw, text=raw.decode("utf-8", errors="replace"))
 
 
