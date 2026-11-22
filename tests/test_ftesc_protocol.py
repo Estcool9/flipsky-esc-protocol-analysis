@@ -156,6 +156,9 @@ class OtherResponseTests(unittest.TestCase):
     def test_master_and_slave_ids(self):
         self.assertEqual(parse_all_esc_ids(b"\x1e\x05\x06\x07"), (5, (6, 7)))
 
+    def test_can_id_over_can_response(self):
+        self.assertEqual(parse_all_esc_ids(b"\\x01\\x02\\x03"), (2, (3,)))
+
     def test_auto_realtime_config(self):
         info = b"\x1a\x01\x00\x64\x12\x34\x56\x78"
         self.assertEqual(parse_auto_realtime_config(info), (1, 100, 0x12345678))
