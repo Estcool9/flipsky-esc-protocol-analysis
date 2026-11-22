@@ -13,6 +13,16 @@ class SetupValueSerializerTests(unittest.TestCase):
         self.assertEqual(encode_setup_value(val_type=1, value_tet=7, value_dou=1.235, eval_scl=100),
                          struct.pack(">h", 124))
 
+    def test_float_tet_7_negative_halfway_rounds_away_from_zero(self):
+        self.assertEqual(encode_setup_value(val_type=1, value_tet=7, value_dou=-1.235, eval_scl=100),
+                         struct.pack(">h", -124))
+        self.assertEqual(encode_setup_value(val_type=1, value_tet=7, value_dou=-1.234, eval_scl=100),
+                         struct.pack(">h", -123))
+
+    def test_float_tet_8_negative_halfway_rounds_away_from_zero(self):
+        self.assertEqual(encode_setup_value(val_type=1, value_tet=8, value_dou=-12.5, eval_scl=1),
+                         struct.pack(">i", -13))
+
     def test_float_tet_8_scaled_signed_32(self):
         self.assertEqual(encode_setup_value(val_type=1, value_tet=8, value_dou=12.5, eval_scl=1000),
                          struct.pack(">i", 12500))
@@ -20,6 +30,10 @@ class SetupValueSerializerTests(unittest.TestCase):
     def test_float_tet_9_ieee754_big_endian(self):
         self.assertEqual(encode_setup_value(val_type=1, value_tet=9, value_dou=1.5),
                          struct.pack(">f", 1.5))
+
+    def test_float_tet_9_preserves_negative_zero_sign_bit(self):
+        self.assertEqual(encode_setup_value(val_type=1, value_tet=9, value_dou=-0.0),
+                         bytes.fromhex("80 00 00 00"))
 
     def test_integer_tet_widths(self):
         self.assertEqual(encode_setup_value(val_type=2, value_tet=1, value_int=0xAB), b"\xAB")
@@ -75,6 +89,8 @@ class SetupValueSerializerTests(unittest.TestCase):
         self.assertEqual(decoded.values["u32"]["value_int"], 0x12345678)
         self.assertEqual(decoded.values["i32"]["value_int"], -123456)
         self.assertEqual(decoded.values["flag4"]["value_int"], -3)
+        self.assertEqual(decoded.values["flag6"]["value_int"], 2)
+        self.assertEqual(decoded.values["flag7"]["value_int"], 3)
 
     def test_decode_two_consecutive_marker_blocks(self):
         first_meta = {"a": {"valType": 2, "valueTET": 1, "value_int": 1}}
