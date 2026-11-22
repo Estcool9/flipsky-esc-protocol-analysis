@@ -371,3 +371,17 @@
 - The C enum declares CMD 0x02 and 0x10 but the sample parser implements only response 0x00 and contains no outbound builder for 0x02 or CAN wrapper. This corroborates, but does not close, the V1.7 gaps.
 - Added [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md); did not copy the source file into the public repo.
 - Overall estimate updated from **79% to 80%**; test suite remains **80 passed, 0 failed**.
+
+
+## 2026-11-22 — V1.7 request payload schemas and offline builders
+
+- Decoded UartComm meta-object index 32: `ftescGetAutoRealtimeData(uint8,uint16)` → `FUN_004993F0` at 0x004993F0; payload is CMD 0x1A, enable byte, uint16 BE interval.
+- Mapped scalar control payloads: duty 0x03 ×100,000; current 0x04 ×1,000; brake current 0x06 ×1,000; Id current 0x25 ×1,000; position 0x26 ×1,000; speed 0x27 ×1.
+- Mapped setup write markers: CMD 0x07 + D2C6EF10; CMD 0x1B + D2C6EF10 and optional 4879187D second block; CMD 0x3A + 54464346.
+- Mapped reset overloads: TopFlow reset CMD 0x1D with no DATA; motor-signal reset/reboot CMD 0x1D with one byte.
+- Mapped IMU calibration CMD 0x29 with signed int32 BE scaled ×1,000.
+- Added `scripts/ftesc_requests.py` with offline-only INFO payload builders and `tests/test_ftesc_requests.py` (9 tests).
+- Added [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md) and linked it from [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md).
+- Fresh public clone: payload restoration succeeded, **89 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **80% to 82%**. Request payload builders are 85%; CMD 0x0F, CMD 0x02, CAN wrapper 0x10 and TopFlow schema remain open.
+- No request was transmitted.
