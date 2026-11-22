@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 85%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 87%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **85%** |
+| **Overall estimate** | **87%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **100 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **104 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -196,3 +196,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - CMD 0x21 response is copied to a QByteArray and emitted to the firmware-update preflight.
 - Added raw UUID decoder that preserves response length; TEA preflight consumes a 16-byte key, while the native response branch does not visibly enforce that length.
 - Fresh clone now has 100 passing tests.
+
+
+### Setup response decoder
+- Decompiled `FUN_004A10C0` marker validation and `FUN_004A0B70` per-value decode.
+- Added inverse ValueSeque decoder supporting float32, scaled signed16/32, signed/unsigned byte, signed/unsigned16 and signed/unsigned32.
+- Decoder supports sequential marker blocks via `next_offset`, including the optional second CMD 0x1B block.
+- “Invalid SecretKey” is a fixed setup marker mismatch message, distinct from UUID/TEA firmware authorization.
+- See [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
