@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 80%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 82%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -26,7 +26,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **80%** |
+| **Overall estimate** | **82%** |
 
 ## Confirmed evidence
 
@@ -90,7 +90,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **80 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **89 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
@@ -169,3 +169,10 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Independently confirms AA/BB framing, CRC high/low order, DD terminator, CMD 0x00 base telemetry and command enum.
 - Declares CMD 0x02 and CMD 0x10 but does not implement either outbound path in the sample; this corroborates the two open V1.7 gaps.
 - See [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
+
+
+### V1.7 request payload builders
+- Added offline builders for resolved scalar controls, auto telemetry, setup marker blocks, reset variants and no-data requests.
+- Added exact marker/payload schema report; command 0x0F, 0x02 and UART CAN-forward 0x10 remain deliberately unimplemented because semantics/path are unresolved.
+- 9 new request-builder tests; fresh clone now has 89 passing tests.
+- See [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md).
