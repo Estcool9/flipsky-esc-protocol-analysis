@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 48%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 50%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -15,7 +15,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | Qt/QML architecture and class ownership | 90% |
 | UART/Qt event and meta-object mapping | 85% |
 | Outer frame format and CRC reconstruction | 100% |
-| Receive-buffer and resynchronization analysis | 70% |
+| Receive-buffer and resynchronization analysis | 90% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 protocol comparison | 90% |
 | V1.7 command-ID and payload cross-reference | 20% |
@@ -24,7 +24,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **48%** |
+| **Overall estimate** | **50%** |
 
 ## Confirmed evidence
 
@@ -55,7 +55,7 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 - V1.7 constructor initializes maximum payload to 0x2710 (10,000 bytes).
 - Receive handler distinguishes valid, malformed and incomplete candidates; invalid candidates advance one byte, valid consumed sizes advance the parser.
 
-See WIRE_FRAME_FORMAT.md and RECEIVE_BUFFER_STATE.md.
+See WIRE_FRAME_FORMAT.md, RECEIVE_BUFFER_STATE.md and RECEIVE_PATH_DEEP_DIVE.md.
 
 ### Public V1.6 UART protocol reference
 - V1.6 official UART protocol PDF read from Nextcloud: document date 2025-12-09, firmware version V1.6, 23 pages.
@@ -70,8 +70,8 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 ### Offline implementation tests
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
-- tests/test_ftesc_frame.py and tests/test_ftesc_protocol.py.
-- Executed on REA against the published GitHub copies: **26 tests passed, 0 failed**.
+- tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
+- Executed on REA against the published GitHub copies: **36 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
