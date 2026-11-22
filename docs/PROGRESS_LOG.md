@@ -95,3 +95,26 @@
 - Added docs/V1_7_QT_API_STRING_MAP.md with explicit confidence labels: names are evidence of API surface, but numeric opcodes are not proven until call paths and emitted bytes are traced.
 - Updated V1.7 command-ID/payload cross-reference workstream to 20%.
 - Re-evaluated overall progress to **48%**.
+
+
+## 2026-11-22 — V1.7 receive-path deep dive and streaming decoder
+
+- Reopened the V1.7 executable in REA/Ghidra 12.2; SHA-256 again matched `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- Decompiled `0x0049C830` (single-frame parser), `0x0049CA30` (receive stream handler), `0x0049C5C0` (frame builder) and `0x0049C7A0` (CRC helper).
+- Confirmed the parser's tri-state result: positive consumed frame size, -1 invalid candidate, -2 incomplete candidate plus a missing-byte count.
+- Mapped receive-state fields by observed use: parse cursor at +0x14, used length at +0x18, incomplete-byte countdown at +0x1C, maximum payload at +0x20, capacity/allocation bound at +0x24 and buffer pointer at +0x28. These are descriptive labels, not recovered C++ member names.
+- New finding: the handler appends serial bytes incrementally and uses the parser's missing-byte count as a countdown, avoiding a full parser call on every byte of a long incomplete frame.
+- Confirmed one-byte resynchronization after an invalid candidate, full-frame consumption after a valid candidate, repeated parsing of concatenated frames, and compaction of the unconsumed suffix when space is needed.
+- Added [RECEIVE_PATH_DEEP_DIVE.md](RECEIVE_PATH_DEEP_DIVE.md) with pseudocode and explicit caveats.
+- Added `scripts/ftesc_stream.py` and `tests/test_ftesc_stream.py`. The stream decoder handles split frames, concatenated frames, leading noise, bad CRC/terminator recovery and reset.
+- A first test run exposed a Python `BufferError`: the frame decoder held a memoryview of the mutable bytearray while the recovery path resized it. The implementation was corrected to pass an immutable bytes snapshot into the existing frame decoder.
+- Re-cloned the public GitHub repository on REA and ran the exact published tree: **36 tests passed, 0 failed** (26 frame/protocol tests plus 10 stream tests).
+- Overall project estimate updated from **48% to 50%**. Receive-buffer/resynchronization analysis rises to 90%; V1.7 command-ID mapping remains the main unresolved static-analysis milestone.
+- No ESC hardware was connected; no serial or BLE data was transmitted.
+
+### Next work
+1. Map the FtescLowLevelFace Qt meta-object dispatch indexes to method names and native bodies.
+2. Trace `ftescControlDuty`, `ftescControlCurrent`, `ftescGetRealtimeDataOnce` and the `ftescObtain*` methods into their actual payload bytes.
+3. Correlate response command IDs with acknowledgement handlers.
+4. Continue CAN-forwarding and firmware-update call graphs.
+5. Compare V1.6 Windows executable(s) against V1.7 once staged locally.
