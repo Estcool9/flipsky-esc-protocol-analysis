@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import IntEnum
+import math
 
 
 class CommandId(IntEnum):
@@ -141,6 +142,26 @@ def parse_realtime_data_00(info: bytes | bytearray | memoryview) -> RealtimeData
         encoder_angle_degrees=_signed(d, 24, 4) / 1_000_000.0,
         reserved_extension=d[28:40] if len(d) == 44 else b"",
         pas_rpm=_signed(d, 40, 4) if len(d) == 44 else None,
+    )
+
+
+def parse_realtime_data_00_v17_angular_extension(
+    info: bytes | bytearray | memoryview,
+) -> tuple[float, float, float]:
+    """Decode the three V1.7 angular values occupying V1.6's 12 reserved bytes.
+
+    The V1.7 binary reads each as a signed 32-bit big-endian integer, divides
+    by 1,000,000 to obtain radians, then converts radians to degrees.
+    """
+    message = parse_info(info)
+    if message.command != CommandId.OBTAIN_DATA_ONCE:
+        raise ValueError(f"expected CMD 0x00, got 0x{message.command:02X}")
+    d = message.data
+    if len(d) != 44:
+        raise ValueError(f"V1.7 CMD 0x00 angular extension requires 44 DATA bytes, got {len(d)}")
+    return tuple(
+        math.degrees(_signed(d, offset, 4) / 1_000_000.0)
+        for offset in (28, 32, 36)
     )
 
 
