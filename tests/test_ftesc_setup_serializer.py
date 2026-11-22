@@ -41,9 +41,9 @@ class SetupValueSerializerTests(unittest.TestCase):
         self.assertEqual(encoded, bytes.fromhex("12 34 56 78 02 01"))
 
     def test_signed_byte_tets_and_value_types(self):
-        self.assertEqual(encode_setup_value(val_type=2, value_tet=2, value_int=-12), b"\\xF4")
+        self.assertEqual(encode_setup_value(val_type=2, value_tet=2, value_int=-12), bytes((0xF4,)))
         for val_type in (4, 6, 7):
-            self.assertEqual(encode_setup_value(val_type=val_type, value_tet=1, value_int=-3), b"\\xFD")
+            self.assertEqual(encode_setup_value(val_type=val_type, value_tet=1, value_int=-3), bytes((0xFD,)))
 
     def test_decode_profile_block_all_observed_types(self):
         marker = 0xD2C6EF10
