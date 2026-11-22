@@ -7,6 +7,9 @@ from scripts.ftesc_frame import (
 class CrcTests(unittest.TestCase):
     def test_modbus_check_vector(self):
         self.assertEqual(crc16_modbus(b"123456789"), 0x4B37)
+    def test_public_ftesc_v14_reference_frame_vector(self):
+        self.assertEqual(encode_frame(bytes.fromhex("11")), bytes.fromhex("AA 01 11 4C 7F DD"))
+
     def test_empty_crc_initial_value(self):
         self.assertEqual(crc16_modbus(b""), 0xFFFF)
 
