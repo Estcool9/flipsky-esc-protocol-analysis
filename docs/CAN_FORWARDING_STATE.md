@@ -102,3 +102,8 @@ The user's Nextcloud contains the official Flipsky **FTESC CAN Communication Pro
 The V1.4 CAN command namespace includes direct-CAN current/duty/eRPM/position commands (0x00–0x05, 0x12–0x14), periodic telemetry commands (0x0B–0x0D), and non-CRC variants (0x15–0x1B). This is not the UART command namespace: direct CAN command 0x00 is current-with-gear, whereas UART INFO command 0x00 is realtime telemetry.
 
 A separate offline decoder is implemented in `scripts/ftesc_can.py`; see [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md). It decodes identifiers and read-only telemetry, but it does not prove where V1.7 inserts its UART CMD 0x10 forwarding envelope.
+
+
+## 8. Older C reference cross-check
+
+The user's V1.4–V1.6 C reference declares `UART_CAN_FWARD=0x10` but does not implement the CAN-forward wrapper. This confirms the command's existence but does not reveal the payload envelope. The V1.7 wrapper insertion and slave response routing remain unresolved; see [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
