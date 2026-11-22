@@ -20,6 +20,9 @@ class ProfileOrderTests(unittest.TestCase):
     def test_classifies_motor_signal_setup_family(self):
         self.assertEqual(classify_family({"a": {"valName": "FOC Current Kp"}}), "motor_signal_setup")
 
+    def test_classifies_encoder_setup_family(self):
+        self.assertEqual(classify_family({"a": {"valName": "Encoder Zero Position(rad)"}}), "encoder_setup")
+
     def test_value_sequence_controls_order_not_values_order(self):
         xml = """<ValueSetups>
           <Values>
