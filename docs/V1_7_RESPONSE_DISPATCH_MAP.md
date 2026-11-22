@@ -110,3 +110,34 @@ The first four reader roles are corroborated by the telemetry case and previousl
 3. Investigate the setup-frame family 0x1B/0x1C/0x3A–0x3D and marker 0x54464346.
 4. Trace CAN forwarding and the CMD 0x10 path.
 5. Extend the offline protocol model with the V1.7 telemetry extension only after assigning stable names to the additional angular fields.
+
+
+## 8. Exact Qt acknowledgement signal mapping
+
+The callback wrappers called by the response switch were inspected at machine-code level. Each wrapper passes the UartComm meta-object pointer `0x0051F248` and a literal signal index to Qt's activation helper. This resolves the response-to-signal map without relying only on method-name guesses.
+
+| Response command | Callback wrapper(s) | Qt signal index | Exact UartComm signal |
+|---:|---|---:|---|
+| `0x00` | `0x004BC060` | 13 | `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` |
+| `0x01`, `0x1E` | `0x004BC200` | 19 | `ftescGetIDResAck(QVector<int>, bool)` |
+| `0x0D` | `0x004BC0D0` | 16 | `signalPPMRecAck(...)` |
+| `0x0E` | `0x004BC120` | 17 | `signalADCRecAck(...)` |
+| `0x0F` | `0x004BC010` | 18 | `motorIdentifyResAck(...)` |
+| `0x11` | `0x004BBDD0` | 3 | `ftescFirmwareVerRec(...)` |
+| `0x11` | `0x004BBE10` | 5 | `ftescFirmwareVerRecType(...)` |
+| `0x14` | `0x004BBF50` | 14 | `ftescTermialPrint(...)` |
+| `0x16` | `0x004BBD30` | 4 | `ftescFirmwareEraseRespenseFlag(...)` |
+| `0x18` | `0x004BBD80` | 6 | `ftescFirmwareWriteBlockSuccessFalg(...)` |
+| `0x1A` | `0x004BBBF0` | 11 | `ftescAutoGetRealtimeDataAck()` |
+| `0x1B` | `0x004BBE60` | 7 | `ftescMotorSignalReadAck(QString, bool)` |
+| `0x1C` | `0x004BBF90` | 8 | `ftescMotorSignalSecretKeyCheckAck(int)` |
+| `0x1D`, `0x3A`, `0x3D` | `0x004BBEB0` | 9 | `ftescTopFlowSetupReadAck(QString, bool)` |
+| `0x21` | `0x004BBCA0` | 1 | `ftescGetUuidAck(...)` |
+| `0x22` | `0x004BBCE0` | 2 | `writeEncryptSuccess(...)` |
+| `0x24` | `0x004BBC60` | 15 | `ftescSamplesPrint(...)` |
+| `0x29` | `0x004BC250` | 20 | `imuCalibrationReceived(FTESC_IMU_CALIBRATION)` |
+| `0x3B`, `0x3C` | `0x004BBFD0` | 10 | `ftescTopFlowSecretKeyCheckAck(int)` |
+
+Signal indexes were read from the wrapper's immediate arguments and cross-checked against the decoded 58-method UartComm meta-object table. This is direct evidence for the callback signal identity.
+
+Signal index 12, `ftescSignalReadAckToRtData(QString, bool)`, is not emitted by the response cases above; it is connected through a separate application-level path and remains a target for follow-up tracing.
