@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity and marker-level pass; function diff pending) | 25% |
+| V1.6 executable comparison (PE identity, marker pass and UART frame/parser role diff; full function diff pending) | 45% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -431,3 +431,12 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Head commit: `68f1c61b2e2dbe8be63803c75d7dceacd68a8b95`.
 - Job `verify`: success; 162 tests passed, 0 failed; research artifact restoration, parameter catalog regeneration, ordered setup profile regeneration and Python compileall all passed.
 - Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45040895498
+
+
+## Windows V1.6 UART frame/parser comparison — 2026-11-22
+
+- Recovered V1.6 Windows frame builder `FUN_00496010`, candidate parser `FUN_00496280` and incremental stream handler `FUN_00496480` in the 2026-09-12 PE.
+- Mapped the class dispatcher and two receive wrappers: serial/device read loop `FUN_00480ED0`; QByteArray input wrapper `FUN_00482750`; `FUN_00481860` tail-jumps to the frame builder.
+- Confirmed matching function roles with V1.7 `0x0049C5C0`, `0x0049C830` and `0x0049CA30`. See [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md).
+- Python decoder now checks the terminal byte before CRC to match native validation precedence; a regression test was added. The actual wire acceptance behavior was already aligned.
+- The V1.6 per-instance max-payload initializer and exact Qt method-index/string-table mapping remain open. No transport or hardware test was performed; overall weighted progress remains **72.6%**.
