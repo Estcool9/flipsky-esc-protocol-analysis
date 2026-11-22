@@ -111,3 +111,16 @@ def encode_setup_block(marker: int, values: Iterable[Mapping[str, Any]]) -> byte
             )
         )
     return bytes(output)
+
+
+def encode_profile_block(
+    marker: int,
+    profile_order: Iterable[str],
+    values_by_id: Mapping[str, Mapping[str, Any]],
+) -> bytes:
+    """Encode a profile using its ValueSeque order, not Values/dict order."""
+    order = list(profile_order)
+    missing = [xml_id for xml_id in order if xml_id not in values_by_id]
+    if missing:
+        raise SetupValueError(f"profile values missing IDs: {missing}")
+    return encode_setup_block(marker, (values_by_id[xml_id] for xml_id in order))
