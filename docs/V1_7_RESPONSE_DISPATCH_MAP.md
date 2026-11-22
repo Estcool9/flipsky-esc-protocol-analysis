@@ -141,3 +141,12 @@ The callback wrappers called by the response switch were inspected at machine-co
 Signal indexes were read from the wrapper's immediate arguments and cross-checked against the decoded 58-method UartComm meta-object table. This is direct evidence for the callback signal identity.
 
 Signal index 12, `ftescSignalReadAckToRtData(QString, bool)`, is not emitted by the response cases above; it is connected through a separate application-level path and remains a target for follow-up tracing.
+
+
+## 8. Independent V1.4 implementation cross-check
+
+A third-party Python/Arduino FTESC UART V1.4 implementation was inspected at pinned commit `49989ac0cde531a68799284d1de9efdd7ba14c7f`. Its common short-frame format and CRC agree with V1.7. Exact example `AA 01 11 4C 7F DD` is reproduced by the offline codec. The third-party driver's base telemetry field order/scales align with the V1.7 CMD 0x00 base layout.
+
+The V1.7 response handler additionally interprets the 12 bytes labelled reserved in V1.6 as three signed micro-radian angular values and reads PAS RPM at DATA offset 40. The parser and tests now cover all four extension values. See [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md).
+
+The third-party implementation's FT85BD hardware compatibility claims remain attributed to its author; no hardware was tested in this project.
