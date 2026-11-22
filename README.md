@@ -171,9 +171,10 @@ The final `writeCharacteristic` call target, response/no-response mode, exact CC
 1. Recover the missing TopFlow ValueSetup XML and map profiles to exact hardware SKUs.
 2. Locate the V1.7 native insertion point for UART CMD 0x10 and complete slave response routing/correlation.
 3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
-4. Compare against a V1.6 executable if one becomes available.
-5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
-6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
+4. Complete function-level comparison of the three staged V1.6 Windows executables against V1.7; first-pass PE32 identity/marker comparison is now recorded.
+5. Decompile the Android V1.6 `BleUart` functions, decode its Qt `.rcc` QML resource bundle, and map the app's exact GATT write/CCCD/MTU choices.
+6. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
+7. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
 
 Hardware validation is still **0%**. The 72.6% weighted estimate reflects static evidence, offline implementation and CI-verified tests; it does not mean the protocol is safe or verified on a live ESC.
 
