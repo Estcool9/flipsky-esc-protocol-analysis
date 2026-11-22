@@ -26,7 +26,7 @@ def i32(value):
     return int(value).to_bytes(4, "big", signed=True)
 
 
-class V17ResponseDecoderTests(unittest.TestCase):
+class FTESCResponseDecoderTests(unittest.TestCase):
     def test_ppm_response_scaled_signed_i32(self):
         self.assertAlmostEqual(parse_signal_ppm_response(b"\x0D" + i32(-500_000)), -0.5)
 
