@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 82%**  
+**Overall estimated progress: 83%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -291,3 +291,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md) and `scripts/ftesc_requests.py`.
 - Fresh clone: **89 tests passed, 0 failed**.
 - Overall estimate: **82%**.
+
+
+## CMD 0x0F and rounding — 2026-11-22
+
+- Native function `0x00499180` payload order: 0F, arg2, low8(arg1), signed16(arg4), signed16(arg3×100), arg5.
+- Semantic argument labels remain unknown; offline builder uses generic names.
+- Native helpers `0x0049D150` and `0x0049D1E0` implement round-half-away-from-zero; 0.5 epsilon at 0x005312C0.
+- Added two tests; fresh clone **91 passed, 0 failed**.
+- Overall estimate: **83%**.
