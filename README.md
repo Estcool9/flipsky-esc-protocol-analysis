@@ -1,8 +1,8 @@
 # Flipsky ESC Tool Protocol Research
 
-Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
+Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This public repository contains the evidence log, extracted application metadata, protocol documentation, offline codecs, reproducible scripts and test suite.
 
-> **Overall progress: 70% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 92% (estimated, 22 November 2026).** This is a milestone-weighted estimate for completing the documented offline protocol model. It is not a measure of certainty, commercial-app feature completeness, hardware safety, or live-device validation.
 
 ## Project status
 
@@ -12,22 +12,25 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Embedded XML extraction and validation | 100% |
 | Parameter catalog generation | 100% |
 | Qt/QML architecture and class ownership | 90% |
-| UART/Qt signal-slot and meta-object mapping | 100% |
-| Outer frame format and CRC reconstruction | 100% |
-| Receive-buffer and resynchronization analysis | 90% |
-| Inner command IDs and payload layouts | 86% |
-| Public V1.6 UART protocol extraction | 100% |
-| V1.4-to-V1.6 documented comparison | 90% |
-| V1.6 Windows binary comparison | 0% |
-| Firmware authorization and block-transfer flow | 90% |
-| Direct CAN V1.4 decoder and telemetry | 100% |
-| V1.7 UART CAN-forward wrapper and slave routing | 40% |
-| VESC compatibility assessment | 25% |
-| Offline frame codec and tests | 100% |
+| Qt meta-object, signal/slot and method dispatch | 100% |
+| UART outer frame and CRC reconstruction | 100% |
+| UART receive buffering and resynchronization | 95% |
+| V1.7 request payload builders | 90% |
+| V1.7 response dispatch and decoders | 95% |
+| ValueSetup serializer and response decoder | 98% |
+| Firmware authorization and block codec | 85% |
+| Direct CAN V1.4 identifier, CRC, telemetry and command codec | 95% |
+| UART CAN-over envelope codec | 90% |
+| V1.7 native CAN wrapper insertion and slave routing | 40% |
+| BLE transport static analysis | 75% |
+| VESC compatibility assessment | 75% |
+| Reproducible extraction, catalog and CI | 95% |
+| TopFlow XML and SKU/profile mapping | 40% |
+| V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **90%** |
+| **Overall estimate** | **92%** |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [docs/CAN_FORWARDING_STATE.md](docs/CAN_FORWARDING_STATE.md), [docs/FTESC_CAN_PROTOCOL_V1.4.md](docs/FTESC_CAN_PROTOCOL_V1.4.md), [docs/V1_7_ONE_SHOT_CMD_02_STATUS.md](docs/V1_7_ONE_SHOT_CMD_02_STATUS.md), [docs/V1_7_PROFILE_SERIALIZATION_ORDER.md](docs/V1_7_PROFILE_SERIALIZATION_ORDER.md), [docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md](docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md), [docs/V1_6_C_REFERENCE_CROSSCHECK.md](docs/V1_6_C_REFERENCE_CROSSCHECK.md), [docs/V1_7_REQUEST_PAYLOAD_SCHEMAS.md](docs/V1_7_REQUEST_PAYLOAD_SCHEMAS.md), [docs/V1_7_SETUP_RESPONSE_DECODER.md](docs/V1_7_SETUP_RESPONSE_DECODER.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
+See [STATUS](docs/STATUS.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [ROADMAP](docs/ROADMAP.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for the current checkpoint and detailed work history.
 
 ## Artifact under analysis
 
@@ -36,11 +39,11 @@ See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.m
 - SHA-256: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`
 - Format: PE32, x86, native Windows GUI application
 - CLR/.NET header: absent
-- Tools: Ghidra 12.2, Rizin 0.9.1 and the REA reverse-engineering toolkit
+- Analysis tools: Ghidra 12.2, Rizin 0.9.1 and the REA reverse-engineering toolkit
 
-The binary contains unusual `.enigma1` and `.enigma2` sections and other protection-like characteristics. A protected/packed build is plausible, but the exact protector and unpacking status have not been established.
+The binary contains unusual `.enigma1` and `.enigma2` sections and other protection-like characteristics. A protected or packed build is plausible, but the exact protector and unpacking status have not been established.
 
-The executable itself remains on the REA analysis host. Its exact identity and hash are documented in [docs/ARTIFACT_INVENTORY.md](docs/ARTIFACT_INVENTORY.md). The GitHub API upload path available in this session could not stream the 50.6 MB executable as a single Git object. It has not been replaced by a truncated copy or an LFS pointer.
+The 50.6 MB executable remains on the REA analysis host; it is not included in this repository. It has not been replaced by a truncated copy or an LFS pointer. Its exact identity and hash are recorded in [ARTIFACT_INVENTORY](docs/ARTIFACT_INVENTORY.md).
 
 ## Confirmed application architecture
 
@@ -52,34 +55,27 @@ The application is built around Qt 5, C++ and QML. Identified modules include Qt
 - `Flipsky.ftesc.valuesetups`
 - `Flipsky.ftesc.bleuart`
 
-The high-level `FtescLowLevelFace` façade coordinates UART and BLE paths. A separate Qt meta-object named `uartPackData` includes `sendDataToESC`, `uartPackDataFromESC`, `uartPackDataHandle` and `uartPackDataTimerSl`.
+The high-level `FtescLowLevelFace` façade coordinates UART and BLE. The separate `uartPackData` Qt meta-object exposes `sendDataToESC`, `uartPackDataFromESC`, `uartPackDataHandle` and `uartPackDataTimerSl`.
 
-See [docs/QT_CONNECTION_REGISTRATION.md](docs/QT_CONNECTION_REGISTRATION.md), [docs/QT_METAOBJECT.md](docs/QT_METAOBJECT.md), and [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md).
+See [QT_CONNECTION_REGISTRATION](docs/QT_CONNECTION_REGISTRATION.md), [QT_METAOBJECT](docs/QT_METAOBJECT.md), [QT_METACALL_DISPATCH_MAP](docs/QT_METACALL_DISPATCH_MAP.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
 
-## Recovered outer UART framing
+## V1.7 UART framing
 
-The receive parser and transmit builder independently support two frame forms.
+The V1.7 sender and receiver support two frame forms.
 
 **Short frame**
 
-`AA | LEN8 | PAYLOAD | CRC16_BE | DD`
+`AA | LEN8 | INFO | CRC16_BE | DD`
 
 **Extended frame**
 
-`BB | LEN16_BE | PAYLOAD | CRC16_BE | DD`
+`BB | LEN16_BE | INFO | CRC16_BE | DD`
 
-The sender selects the short form for payloads from 1 through 255 bytes and the extended form above 255 bytes. The receiver rejects zero-length short payloads and rejects extended lengths at or below 254. The constructor initializes the maximum-payload field to `0x2710` (10,000 bytes) in this binary.
+INFO is the command byte followed by command-specific DATA. The sender selects the short form for INFO lengths 1–255 and the extended form above 255. The receiver rejects zero-length short payloads and extended lengths at or below 254. The constructor initializes the maximum-payload field to `0x2710` (10,000 bytes).
 
-The checksum is **CRC-16/MODBUS**: reflected polynomial `0xA001`, initial value `0xFFFF`, final XOR `0x0000`. It is calculated over the payload only and transmitted high byte first. The two 256-byte lookup tables embedded in the binary match generated CRC-16/MODBUS tables; the standard check vector `123456789` yields `0x4B37`.
+The checksum is **CRC-16/MODBUS**: reflected polynomial `0xA001`, initial value `0xFFFF`, final XOR `0x0000`. It covers INFO only and is transmitted high byte first. The embedded split lookup tables match CRC-16/MODBUS; the standard check vector `123456789` yields `0x4B37`.
 
-The response dispatcher at `0x004997A0` and the separate `UartComm` static meta-call at `0x004BC2B0` now map many V1.7 response and outbound request command cases. The request map confirms motor control commands 0x03, 0x04, 0x06, 0x25, 0x26 and 0x27, plus firmware, setup, CAN and sensor requests. See [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md). The response dispatcher at `0x004997A0` maps V1.7 response command cases. Commands `0x00`, `0x11`, `0x1A` and `0x1E` correlate strongly with public V1.6 telemetry, firmware identity, periodic telemetry acknowledgement and ESC-ID enumeration. The V1.7 `0x00` path reads the full 44-byte DATA auto-telemetry response, including three extra 32-bit angular values in the 12 bytes that V1.6 labels reserved. Their exact semantic names remain unknown. See [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md).
-
-The receive handler distinguishes:
-- a positive return value for a valid frame's consumed length;
-- `-1` for an invalid candidate, after which the caller advances one byte to search again;
-- `-2` for an incomplete candidate.
-
-The handler loops after a successfully consumed frame, allowing multiple complete frames in one input buffer. See [docs/WIRE_FRAME_FORMAT.md](docs/WIRE_FRAME_FORMAT.md) and [docs/RECEIVE_BUFFER_STATE.md](docs/RECEIVE_BUFFER_STATE.md).
+The receive parser distinguishes valid consumed frames, invalid candidates and incomplete candidates. It advances one byte after invalid input and loops after each complete frame, so multiple frames in one input buffer are supported. See [WIRE_FRAME_FORMAT](docs/WIRE_FRAME_FORMAT.md), [RECEIVE_BUFFER_STATE](docs/RECEIVE_BUFFER_STATE.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
 
 ## Parameter resources
 
@@ -91,99 +87,85 @@ Thirteen compressed Zlib XML resources were recovered and validated. The derived
 
 Families include CAN, UART, PPM, ADC, PAS, battery and motor current, eRPM, phase resistance and inductance, flux, FOC gains, encoders, PWM, thermal sensing and battery cutoffs.
 
-These XML resources are application metadata. Values and limits found in them are **not** recommendations for safe ESC or motor configuration.
+The XML files are application metadata, not firmware images. Values and limits in them are **not** recommendations for safe ESC or motor configuration.
 
-## Offline frame codec
-
-The repository contains a standard-library-only Python implementation:
-
-- `scripts/ftesc_frame.py`: CRC-16/MODBUS, frame encoder, single-frame decoder and concatenated-frame decoder.
-- `scripts/ftesc_stream.py`: incremental decoder retaining incomplete frames across chunks and recovering after invalid candidates.
-- `scripts/ftesc_can.py`: read-only decoder for FTESC V1.4 29-bit CAN identifiers and three periodic telemetry messages.
-- `scripts/ftesc_firmware.py`: offline-only V1.7 firmware erase/write payload and 240-byte XOR block codec.
-- `scripts/ftesc_requests.py`: offline V1.7 control, setup, telemetry and reset INFO request builders.
-- `scripts/ftesc_responses.py`: offline V1.7 PPM/ADC, IMU calibration and boolean/no-data ACK decoders.
-- `tests/test_ftesc_frame.py`: unit tests for checksum, both frame forms, boundary lengths, incomplete input, corruption and concatenated frames.
-
-Run the test suite from the repository root:
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-**Observed result on REA:** 77 tests passed, 0 failures, including UART framing, V1.7 telemetry, direct CAN telemetry, firmware block encoding, exact ValueSeque ordering, setup serialization and incremental-stream tests.
-
-This codec handles only the outer frame layer. It does not yet interpret inner command IDs, parameter payloads, authentication, firmware-update payloads or BLE-specific wrappers.
-
-## VESC compatibility
-
-Flipsky distinguishes its FT ESC family from VESC-based FSESC products. Similar Qt technology or similar UI controls do not establish protocol compatibility. The recovered Flipsky outer frame format is documented here; compatibility with VESC framing, opcodes and payload schemas remains unproven.
-
-See [docs/VESC_COMPARISON.md](docs/VESC_COMPARISON.md).
-
-## Open technical questions
-
-- Inner command IDs/opcodes and operation-specific payload layouts.
-- How read/write requests match acknowledgement signals.
-- CAN forwarding and multi-ESC request/response semantics.
-- Firmware-update block format and precise TEA routine usage.
-- Whether ordinary UART payloads ever use TEA encryption.
-- BLE's exact outer framing and whether it wraps the same frame format.
-- Exact persistence/reset behaviour for all fragmented or corrupted input patterns.
-- Compatibility across FT ESC hardware revisions.
-
-The Qt dispatch map now resolves `tea_encrypt` to a 32-round TEA block transform and `encrypt` to an 8-byte zero-padded buffer wrapper. The `firmwareUpdatePro` native body calls the wrapper directly. This confirms TEA use in the firmware-update path only; systematic encryption of ordinary UART frames has **not** been demonstrated.
-
-## Repository contents
-
-- `docs/`: status, progress log, checkpoints, protocol evidence, inventories and VESC comparison.
-- `reports/`: technical summary, startup path and initial Qt/UART wiring.
-- `scripts/`: repeatable XML extraction, parameter catalog generation, payload restoration and frame codec.
-- `tests/`: offline frame codec tests.
-- `analysis-data/`: derived parameter catalogs (complete payloads are stored as gzip/base64).
-- `embedded-xml/`: extracted embedded XML resources and extraction manifest (stored as gzip/base64).
-
-To reconstruct the full catalogs and XML resources in a local clone, run:
+The large catalog/resource artifacts are stored as gzip-compressed Base64 payloads to keep transfers reproducible. Restore them with:
 
 ```bash
 python scripts/restore_payloads.py --root .
 ```
 
-See [docs/PAYLOAD_FORMAT.md](docs/PAYLOAD_FORMAT.md) for the payload layout and verification procedure.
+Rebuild the catalog and ordered profiles with `scripts/build_parameter_catalog.py` and `scripts/ftesc_profiles.py`.
 
-## Safety and handling
+## Offline protocol implementation
 
-This is currently a static-analysis and offline-testing project. No physical ESC was tested and no firmware was flashed during this analysis. Do not send unknown frames to a motor-connected controller. Do not treat defaults or software limits as safe operating recommendations. Firmware flashing, bootloader erasure and motor-control writes remain out of scope until their protocols and failure modes are fully understood.
+The repository contains a standard-library-only Python codec. It builds and parses byte structures only; it does not open serial/CAN/BLE interfaces or transmit commands.
 
-## References
+- `scripts/ftesc_frame.py`: CRC-16/MODBUS, short/extended frame encoder, frame decoder and concatenated-frame decoder.
+- `scripts/ftesc_stream.py`: incremental UART decoder, retaining incomplete frames and recovering after invalid candidates.
+- `scripts/ftesc_protocol.py`: INFO envelopes, realtime telemetry, V1.4/V1.6 legacy response parsing and ESC-ID lists.
+- `scripts/ftesc_requests.py`: V1.7 request builders plus version-specific V1.4/V1.6 UART builders, including CMD 0x10 CAN forwarding, CMD 0x02 control layouts and CMD 0x20.
+- `scripts/ftesc_responses.py`: V1.7 PPM/ADC, firmware identity, UUID, text, setup ACK, motor-signal and generic TopFlow response decoders.
+- `scripts/ftesc_setup_serializer.py`: typed ValueSetup encoder and marker-validated ValueSeque response decoder.
+- `scripts/ftesc_firmware.py`: offline-only V1.7 firmware erase/write payload and 240-byte XOR block codec.
+- `scripts/ftesc_can.py`: direct FTESC CAN V1.4 extended-ID codec, CRC validation, periodic telemetry decoders and offline control-command encoders.
+- `scripts/extract_embedded_xml.py`, `scripts/build_parameter_catalog.py`, `scripts/ftesc_profiles.py`: reproducible XML extraction, catalog generation and ValueSeque ordering.
+- `tests/`: unit tests covering framing, streaming, requests, responses, setup encoding/decoding, firmware blocks and direct CAN.
 
-- [Flipsky — Differences Between FT ESC and FSESC](https://flipsky.net/blogs/vesc-tool/differences-between-ft-esc-and-fsesc)
-- [Flipsky — Tips for compatible FSESC and VESC Tool versions](https://flipsky.net/blogs/vesc-tool/tips-for-compatible-fsesc-and-vesc_tool-version)
-- [VESC Tool source repository](https://github.com/vedderb/vesc_tool)
-- [VESC firmware source repository](https://github.com/vedderb/bldc)
+Run the test suite from the repository root:
 
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q scripts tests
+```
 
-## Public V1.6 UART specification and version delta
+**Latest verified result on REA:** **124 tests passed, 0 failures**. The catalog and profile regeneration comparisons also passed. GitHub Actions is configured in [offline-checks.yml](.github/workflows/offline-checks.yml) to restore payloads, regenerate the catalog and profiles, compare them byte-for-byte, run the tests and compile Python sources.
 
-The official Flipsky V1.6 UART protocol PDF and the earlier V1.4 protocol PDF were read from the Nextcloud project folder. The supplied ECU-side example source is preserved under reference/; it is not the ESC Tool application's source code or ESC firmware.
+## Official V1.4/V1.6 protocol references
 
-Confirmed V1.4-to-V1.6 changes:
-- CMD 00 keeps the 28-byte base telemetry response and documents a longer auto-telemetry response with 12 reserved bytes and PAS RPM.
-- CMD 02 moves the current request from DATA D0-D1 to D2-D3, with D0-D1 reserved.
-- V1.6 adds a PAS-mode semantic alias for CMD 02; only D0 (PAS gear) is used in that mode.
-- The outer AA/BB framing, INFO length definition, CRC-16/MODBUS and big-endian integer conventions remain unchanged.
+The repository keeps published protocol versions distinct from direct observations of the V1.7 executable.
 
-One V1.6 PAS-response section lists extra PAS RPM bytes but retains DLEN 0x1C. Those extra bytes would require DLEN 0x20, so this is recorded as a source-document inconsistency.
+- [FTESC UART Protocol V1.6](docs/FTESC_UART_PROTOCOL_V1.6.md): serial framing, CRC, command layouts, CAN-over, keepalive, firmware identity and V1.4-to-V1.6 differences.
+- [FTESC Direct CAN Protocol V1.4](docs/FTESC_CAN_PROTOCOL_V1.4.md): 29-bit extended IDs, fixed prefix, direct-CAN command namespace, CRC and periodic telemetry.
+- [CAN forwarding state](docs/CAN_FORWARDING_STATE.md): V1.7 target-ID state and the still-unresolved native insertion/routing path.
+- [External implementation cross-check](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md): independent FT85BD implementation and concrete frame-vector comparison.
+- [External references](docs/EXTERNAL_REFERENCES.md): official Flipsky product and update references.
 
-See [docs/FTESC_UART_PROTOCOL_V1.6.md](docs/FTESC_UART_PROTOCOL_V1.6.md), [docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md](docs/V1_4_TO_V1_6_PROTOCOL_CHANGES.md), [docs/V1_7_BINARY_CROSS_REFERENCE.md](docs/V1_7_BINARY_CROSS_REFERENCE.md), and [docs/V1.6_MANUAL_NOTES.md](docs/V1.6_MANUAL_NOTES.md).
+Important version differences:
+- V1.4 and V1.6 use different byte ordering for the first four DATA bytes of UART CMD 0x02. Separate builders are provided.
+- V1.4/V1.6 CMD 0x1A documents a seven-byte response; the V1.7 desktop response dispatcher emits a no-DATA acknowledgement.
+- V1.4 CMD 0x1D is reset/reboot with one reserved zero byte. V1.7 reuses 0x1D for TopFlow and motor-signal setup operations.
+- Direct-CAN command 0x00 means current-with-gear; UART INFO command 0x00 means realtime telemetry. Numeric command IDs are bus-specific.
 
-## More offline protocol tooling
+## Firmware update analysis
 
-scripts/ftesc_protocol.py now builds command INFO fields and complete outer frames, and parses selected V1.6 telemetry responses for CMD 00, CMD 02/CMD 20, CMD 1A and CMD 1E. The combined frame and command test suite has **26 passing tests** on REA.
+The V1.7 application performs a UUID-based TEA authorization preflight:
+- requests the UUID with CMD 0x21;
+- uses a 16-byte challenge and a 32-round TEA block transform with the device UUID as key;
+- sends the encrypted challenge with CMD 0x22;
+- waits for an authorization acknowledgement.
 
+Separate native request methods implement boot mode (0x13), erase (0x16) and firmware block write (0x18). The write path uses a 240-byte block payload and a separate XOR transform. The complete UI/bootloader state machine, retry progression and exact firmware image format remain unfinished. No firmware image was available in the analysis workspace and no firmware was flashed.
 
-## V1.7 Qt API string map
+See [FIRMWARE_UPDATE_FLOW](docs/FIRMWARE_UPDATE_FLOW.md).
 
-A new static map records high-level methods found in the V1.7 Qt string/meta-object data, including controls for duty, current, D-axis current, speed, position and brake current; automatic telemetry; CAN ID/identification flows; firmware version and firmware update methods; and encryption-related names. Candidate V1.6 opcode relationships are marked as hypotheses until their call paths and emitted bytes are confirmed.
+## VESC compatibility
 
-See [docs/V1_7_QT_API_STRING_MAP.md](docs/V1_7_QT_API_STRING_MAP.md).
+Flipsky's official product-family description distinguishes FT ESC (NON-VESC) from VESC-based FSESC products and says their tools are not interchangeable. Similar Qt technology, motor-control terminology or UI controls do not establish wire-protocol compatibility.
+
+See [VESC_COMPARISON](docs/VESC_COMPARISON.md).
+
+## What remains before 100%
+
+1. Recover the missing TopFlow ValueSetup XML and map profiles to exact hardware SKUs.
+2. Locate the V1.7 native insertion point for UART CMD 0x10 and complete slave response routing/correlation.
+3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
+4. Compare against a V1.6 executable if one becomes available.
+5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
+6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE characteristic UUIDs/write mode, UART baud selection and timing units.
+
+Hardware validation is still **0%**. The 92% estimate means the static evidence and offline implementation are substantially complete; it does not mean the protocol is safe or verified on a live ESC.
+
+## Safety and scope
+
+No serial, CAN or BLE command was transmitted. No physical ESC was connected and no firmware was flashed. The builders are offline byte encoders, not hardware-control tools. Do not use parameter values, current limits, motor-control commands or firmware images from this research as operating recommendations without Flipsky documentation and controlled hardware validation.
