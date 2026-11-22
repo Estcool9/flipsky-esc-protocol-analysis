@@ -64,7 +64,7 @@ Still unresolved:
 
 ## Progress update
 
-The BLE reverse-engineering sub-workstream is now **85%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
+The Windows V1.7 BLE static sub-workstream remains **85%**: service/TX/RX UUIDs, controller/service signal flow, common parser handoff and 20-byte application chunking are mapped. The exact Windows call target/write mode, CCCD payload, negotiated MTU and live behavior remain unresolved. Separately, the V1.6 Android native implementation now provides a direct cross-platform reference: WriteWithoutResponse, CCCD bytes 01 00 (notifications), 20-byte chunking and the same FTESC stream parser. This corroborates the likely V1.7 choices but does not by itself prove the protected Windows call's enum argument.
 
 The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
@@ -127,3 +127,18 @@ The bundled Qt Android Java bridge gives concrete backend semantics: its `writeC
 These facts describe the Qt Android backend included in the APK. The application-selected type value, actual MTU, exact CCCD payload and notification/indication choice are not yet proven. They must not be inferred from the Windows protected indirect-call candidate.
 
 Detailed report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md). The BLE static sub-workstream rises from 80% to **85%**; overall weighted project score remains 72.6%.
+
+
+## Android V1.6 direct transport confirmation — 2026-11-22
+
+The staged V1.6 Android ARM64 app library provides direct application-level values:
+
+- `BleUart::writeData` at `0x000FE09C` loads chunk size `0x14` (20) at `0x000FE0BC`, slices successive `QByteArray::mid` segments at `0x000FE10C`, and advances the offset by 20 at `0x000FE138`.
+- `BleUart::sendNextPacket` at `0x000FE1A8` loads third C++ API argument `1` at `0x000FE2A8`, moves it into `w3` at `0x000FE2C0`, and directly calls Qt `QLowEnergyService::writeCharacteristic` at `0x000FE2C4`. In the Qt 5.15 C++ `WriteMode` enum, `1` is `WriteWithoutResponse`.
+- `BleUart::serviceStateChanged` at `0x000FF648` looks up descriptor UUID `0x2902`, converts the literal `0100` (VA `0x002851C9`) from hex, and writes it using `writeDescriptor`. The resulting bytes `01 00` select notifications (CCCD bit 0), not indications.
+- `BleUart::updateData` at `0x000FFB8C` dispatches matching characteristic data through the PLT relocation at GOT `0x00881578` to `BleUart::dataRx(QByteArray)`; that signal thunk at `0x0025ACD8` invokes `QMetaObject::activate`.
+- The application slot `FtescLowLevelFace::bleDataRx(QByteArray)` at `0x00234730` copies its input via `QByteArray::QByteArray(QByteArray const&)` (PLT `0x000EA080`, GOT `0x0087E688`) and calls `uartPackData::uartPackDataHandle(QByteArray)` (PLT `0x000E81C0`, GOT `0x0087D728`). This is the common FTESC stream parser used by the serial transport.
+- The Android Qt metaobject includes signal string `2dataRx(QByteArray)` and slot string `1bleDataRx(QByteArray)`; the exact constructor-level `QObject::connect` site remains unresolved.
+
+This direct Android evidence corroborates the V1.7 Windows 20-byte chunking and makes `WriteWithoutResponse` a strong cross-platform hypothesis for Windows. It does not upgrade the Windows indirect-call target at `0x00404FEC` into a proven symbol mapping. Android artifact SHA: `26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e`; extracted ARM64 library SHA: `7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc`.
+
