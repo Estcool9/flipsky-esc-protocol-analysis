@@ -1,3 +1,167 @@
 {
-  "_notice": "INCOMPLETE PLACEHOLDER. Restore the complete original manifest from extraction-manifest.json.gz.b64 using scripts/restore_payloads.py."
+  "source": "Flipsky_ESC_Tool_V1.7_20261029.exe",
+  "source_sha256": "dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38",
+  "method": "bounded zlib streams at known offsets; no executable run",
+  "max_decompressed_bytes_per_stream": 4194304,
+  "records": [
+    {
+      "offset": "0x1e2ce8",
+      "file": "resource_01_001e2ce8.xml",
+      "status": "saved",
+      "bytes": 315367,
+      "sha256": "3bd75125f48c39a12e47184fcdcff8f143e9066ff03f06f4c5cbcd97338665f7",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1e8420",
+      "file": "resource_02_001e8420.xml",
+      "status": "saved",
+      "bytes": 125765,
+      "sha256": "217ccf2b0d11c0c92032c9fc6f585b8058771a7ec870eebc63493d92e6e12edb",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1eab68",
+      "file": "resource_03_001eab68.xml",
+      "status": "saved",
+      "bytes": 162855,
+      "sha256": "a6aee37f394c14c39531301c372149d83d33c0ff1e27aecdb7bab9e566bca95d",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1edb48",
+      "file": "resource_04_001edb48.xml",
+      "status": "saved",
+      "bytes": 139391,
+      "sha256": "729177495616b87105dbff87eb76dfff8ce06f97da3a3ef9d2d380c4effe3746",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f0530",
+      "file": "resource_05_001f0530.xml",
+      "status": "saved",
+      "bytes": 93683,
+      "sha256": "77661c7e8c5caea40d4bc3603327f4e188eb048d0a46b3bd8508b20cae8bc0e7",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f263d",
+      "file": "resource_06_001f263d.xml",
+      "status": "saved",
+      "bytes": 93608,
+      "sha256": "a1cab3ee0f0839c13450ba5f90bc52c88bfa1a61b845cf84e946a268f531b50c",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f4767",
+      "file": "resource_07_001f4767.xml",
+      "status": "saved",
+      "bytes": 113554,
+      "sha256": "ee6844f1c8c022a2b966a41f39a0ec67ad2232e84d82eb003bb314c90919adf3",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f68f3",
+      "file": "resource_08_001f68f3.xml",
+      "status": "saved",
+      "bytes": 41057,
+      "sha256": "447603096775a9cf74af27a59751dcb51f3cee9b2ba038c957da1b9b45b15fe7",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f9273",
+      "file": "resource_09_001f9273.xml",
+      "status": "saved",
+      "bytes": 38702,
+      "sha256": "f8d19ad975e44fe90da8d7408bccf1a253f99b18eb189694772a0dfee9cadff0",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1fa14c",
+      "file": "resource_10_001fa14c.xml",
+      "status": "saved",
+      "bytes": 75055,
+      "sha256": "83c9b84975be63af5238163d4ae56f755e6b148d85b6a11909cbc852958368fc",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1fb879",
+      "file": "resource_11_001fb879.xml",
+      "status": "saved",
+      "bytes": 38632,
+      "sha256": "a20aabef0c16f5842ca2136dd686cd9c313e37251a1b402f2e9afba0d77eb69a",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1fde78",
+      "status": "duplicate",
+      "duplicate_of": "resource_11_001fb879.xml",
+      "bytes": 38632,
+      "sha256": "a20aabef0c16f5842ca2136dd686cd9c313e37251a1b402f2e9afba0d77eb69a"
+    },
+    {
+      "offset": "0x209c88",
+      "file": "resource_13_00209c88.xml",
+      "status": "saved",
+      "bytes": 164539,
+      "sha256": "9174a70828c6145c46f01b55200a8c28d86d78020969165fee2ff987707f3e25",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x21c2bb",
+      "file": "resource_14_0021c2bb.xml",
+      "status": "saved",
+      "bytes": 163147,
+      "sha256": "71467575ef14cf0499d578b2445d9b32ec41daf6657a26f102aad5ed1fdf2be0",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1f78ba",
+      "file": "resource_15_001f78ba.xml",
+      "status": "saved",
+      "bytes": 86774,
+      "sha256": "fa1b2970603ce1681190888cfab6b753a2cdd3b42609da11919fe91383a70257",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x1fed4a",
+      "file": "resource_16_001fed4a.xml",
+      "status": "saved",
+      "bytes": 318113,
+      "sha256": "148d4564a7e1bf5e5d8e33937b67321fb186566d79d1007ef21b030e541384d9",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x204444",
+      "file": "resource_17_00204444.xml",
+      "status": "saved",
+      "bytes": 318156,
+      "sha256": "45172ce2ba57f30b5ec6b71296f013bb05d75986ba6030c4e3f7b29e57904fa4",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x20cd8c",
+      "file": "resource_18_0020cd8c.xml",
+      "status": "saved",
+      "bytes": 164276,
+      "sha256": "666e78c3326268730fc281023fcadc4e4281909fdca7cdfd53529a2edde3c0d0",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x20fe7f",
+      "file": "resource_19_0020fe7f.xml",
+      "status": "saved",
+      "bytes": 100744,
+      "sha256": "0e3f2d99e64222b9cfdcb6dbb7446ea21cae4824d8f90977220ca88a688bcf57",
+      "root": "ValueSetups"
+    },
+    {
+      "offset": "0x21f2bc",
+      "file": "resource_20_0021f2bc.xml",
+      "status": "saved",
+      "bytes": 162884,
+      "sha256": "5d3a06b3f9dcbebbe7f94ab49eb0c2a5cf5675f490d7da51f09522da6186f9da",
+      "root": "ValueSetups"
+    }
+  ]
 }
