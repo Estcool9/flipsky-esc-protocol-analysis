@@ -829,3 +829,6 @@
 - Le chemin natif CMD `0x01` construit un vecteur de bytes comparable, mais il n'est pas listé dans la table officielle V1.6; il reste documenté comme vecteur brut non interprété, sans fusion avec CMD1E.
 
 - GitHub Actions run #277 (`45052134589`, head `101332673dda445e55689b96fd72a16d57324edd`) réussi : **170 tests passed, 0 failed** ; les trois tests `test_esc_id_enumeration_response_*` passent, `python -m compileall -q scripts tests` passe, restauration des artefacts et génération du catalogue/profils ordonnés réussies. Run : https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45052134589
+
+- Ajouté `parse_unclassified_id_vector_response()` pour la réponse V1.6 CMD `0x01` : retourne exclusivement le vecteur brut de DATA sous forme de tuple d'entiers, en validant l'opcode et sans interpréter master/slave, statut ou booléen Qt. Commits source `e7ed04f9a22b24124170d4cc63f89a47037dd55c`, tests `27af3bc6745b45de5ab8cf69cbfdf36ae7a5d31e`.
+- CI GitHub Actions run #284 (`45052257713`, head `27af3bc6745b45de5ab8cf69cbfdf36ae7a5d31e`) réussie : **172 tests passed, 0 failed** ; les deux nouveaux tests CMD01 passent, restoration des artefacts, régénération catalogue/profils et `python -m compileall -q scripts tests` passent. Run : https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45052257713
