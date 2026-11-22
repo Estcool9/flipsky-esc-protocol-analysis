@@ -159,11 +159,13 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         self.assertEqual(parse_text_response(bytes((0x24,)) + b"sample", 0x24).text, "sample")
 
     def test_terminal_text_stops_at_native_nul_but_samples_preserve_bytes(self):
-        terminal = parse_text_response(b"\\x14ready\\x00ignored", 0x14)
+        terminal_info = bytes((0x14,)) + b"ready" + bytes((0,)) + b"ignored"
+        terminal = parse_text_response(terminal_info, 0x14)
         self.assertEqual(terminal.raw, b"ready")
         self.assertEqual(terminal.text, "ready")
-        samples = parse_text_response(b"\\x24ready\\x00tail", 0x24)
-        self.assertEqual(samples.raw, b"ready\\x00tail")
+        samples_info = bytes((0x24,)) + b"ready" + bytes((0,)) + b"tail"
+        samples = parse_text_response(samples_info, 0x24)
+        self.assertEqual(samples.raw, b"ready" + bytes((0,)) + b"tail")
         self.assertEqual(samples.text, "ready\\x00tail")
 
     def test_uuid_response_preserves_raw_key_bytes(self):
@@ -172,7 +174,7 @@ class FTESCResponseDecoderTests(unittest.TestCase):
 
     def test_imu_calibration_signed_values_scale_by_one_million(self):
         values = (-1_250_000, 0, 2_500_000, -3_000_000, 4_000_000, 5_000_000, 6_000_000, 7_000_000, -8_000_000)
-        info = b"\\x29" + b"".join(i32(value) for value in values)
+        info = bytes((0x29,)) + b"".join(i32(value) for value in values)
         result = parse_imu_calibration_response(info)
         self.assertEqual(
             result.values,
