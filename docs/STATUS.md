@@ -60,7 +60,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, TX chunking, Android Qt backend and V1.6 native symbol map | 85% |
+| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 exact write mode/CCCD and shared parser mapping | 90% |
 | V1.6 executable comparison (PE identity and marker-level pass; function diff pending) | 25% |
 | Hardware validation | 0% |
 
@@ -352,3 +352,13 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Windows import tables remain partial due ambiguous/non-contiguous mapping. V1.6 binary comparison sub-workstream: 0% → 25%; BLE static sub-workstream: 80% → 85%.
 - Whole-product score remains **72.6%** (79.9 / 110); no UI/live transport or hardware validation has been added.
 - See [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md) and [LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md](LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md).
+
+
+## Android V1.6 BLE transport closure — 2026-11-22
+
+- Direct native app disassembly proves `BleUart::writeData` uses a fixed `0x14` (20-byte) stride and `QByteArray::mid` fragments.
+- Direct call site `BleUart::sendNextPacket` places C++ `QLowEnergyService::WriteMode=1` in the third argument and calls `writeCharacteristic`; for Qt 5.15 this is `WriteWithoutResponse`.
+- Direct service-state code resolves CCCD UUID `0x2902`, converts literal `0100` into bytes `01 00`, and writes that descriptor. This enables notifications, not indications.
+- RX callback `BleUart::updateData` routes to `BleUart::dataRx` signal; `FtescLowLevelFace::bleDataRx` copies input and invokes `uartPackData::uartPackDataHandle(QByteArray)`, the shared FTESC stream parser. Exact QObject constructor connect edge is still open.
+- Android/BLE static sub-workstream: 85% → 90%. Windows V1.7 final write target remains protected/unresolved; Android V1.6 provides strong cross-platform corroboration but is not a substitute for the Windows call edge.
+- Whole-product score stays **72.6%** (79.9 / 110). Negotiated MTU, live notification behavior, retries/reconnect, app-version differences and hardware validation remain unverified.
