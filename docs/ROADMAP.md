@@ -238,3 +238,16 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Complete the full V1.6/V1.7 function-level diff, including firmware and protected Windows BLE write path.
 - Detailed report: [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md).
 - The V1.6 comparison sub-workstream moves from 25% to 45%; overall weighted project progress remains **72.6%**.
+
+
+## 2026-11-22 — Windows V1.6 UartComm metadata and firmware send path
+
+- [x] Decode the full V1.6 `UartComm` QMetaObject (50 methods / 19 signals) and resolve exact method names by relative string-pool offsets.
+- [x] Map firmware-related slot indexes to static handler addresses and ACK signal names.
+- [x] Trace firmware erase/write/boot-mode wrappers into the common `sendDataToESC(QByteArray&)` Qt signal.
+- [x] Confirm the erase argument is serialized as four big-endian bytes and boot-mode sends an empty QByteArray.
+- [ ] Trace the numeric INFO command IDs and incoming response dispatcher for erase/write/UUID/encryption ACKs.
+- [ ] Resolve the `writeMcuEncrypt` helper and firmware key/challenge selection without publishing key material.
+- [ ] Complete transfer block, ACK, retry/timeout, and recovery/resume state transitions.
+- Detailed report: [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
+- V1.6 comparison sub-workstream: 45% → 55%; overall weighted project progress remains **72.6%**.
