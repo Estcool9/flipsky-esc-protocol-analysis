@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 88%**  
+**Overall estimated progress: 89%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -340,3 +340,13 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Repo verified public, main branch, admin/push access.
 - Official FTESC Gateway page confirms USB passthrough via CAN ID; official V1.6 update guide confirms separate master/slave USB flashing procedure.
 - Overall estimate: **88%**.
+
+
+## Variable-text response decoders — 2026-11-22
+
+- CMD 0x0F string + bool status.
+- CMD 0x11 major/minor/type + QString field + trailing byte; raw label bytes preserved.
+- CMD 0x14 terminal text; CMD 0x24 samples text.
+- Added `parse_firmware_version_response()`, `parse_motor_identify_response()`, `parse_text_response()`.
+- Fresh clone: **107 tests passed, 0 failed**.
+- Overall estimate: **89%**.
