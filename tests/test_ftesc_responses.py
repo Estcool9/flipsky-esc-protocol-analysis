@@ -5,6 +5,9 @@ from scripts.ftesc_responses import (
     ImuCalibrationResponse,
     SignalAdcResponse,
     parse_auto_realtime_ack,
+    parse_firmware_version_response,
+    parse_motor_identify_response,
+    parse_text_response,
     parse_boolean_ack,
     parse_imu_calibration_response,
     parse_signal_adc_response,
@@ -49,6 +52,22 @@ class V17ResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_firmware_version_response_layout(self):
+        info = bytes((0x11, 1, 7, 2)) + b"FTESC-1.7" + bytes((3,))
+        result = parse_firmware_version_response(info)
+        self.assertEqual((result.major, result.minor, result.firmware_type), (1, 7, 2))
+        self.assertEqual(result.label, "FTESC-1.7")
+        self.assertEqual(result.suffix_byte, 3)
+
+    def test_motor_identify_response_string_and_bool(self):
+        result = parse_motor_identify_response(bytes((0x0F,)) + b"motor ok" + bytes((1,)))
+        self.assertEqual(result.label, "motor ok")
+        self.assertTrue(result.success)
+
+    def test_terminal_and_samples_text(self):
+        self.assertEqual(parse_text_response(bytes((0x14,)) + b"ready", 0x14).text, "ready")
+        self.assertEqual(parse_text_response(bytes((0x24,)) + b"sample", 0x24).text, "sample")
 
     def test_uuid_response_preserves_raw_key_bytes(self):
         uuid = bytes(range(16))
