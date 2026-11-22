@@ -30,7 +30,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Latest REA verification before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
 - Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; these new tests have not yet been executed by CI in this session.
-- V1.7 BLE GATT service/TX/RX UUIDs statically identified; controller/service signal flow and CCCD 0x2902 lookup mapped. Live BLE remains unverified.
+- V1.7 BLE GATT service/TX/RX UUIDs statically identified; controller/service signal flow, CCCD 0x2902 lookup, and Qt connection bleDataRx(QByteArray) to dataRx(QByteArray) mapped. Downstream parser path and live BLE remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
 ## Source intake and tooling
@@ -60,7 +60,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs and controller/service-state reconstruction | 55% |
+| BLE GATT UUIDs, controller/service state and app ingress connection | 60% |
 | V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
 
@@ -304,3 +304,11 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - The VESC/FSESC protocol work package moves from 80% to 85%; weighted total changes from 71.9% to 72.2%, still **72%** when rounded to a whole percent.
 - The 7 new tests are committed but pending a fresh CI run; the previously verified baseline remains 148 passing tests.
 - No serial/CAN/BLE interface was opened and no ESC command was transmitted.
+
+
+### V1.7 BLE ingress connection refinement
+- Decompiled FtescLowLevelFace constructor FUN_00483910 at connection site around 0x0048456D.
+- Confirmed Qt signal/slot connection from BleUart::bleDataRx(QByteArray) (string at 0x0052DF35) to dataRx(QByteArray) (string at 0x0052DF4C).
+- This proves byte-array ingress is connected to an application-level receiver. It does not yet prove how that receiver passes bytes into uartPackData or the exact stream parser.
+- BLE reverse-engineering sub-workstream: 55% to 60%; whole-product score remains 72.2% (rounded 72%).
+- Evidence: constructor assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21; signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f; slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962; exact method-name inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
