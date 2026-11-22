@@ -1,6 +1,6 @@
 # Technical roadmap
 
-**Overall estimated progress: 50% (2026-11-22).**
+**Overall estimated progress: 54% (2026-11-22).**
 
 ## Phase A — Static application mapping
 
@@ -11,7 +11,7 @@
 - [x] Generate a reproducible parameter catalog.
 - [x] Map initial Qt UART/BLE signal-slot wiring.
 - [x] Identify FtescLowLevelFace and uartPackData meta-object roles.
-- [ ] Map every Qt meta-object dispatch index to its native implementation; high-level API strings are now catalogued.
+- [x] Map all 64 FtescLowLevelFace Qt meta-object dispatch indexes to native implementations; high-level API strings are catalogued.
 - [ ] Confirm all callers and exact role of the tea_encrypt method.
 - [x] Locate the uartPackData frame parser and frame builder.
 
@@ -27,7 +27,7 @@
 - [x] Build offline frame and selected command/telemetry codecs.
 - [x] Run synthetic test vectors (36 passed).
 - [ ] Map V1.7 numeric command IDs to outbound request builders using the new Qt API string map.
-- [ ] Map V1.7 numeric response IDs to Qt acknowledgements and parsers.
+- [ ] Map all V1.7 numeric response IDs to Qt acknowledgements and parsers (0x00, 0x11, 0x1A and 0x1E are now correlated).
 - [ ] Confirm V1.7 CMD 02 offsets against the V1.6 spec.
 - [ ] Trace CAN forwarding and slave response dispatch.
 - [ ] Establish exact cross-callback fragmentation/reset behaviour.
