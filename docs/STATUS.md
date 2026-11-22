@@ -36,9 +36,9 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 ## Source intake and tooling
 
 - Scanned /Projet Perso/Revolt-Engine/Software in Nextcloud: 92 entries, tree not truncated.
-- Found three V1.6 Windows builds (2025-10-14, 2026-08-06, 2026-09-12), a V1.6 macOS DMG, and the V1.6 Android BLE APK. These binaries are inventoried but not staged on the REA host; see [NEXTCLOUD_SOFTWARE_INVENTORY.md](NEXTCLOUD_SOFTWARE_INVENTORY.md).
+- Acquired and staged the V1.6 Android BLE APK plus all three Windows V1.6 EXEs from Nextcloud through Gateway SSH. Source and destination SHA-256 matched for all four; originals were not modified. See [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md).
 - Ghidra 12.2 is available and sufficient for the current PE32 analysis. Hopper is missing, IDA is not configured, and Kuna is not configured/does not admit PE in the current provider.
-- REA's Apktool 3.0.3 launcher (`/usr/local/bin/apktool`) and ADB 34.0.5 launcher (`/usr/bin/adb`) were verified. No Android device was contacted. The APK is still not staged on REA; the caller-supplied JADX MCP JAR/JDK path still needs verification. Other optional provider gaps are listed in [TOOLING_AUDIT.md](TOOLING_AUDIT.md).
+- REA's Apktool 3.0.3, ADB 34.0.5 and JADX headless MCP 0.7.1 are operational. The V1.6 APK is staged and analyzed; no Android device was contacted. Other optional provider gaps are listed in [TOOLING_AUDIT.md](TOOLING_AUDIT.md).
 
 ## Workstream progress
 
@@ -60,8 +60,8 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, TX chunking and candidate write call | 80% |
-| V1.6 executable comparison | 0% |
+| BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, TX chunking, Android Qt backend and V1.6 native symbol map | 85% |
+| V1.6 executable comparison (PE identity and marker-level pass; function diff pending) | 25% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -339,3 +339,16 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Ghidra resolves the computed call to `0x00B5A1D0` in protected Enigma code. The argument shape strongly matches Qt `writeCharacteristic(..., WriteMode)`, and its mangled symbol string is present, but the target-to-symbol edge is not proven because target decompilation is invalid.
 - BLE static sub-workstream advances 75% → 80%; the whole-product score remains 72.6%. The exact write mode remains unresolved.
 - Evidence: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`, `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`, `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
+
+
+## V1.6 Android and Windows static comparison — 2026-11-22
+
+- Four Nextcloud artifacts were transferred to CT 107 in read-only copies; source and destination SHA-256 values match. APK: `26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e`; Windows 2026-09-12: `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`; 2026-08-06: `94cfd851a5ccce38b8c42c9f154128e10fa2906ce9efc9cddfa39c4a00361a03`; 2025-10-14: `1dc93bd84f4dab1a3ee7b3946fa0522c78fc870227523d8d5fe6d6e187ea2b07`.
+- APK inventory: 149 occurrences / 148 artifact nodes; no integrity contradictions. Both ARM64 and ARMv7 Flipsky native libraries and Qt5Bluetooth libraries were extracted and hash-verified.
+- The APK manifest identifies Qt Android 5, version 1.6, minSdk 21, targetSdk 28. It declares `debuggable=true` and exported `com.ftesc.VForegroundService`; implementation remains unresolved.
+- ARM64 Flipsky library symbol map identifies `BleUart` QML type, scan/connect/write/receive/descriptor callbacks, `FtescLowLevelFace` transport, UART packing, firmware/bootloader, setup table and CAN firmware identity functions.
+- Qt Android bridge maps writeType 1 to Android WRITE_TYPE_DEFAULT and writeType 2 to WRITE_TYPE_NO_RESPONSE; requestMtu(512) is attempted, with fallback to MTU 23. Queued jobs use a 3-second timeout. These are backend semantics, not proof of app-selected runtime values.
+- All three Windows V1.6 builds and V1.7 return the same targeted BLE/FTESC symbol markers. V1.6 2025-10-14 additionally returns a Qt Win32 private writeCharacteristic symbol in the same targeted scan; this is a string-level delta only.
+- Windows import tables remain partial due ambiguous/non-contiguous mapping. V1.6 binary comparison sub-workstream: 0% → 25%; BLE static sub-workstream: 80% → 85%.
+- Whole-product score remains **72.6%** (79.9 / 110); no UI/live transport or hardware validation has been added.
+- See [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md) and [LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md](LOCAL_QWEN_OPENWEBUI_AGENT_ARCHITECTURE.md).
