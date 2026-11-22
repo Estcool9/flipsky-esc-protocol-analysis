@@ -285,3 +285,14 @@
 - Fresh public GitHub clone: **60 tests passed, 0 failed**; `compileall` succeeded.
 - Overall estimate updated from **71% to 73%**. Direct CAN V1.4 telemetry decoder is complete for the three periodic messages; V1.7 UART CMD 0x10 wrapper and slave response routing remain 40%.
 - No CAN interface opened and no frames transmitted.
+
+
+## 2026-11-22 — V1.7 CMD 0x02 support gap documented
+
+- Compared the public V1.6 CMD 0x02 specification (14 DATA bytes, current request at offsets 2–3 in V1.6) with the mapped V1.7 request and response dispatchers.
+- The V1.7 response switch at `0x004997A0` has no CMD 0x02 case.
+- The decoded UartComm request methods do not include a direct CMD 0x02 builder.
+- UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists and is connected in Qt metadata, but it is a signal and does not prove an outbound request builder.
+- Added [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md) with exact negative evidence and next static-analysis targets.
+- Overall estimate remains **73%**; this is an identified unresolved feature gap, not a completed protocol path.
+- No command was sent.
