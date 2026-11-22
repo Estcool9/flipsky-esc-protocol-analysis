@@ -30,6 +30,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Latest REA verification before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
 - Added `scripts/vesc_stream.py` and 7 stream tests on 2026-11-22; these new tests have not yet been executed by CI in this session.
+- V1.7 BLE GATT service/TX/RX UUIDs statically identified; controller/service signal flow and CCCD 0x2902 lookup mapped. Live BLE remains unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
 ## Workstream progress
@@ -52,11 +53,19 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | Flipsky VESC direct CAN V1.0 basic codec | 80% |
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
-| BLE UUID/chunk/write-mode reconstruction | 40% |
+| BLE GATT UUIDs and controller/service-state reconstruction | 55% |
 | V1.6 executable comparison | 0% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
+
+### V1.7 BLE GATT static reconstruction
+- Identified service UUID `0000fff0-0000-1000-8000-00805f9b34fb`, TX UUID `0000fff2-0000-1000-8000-00805f9b34fb` and RX UUID `0000fff1-0000-1000-8000-00805f9b34fb` in `FUN_004051C0`; fields are `this+0x28`, `this+0x2C` and `this+0x30` respectively.
+- Mapped controller/service setup, service discovery, service-state checks, characteristic-change callback and disconnect/error handlers across `FUN_00402ED0`, `FUN_004016B0`, `FUN_004023D0`, `FUN_00401920`, `FUN_00402000`, `FUN_00401810`, `FUN_00402120`, `FUN_00401EB0` and `FUN_00402A30`.
+- Located lookup of descriptor UUID `0x2902` in the service-state path. The precise descriptor value and write mode remain unknown pending instruction-level completion/passive capture.
+- The `BleUart` metadata includes `writeData`, `sendNextPacket` and `dataRx(QByteArray)`. Their full caller-to-`writeCharacteristic` and receive-parser paths are not yet closed.
+- Updated BLE reverse-engineering sub-workstream from 40% to 55%; no change to whole-product weighted progress (72.4% ≈ 72%) because no live transport or desktop functionality was implemented.
+- See [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
 
 ### Official direct CAN V1.4 protocol and decoder
 - Read the user's Nextcloud copy of Flipsky FTESC CAN Communication Protocol V1.4 (FT-CM-CAN-20250423-04, 22 pages, 2025-04-23).
@@ -126,7 +135,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - Trace CAN forwarding payloads and acknowledgements.
 - Trace periodic telemetry 0x1A and keepalive 0x19 scheduling.
 - Compare actual V1.6 Windows executables with V1.7 after staging a V1.6 build on REA.
-- Determine BLE-specific framing separately from UART framing.
+- Confirm BLE `writeCharacteristic` write mode, MTU/chunk size, `sendNextPacket` behavior and the exact CCCD 0x2902 value. See [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
 - Trace firmware-update block format and precise TEA usage.
 - Validate across actual ESC hardware revisions only when a safe, isolated test setup is available.
 
