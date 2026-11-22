@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm metadata, firmware/CAN command wrappers and CMD 0x0F payload) | 60% |
+| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm metadata, firmware/CAN requests and response command-to-signal mapping) | 65% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -458,3 +458,11 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Head commit: `3b33076edaedd867e97aadd5d9ee0defebe158e6`.
 - Job `verify`: success; **164 tests passed, 0 failed**, including native CMD 0x0F truncation/scaled-rounding coverage; artifact restore, catalog/profile regeneration and compileall passed.
 - Run: https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45048896742
+
+
+## V1.6 UART response dispatcher mapped to Qt signals — 2026-11-22
+
+- Decompiled `uartPackHandle` / `FUN_004948d0`; mapped 19 recognized INFO command branches to the matching `UartComm` signal wrappers by reading their `QMetaObject::activate` method indexes.
+- Confirmed firmware ACK links for version (`0x11`), erase (`0x16`), block-write (`0x18`), UUID (`0x21`) and MCU-encrypt status (`0x22`); CAN/ID-list responses (`0x01`, `0x1E`); motor-signal read/setup (`0x09`, `0x0A`, `0x1B`); PPM/ADC (`0x0D`, `0x0E`); motor-identification (`0x0F`); terminal/sample print (`0x14`, `0x24`); and IMU calibration (`0x29`).
+- Exact Qt signal indexes and remaining schema gaps are recorded in [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md). This is a command-to-signal map, not complete byte-level decoders for every response.
+- V1.6 comparison sub-workstream advances **60% → 65%**. Whole-product weighted progress remains **72.6% (79.9 / 110)**.
