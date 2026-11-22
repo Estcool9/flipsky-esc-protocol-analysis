@@ -142,3 +142,9 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - Added `scripts/ftesc_profiles.py`, profile-aware serializer entry point, full compressed CSV/JSON order artifacts, summary JSON and tests.
 - Omitted keys are recorded, not guessed. Product/hardware resource selection and conditional second-block selection remain open.
 - See [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md).
+
+
+### CMD 0x00 / realtime-data signal correlation
+- The CMD 0x00 response branch calls callback wrapper `0x004BC060`, corresponding to UartComm signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)`.
+- This is response-side telemetry. It is not evidence of a CMD 0x02 outbound request.
+- CMD 0x02 remains unresolved; see [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
