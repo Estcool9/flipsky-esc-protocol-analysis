@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 54%**  
+**Overall estimated progress: 58%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -43,7 +43,7 @@ The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes t
 | Qt/QML architecture and class ownership | 90% |
 | UART/Qt event and meta-object mapping | 100% |
 | Outer frame and CRC reconstruction | 100% |
-| Inner command IDs and payload layouts | 35% |
+| Inner command IDs and payload layouts | 65% |
 | Firmware update / TEA relationship | 55% |
 | VESC compatibility assessment | 25% |
 | Offline frame/parser/stream tests | 100% (36 tests passing on published tree) |
@@ -123,3 +123,15 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - CMD 0x00 V1.7 reads the 44-byte extended telemetry DATA layout, including three extra 32-bit angular values and PAS RPM.
 - New report: [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md).
 - Overall estimated progress: **54%**. FtescLowLevelFace Qt meta-call map 100%; V1.7 command cross-reference 35%.
+
+
+## UartComm outbound command map — 2026-11-22
+
+- Decoded UartComm static meta-object at `0x0051F248`: 58 methods, including 21 signals and 37 slots/invokable methods.
+- Static meta-call at `0x004BC2B0` maps request methods to native implementations; slot index 21 `uartPackHandle` calls response dispatcher `0x004997A0`.
+- New report: [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md).
+- Confirmed motor control opcodes: duty 0x03, current 0x04, brake current 0x06, D-axis current 0x25, position 0x26, speed 0x27; all values encoded as scaled, rounded 32-bit big-endian integers.
+- Confirmed firmware/setup/sensor/CAN request command values and telemetry CMD 0x1A layout. Details and caveats are in the request map.
+- Setup payload marker constants recovered but not semantically named.
+- Overall estimated progress: **58%**. V1.7 command/payload mapping 65%; firmware update/TEA 75%.
+- No physical ESC interaction.
