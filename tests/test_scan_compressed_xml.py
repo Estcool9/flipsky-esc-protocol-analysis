@@ -29,6 +29,12 @@ class ScanCompressedXmlTests(unittest.TestCase):
         result = scan_zlib_xml(data)
         self.assertEqual(len(result.xml_streams), 0)
 
+    def test_skips_valid_non_xml_stream_and_finds_following_xml(self):
+        binary = zlib.compress(bytes(range(256)))
+        xml = zlib.compress(b"<ValueSetups/>")
+        result = scan_zlib_xml(binary + b"padding" + xml)
+        self.assertEqual([x.root_tag for x in result.unique_xml], ["ValueSetups"])
+
     def test_rejects_incomplete_stream(self):
         xml = b"<ValueSetups><Values/></ValueSetups>"
         data = zlib.compress(xml)[:-3]
