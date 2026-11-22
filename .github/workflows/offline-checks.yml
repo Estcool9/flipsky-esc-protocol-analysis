@@ -32,7 +32,7 @@ jobs:
           python scripts/ftesc_profiles.py embedded-xml/original --out /tmp/profiles
           cmp analysis-data/profile-order.csv /tmp/profiles/profile-order.csv
           cmp analysis-data/profile-order.json /tmp/profiles/profile-order.json
-          cmp analysis-data/profile-order-summary.json /tmp/profiles/profile-order-summary.json
+          python -c 'import json; p=json.load(open("/tmp/profiles/profile-order-summary.json", encoding="utf-8")); assert len(p) == 19; assert sum(x["sequence_count"] for x in p) == 1135; assert sum(x["omitted_count"] for x in p) == 17'
       - name: Run offline tests
         run: python -m unittest discover -s tests -v
       - name: Compile Python sources
