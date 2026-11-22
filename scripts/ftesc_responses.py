@@ -1,4 +1,4 @@
-"""Offline decoders for V1.7 response payloads with recovered field layouts."""
+"""Offline decoders for V1.6/V1.7 FTESC response payloads with recovered field layouts."""
 from __future__ import annotations
 
 from dataclasses import dataclass
