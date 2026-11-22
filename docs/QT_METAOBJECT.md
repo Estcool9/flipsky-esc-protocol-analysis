@@ -81,3 +81,12 @@ This is stronger than simply listing method names: the class ownership and stati
 - Trace `sendDataToESC` and its callers to discover actual transmitted byte construction.
 
 No packet framing, opcode, CRC, endianness or encryption use has been demonstrated yet.
+
+
+## Dispatch-map update — 2026-11-22
+
+The revision-8 Qt meta-data table and static meta-call switch have now been decoded. All 64 method indexes are mapped to names and native dispatch targets; see [QT_METACALL_DISPATCH_MAP.md](QT_METACALL_DISPATCH_MAP.md).
+
+The TEA methods are resolved: `tea_encrypt` is the 32-round block transform at `0x00481B30`; `encrypt` is the zero-pad/block wrapper at `0x00481BC0`. The `firmwareUpdatePro` function at `0x00486570` calls the wrapper at `0x00486C1F`. This establishes TEA in the firmware-update path only.
+
+The response dispatcher at `0x004997A0` has also been mapped; see [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md). High-confidence V1.6 correlations are CMD 0x00, 0x11, 0x1A and 0x1E. The 0x00 path reads the extended 44-byte DATA telemetry response, including three extra angular values in the 12 bytes called reserved in the V1.6 PDF.
