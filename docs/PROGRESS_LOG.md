@@ -534,3 +534,21 @@
 - Updated README, STATUS and ROADMAP. VESC/FSESC package estimate: 80% → 85%; weighted total: 71.9% → 72.4%, displayed as 72%.
 - New tests have not yet been executed; previous REA baseline is 148 passing tests. CI must confirm the new tests before counting them as verified.
 - No hardware or transport interface was used.
+
+
+## 2026-11-22 — V1.7 BLE GATT identifiers and lifecycle mapped
+
+- Continued REA/Ghidra 12.2 analysis on the already-open V1.7 PE32 x86 artifact (SHA-256 `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`).
+- Found the Qt `BleUart` object string table and the names `dataRx`, `writeData`, `sendNextPacket`, `addDevice`, plus controller/service signals.
+- Decompiled native constructor `FUN_004051C0`: service UUID `0000fff0-0000-1000-8000-00805f9b34fb` at `this+0x28`; TX characteristic `0000fff2-0000-1000-8000-00805f9b34fb` at `this+0x2C`; RX characteristic `0000fff1-0000-1000-8000-00805f9b34fb` at `this+0x30`. These values are observed literals and field assignments, not guesses.
+- Mapped `FUN_00402ED0` controller creation and connections for `serviceDiscovered`, discovery completion, error, connected/disconnected, controller state and connection updates.
+- Mapped `FUN_004016B0` discovered-service UUID comparison and service-found flag; `FUN_004023D0` service-object creation from the stored UUID and signal registration; `FUN_00401920` service-state handler and explicit TX/RX missing-characteristic error branches.
+- Mapped `FUN_00402000` as the callback for `characteristicChanged(QLowEnergyCharacteristic,QByteArray)`; mapped service/controller error and disconnect/logging handlers.
+- Located the service-state path's descriptor UUID lookup for `0x2902` (CCCD). The exact descriptor value and write mode are not yet conclusively recovered. Do not hard-code a notification payload from the UUID alone.
+- A `70000` literal is passed to a timer-like wrapper in the controller init function; its unit/semantic purpose remains unconfirmed.
+- New BLE doc: [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md). The BLE reverse-engineering sub-workstream moves from 40% to 55%.
+- Whole-product weighted score remains **72.4% (displayed 72%)**: static discovery does not implement the desktop app or a live BLE transport.
+- REA retained-evidence memory reached its configured capacity during an additional large function-dossier request. That request was not accepted into the retained registry; no prior evidence was intentionally cleared. Export/checkpoint before continuing with another large analysis batch.
+- Still open: the complete `writeData` / `sendNextPacket` caller path, `writeCharacteristic` mode, CCCD value, MTU/chunking/reassembly, and passive BLE capture.
+- No device scan, BLE connection, characteristic write, UART/CAN transmission, or firmware operation was performed.
+- Evidence IDs retained: UUID search `ev_c20b6860d554e3552d2dc6b82cebf19613220d0aa60f1a9439454420eac9ed7c`; BLE string inventory `ev_7835a85225d762c87de7b9860c87cdfb403da27dd47164414c9e8789300ff685`; Qt metadata bytes `ev_b916cb75bc14727e78b83f0b8ff0c6aba0cc33fe8e9e2d2729e558ade7a52b84`; service-state dossier `ev_3feb0512635b349f450a5ea25919bedf24032ad311879124761ef69557d31e5e`; service setup dossier `ev_a8c247ff6f88ad41db5404f895e9dac4e89b515f10c4bc39760c6635077ed985`; controller init dossier `ev_4aeaf50320792a55be39923e9659a5d8b29a4351d13bb721aae8f1806253cb12`; characteristic callback xref `ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f`; BleUart meta-call decompile `ev_7be243cc6465b5cd705b2bd3c40cdb13db0554d3d45bf7256e1f21315f27ff4f`.
