@@ -140,3 +140,32 @@
 3. Trace CAN forwarding CMD 0x10 and its nested slave response.
 4. Identify BLE framing and its relationship to the UART frame helper.
 5. Stage a V1.6 Windows executable for binary comparison.
+
+
+## 2026-11-22 — UartComm meta-object and outbound command map
+
+- Discovered the second major static meta-object at `0x0051F248`, identified as `UartComm`, with string-data at `0x00F232A0`, meta-data at `0x00F22B40`, and static meta-call at `0x004BC2B0`.
+- Decoded all **58 Qt methods**: 21 signals and 37 slots/invokable methods. The `uartPackHandle` slot (index 21) dispatches directly to the response parser at `0x004997A0`.
+- Mapped high-level outbound request methods to native implementations, including six motor-control methods, telemetry setup, firmware version/erase/write/boot-mode, UUID, setup read/write, PPM/ADC, IMU calibration, motor identification over CAN and ESC-ID enumeration.
+- Confirmed request command bytes by following direct static-meta-call cases to the method bodies and inspecting the immediate values written to the byte-append helper:
+  - duty 0x03 (scale 100,000); current 0x04 (1,000); brake current 0x06 (1,000);
+  - D-axis current 0x25 (1,000); position 0x26 (1,000); speed 0x27 (1);
+  - firmware version 0x11; boot mode 0x13; erase 0x16; write 0x18;
+  - periodic telemetry 0x1A; motor-signal setup read/write 0x1C/0x1B;
+  - motor setup write/read 0x07/0x09; signal setup read 0x0A;
+  - TopFlow setup write/read/default-read 0x3A/0x3B/0x3C;
+  - reset/setup 0x1D; UUID 0x21; MCU encryption-related write 0x22; reboot 0x23;
+  - PPM/ADC reads 0x0D/0x0E; IMU calibration 0x29; motor identify over CAN 0x0F; ESC ID over CAN 0x01.
+- Confirmed control values are scaled, rounded and appended as 32-bit big-endian signed integers. The periodic telemetry request is CMD 0x1A + one enable byte + a 16-bit big-endian interval.
+- Confirmed firmware block write CMD 0x18 applies a bytewise XOR transform beginning with 0xD0 and using a table at `0x00530F61`; the separate firmware orchestration calls the TEA buffer wrapper. No key material is published.
+- Mapped setup serialization markers: `0xD2C6EF10`, `0x4879187D`, `0x54464346`. Their semantic names remain unknown.
+- Added [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md), including method-index mapping, command bytes, payload layouts and confidence.
+- Overall estimate updated from **54% to 58%**. Outbound request/command cross-reference rises to 65%; full setup schemas, CAN forwarding and one-shot CMD 0x02 remain open.
+- No ESC hardware connected and no serial/BLE commands transmitted.
+
+### Next work
+1. Trace the CMD 0x02 one-shot telemetry/control request path and relate it to `ftescGetRealtimeDataOnce`.
+2. Recover complete setup serialization schemas for motor, motor-signal and TopFlow writes.
+3. Map acknowledgement callback wrappers to their exact Qt signal indexes.
+4. Trace CAN forwarding and BLE transport.
+5. Compare V1.6 Windows binary with V1.7.
