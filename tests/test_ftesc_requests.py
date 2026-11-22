@@ -13,6 +13,7 @@ from scripts.ftesc_requests import (
     build_control_speed_info,
     build_get_realtime_once_info,
     build_imu_calibration_info,
+    build_identify_motor_over_can_info,
     build_motor_setup_info,
     build_motor_signal_setup_info,
     build_reset_motor_signal_setup_info,
@@ -33,6 +34,16 @@ class V17RequestBuilderTests(unittest.TestCase):
         self.assertEqual(build_control_id_current_info(1), bytes.fromhex("25 00 00 03 E8"))
         self.assertEqual(build_control_position_info(-1), bytes.fromhex("26 FF FF FC 18"))
         self.assertEqual(build_control_speed_info(-123), bytes.fromhex("27 FF FF FF 85"))
+
+    def test_identify_motor_over_can_native_field_order(self):
+        self.assertEqual(
+            build_identify_motor_over_can_info(0x12, 0x34, 1.25, -2.5, 0x56),
+            bytes.fromhex("0F 34 12 FF FD 00 7D 56"),
+        )
+
+    def test_control_scaling_rounds_half_away_from_zero(self):
+        self.assertEqual(build_control_current_info(0.0005), bytes.fromhex("04 00 00 00 01"))
+        self.assertEqual(build_control_current_info(-0.0005), bytes.fromhex("04 FF FF FF FF"))
 
     def test_imu_calibration_scaling(self):
         self.assertEqual(build_imu_calibration_info(1.234), bytes.fromhex("29 00 00 04 D2"))
