@@ -1,6 +1,6 @@
 # Technical roadmap
 
-**Overall estimated progress: 58% (2026-11-22).**
+**Overall estimated progress: 60% (2026-11-22).**
 
 ## Phase A — Static application mapping
 
