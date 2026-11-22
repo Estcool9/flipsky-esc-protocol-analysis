@@ -439,3 +439,15 @@
 - Fresh public clone: **104 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **85% to 87%**. Motor/signal setup request/response codecs are now 95%; TopFlow schema and profile/SKU selection remain open.
 - No setup response was captured from hardware.
+
+
+## 2026-11-22 — CI and public repository reproducibility
+
+- Added `.github/workflows/offline-checks.yml` to restore gzip/base64 artifacts, regenerate the parameter catalog and ValueSeque profiles, compare generated outputs byte-for-byte, run all unit tests and compile Python sources.
+- The first local workflow-equivalent run exposed stale parameter catalog payloads due to HTML whitespace normalization. Regenerated the compressed CSV, JSON and ID catalog payloads from the current script and published them.
+- Re-ran the entire sequence on REA: **all catalog/profile cmp checks passed**, 104 unit tests passed, and `compileall` passed.
+- Confirmed GitHub repository `Estcool9/flipsky-esc-protocol-analysis` is public, default branch `main`, with admin/push permission.
+- Added official Flipsky FTESC Gateway product-page context: USB passthrough to address/identify/configure a specific ESC by CAN ID, common CAN baud and unique IDs. This supports the use case but does not reveal CMD 0x10 wire framing.
+- Added official FT Series V1.6 update guide cross-check: bootloader, reconnect, flash; dual-drive master and slave updated independently over USB.
+- The linked Gateway V1.6 manual PDF could not be retrieved by the browser; this limitation is recorded in [EXTERNAL_REFERENCES.md](EXTERNAL_REFERENCES.md).
+- Overall estimate updated from **87% to 88%**. Reproducibility/CI rises to 90%; exact CAN wrapper, TopFlow schema, model/resource mapping and hardware validation remain open.
