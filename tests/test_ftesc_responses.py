@@ -166,7 +166,7 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         samples_info = bytes((0x24,)) + b"ready" + bytes((0,)) + b"tail"
         samples = parse_text_response(samples_info, 0x24)
         self.assertEqual(samples.raw, b"ready" + bytes((0,)) + b"tail")
-        self.assertEqual(samples.text, "ready\\x00tail")
+        self.assertEqual(samples.text, "ready" + chr(0) + "tail")
 
     def test_uuid_response_preserves_raw_key_bytes(self):
         uuid = bytes(range(16))
