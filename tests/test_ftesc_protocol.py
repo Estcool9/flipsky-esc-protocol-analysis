@@ -11,6 +11,7 @@ from scripts.ftesc_protocol import (
     parse_info,
     parse_motor_telemetry_02_or_20,
     parse_realtime_data_00,
+    parse_realtime_data_00_v17_angular_extension,
 )
 
 
@@ -77,6 +78,20 @@ class RealtimeTelemetryTests(unittest.TestCase):
         parsed = parse_realtime_data_00(b"\x00" + self.make_data(extended=True))
         self.assertEqual(parsed.reserved_extension, bytes(range(12)))
         self.assertEqual(parsed.pas_rpm, 900)
+
+    def test_v17_angular_extension_converts_micro_radians_to_degrees(self):
+        d = bytearray(self.make_data(extended=True))
+        put_signed(d, 28, 4, 1_000_000)
+        put_signed(d, 32, 4, -500_000)
+        put_signed(d, 36, 4, 0)
+        angles = parse_realtime_data_00_v17_angular_extension(b"\\x00" + d)
+        self.assertAlmostEqual(angles[0], 57.295779513, places=8)
+        self.assertAlmostEqual(angles[1], -28.647889756, places=8)
+        self.assertEqual(angles[2], 0.0)
+
+    def test_v17_angular_extension_requires_extended_response(self):
+        with self.assertRaises(ValueError):
+            parse_realtime_data_00_v17_angular_extension(b"\\x00" + self.make_data())
 
     def test_realtime_response_rejects_wrong_size(self):
         with self.assertRaises(ValueError):
