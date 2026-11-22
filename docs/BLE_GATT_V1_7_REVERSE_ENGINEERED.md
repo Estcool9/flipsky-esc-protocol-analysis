@@ -64,7 +64,7 @@ Still unresolved:
 
 ## Progress update
 
-The BLE reverse-engineering sub-workstream is now **75%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
+The BLE reverse-engineering sub-workstream is now **80%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
 
 The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
@@ -103,3 +103,16 @@ All conclusions here are static observations from the named V1.7 executable. No 
 - Evidence: `ev_0b96fa9d9daca6528da735c37d6a4fa85f5cede2be619f08d07cfa494e6da22b`, `ev_0863f4b9c9cbaa26854a9389f1d2d4f01af0cd11963bc5043a68b1b315c57def`, `ev_26f4ad2230070fd6a96d3322a1e2c2fb5985d8d1c5709c228825789f669a36d1`, `ev_14bbb5c07a7e3c24e7f64e40abe36d4c543e0a8939b2ffd966061e649720f728` and `ev_64791b4adf0065ca2f544059fa314ba5862bbfd4c675fb96244f53cd84e50c5e`.
 - Detailed call-path report: [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
 - No BLE scan, pairing, connection, characteristic read/write or ESC command was performed.
+
+
+### Candidate final GATT write call — 2026-11-22
+
+The asynchronous queue pump `FUN_00404E80` contains an indirect call at `0x00404FEC`. Assembly shows the BLE service object in ECX, followed by a characteristic-like object, queued `QByteArray` and third argument `1`. The static computed reference resolves to protected address `0x00B5A1D0`.
+
+This call shape strongly matches the mangled `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)` symbol string found in V1.7. The resolved target lies in the protected Enigma region and its decompilation is invalid; there is no proven target-to-symbol edge. Treat this as a strong candidate only. The integer value `1` is observed at the call site, but is not yet mapped to write-with-response or write-without-response.
+
+Evidence IDs:
+- Assembly: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`
+- Computed target: `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`
+- Protected target decompilation: `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`
+- [Detailed BLE transport note](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
