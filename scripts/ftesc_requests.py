@@ -281,7 +281,7 @@ def build_can_forward_info(
     return build_info(CMD_CAN_OVER, data)
 
 
-def build_control_and_obtain_data_once_info(
+def build_v14_control_and_obtain_data_once_info(
     current_code: int,
     *,
     direction_switch_enabled: bool = False,
@@ -340,3 +340,54 @@ def build_v14_reset_reboot_info() -> bytes:
     substitute this V1.4 variant for the V1.7-native reset builders.
     """
     return build_info(0x1D, bytes((0,)))
+
+
+def build_v16_control_and_obtain_data_once_info(
+    current_code: int,
+    *,
+    direction_switch_enabled: bool = False,
+    rotation_direction: bool = False,
+    gear: int = 0,
+    horn: bool = False,
+    headlight: bool = False,
+    brake_light: bool = False,
+    cruise_enabled: bool = False,
+    cruise_on: bool = False,
+    multi_mode_enabled: bool = False,
+    multi_mode: int = 0,
+) -> bytes:
+    """Build the V1.6 CMD 0x02 14-byte UART-mode payload.
+
+    V1.6 moved the two-byte reserved field before current_code. This differs
+    from V1.4, where current_code occupies DATA[0:2].
+    """
+    if isinstance(current_code, bool) or not isinstance(current_code, int) or not 0 <= current_code <= 1023:
+        raise SetupValueError("current_code must be an integer in 0..1023")
+    if isinstance(gear, bool) or not isinstance(gear, int) or not 0 <= gear <= 4:
+        raise SetupValueError("gear must be an integer in 0..4")
+    if isinstance(multi_mode, bool) or not isinstance(multi_mode, int) or not 0 <= multi_mode <= 2:
+        raise SetupValueError("multi_mode must be an integer in 0..2")
+    data = (
+        bytes(2)
+        + _u16(current_code, "current_code")
+        + _bool_byte(direction_switch_enabled, "direction_switch_enabled")
+        + _bool_byte(rotation_direction, "rotation_direction")
+        + _u8(gear, "gear")
+        + _bool_byte(horn, "horn")
+        + _bool_byte(headlight, "headlight")
+        + _bool_byte(brake_light, "brake_light")
+        + _bool_byte(cruise_enabled, "cruise_enabled")
+        + _bool_byte(cruise_on, "cruise_on")
+        + _bool_byte(multi_mode_enabled, "multi_mode_enabled")
+        + _u8(multi_mode, "multi_mode")
+    )
+    if len(data) != 14:
+        raise AssertionError("V1.6 CMD 0x02 payload must be exactly 14 bytes")
+    return build_info(CMD_CONTROL_AND_OBTAIN_DATA_ONCE, data)
+
+
+def build_v16_pas_gear_control_info(pas_gear: int) -> bytes:
+    """Build the V1.6 PAS-mode CMD 0x02 alias: D0 gear, D1-D13 ignored."""
+    if isinstance(pas_gear, bool) or not isinstance(pas_gear, int) or not 0 <= pas_gear <= 0xFF:
+        raise SetupValueError("pas_gear must fit unsigned 8-bit")
+    return build_info(CMD_CONTROL_AND_OBTAIN_DATA_ONCE, bytes((pas_gear,)) + bytes(13))
