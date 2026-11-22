@@ -6,6 +6,7 @@ from scripts.ftesc_responses import (
     SignalAdcResponse,
     parse_auto_realtime_ack,
     parse_can_forward_response,
+    parse_esc_id_enumeration_response,
     parse_motor_signal_setup_response,
     parse_v16_motor_setup_response,
     parse_v16_motor_signal_setup_response,
@@ -58,6 +59,22 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_esc_id_enumeration_response_master_then_slave_ids(self):
+        result = parse_esc_id_enumeration_response(bytes.fromhex("1E 02 05 07"))
+        self.assertEqual(result.master_id, 2)
+        self.assertEqual(result.slave_ids, (5, 7))
+        self.assertEqual(result.raw_ids, bytes((2, 5, 7)))
+
+    def test_esc_id_enumeration_response_empty_vector_is_preserved(self):
+        result = parse_esc_id_enumeration_response(b"\x1E")
+        self.assertIsNone(result.master_id)
+        self.assertEqual(result.slave_ids, ())
+        self.assertEqual(result.raw_ids, b"")
+
+    def test_esc_id_enumeration_response_rejects_other_command(self):
+        with self.assertRaises(ValueError):
+            parse_esc_id_enumeration_response(b"\x01\x02")
 
     def test_can_forward_response_uses_slave_command_as_info_command(self):
         result = parse_can_forward_response(bytes.fromhex("04 01 02"), 0x04)
