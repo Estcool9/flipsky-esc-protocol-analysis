@@ -26,3 +26,14 @@ Thumbs.db
 # Temporary outputs
 *.tmp
 *.restore-tmp
+
+
+# Generated, restored analysis outputs (canonical copies are the .gz.b64 payloads)
+analysis-data/parameter-catalog.csv
+analysis-data/parameter-catalog.json
+analysis-data/parameter-ids.json
+analysis-data/profile-order.csv
+analysis-data/profile-order.json
+
+# Extracted source XML is reconstructed from the compressed payloads
+embedded-xml/original/*.xml
