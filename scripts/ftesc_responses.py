@@ -2,8 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 from scripts.ftesc_protocol import parse_info
+from scripts.ftesc_setup_serializer import DecodedSetupBlock, SetupValueError, decode_profile_block
+from scripts.ftesc_requests import MOTOR_SETUP_MARKER, MOTOR_SIGNAL_SETUP_MARKER, TOPFLOW_SETUP_MARKER
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,6 +20,27 @@ class SignalAdcResponse:
 class ImuCalibrationResponse:
     """Nine native calibration scalars; semantic axis labels are not yet established."""
     values: tuple[float, float, float, float, float, float, float, float, float]
+
+
+@dataclass(frozen=True, slots=True)
+class MotorSignalSetupResponse:
+    first_block: DecodedSetupBlock
+    second_block: DecodedSetupBlock
+    secret_key_status: int
+    success: bool
+
+
+@dataclass(frozen=True, slots=True)
+class TopFlowSetupResponse:
+    block: DecodedSetupBlock
+    secret_key_status: int
+    success: bool
+
+
+@dataclass(frozen=True, slots=True)
+class SetupWriteAck:
+    command: int
+    acknowledged: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -194,3 +219,69 @@ def parse_firmware_version_response(
         label=label_raw.decode("utf-8", errors="replace"),
         suffix_byte=suffix,
     )
+
+
+def parse_setup_write_ack(
+    info: bytes | bytearray | memoryview, expected_command: int
+) -> SetupWriteAck:
+    """Validate no-DATA status acknowledgements for setup/reset commands."""
+    if expected_command not in (0x1B, 0x1D, 0x3A, 0x3D):
+        raise ValueError("unsupported setup status acknowledgement command")
+    message = parse_info(info)
+    if message.command != expected_command:
+        raise ValueError(
+            f"expected CMD 0x{expected_command:02X}, got 0x{message.command:02X}"
+        )
+    if message.data:
+        raise ValueError(f"CMD 0x{expected_command:02X} status ACK must have no DATA")
+    return SetupWriteAck(command=message.command)
+
+
+def parse_motor_signal_setup_response(
+    info: bytes | bytearray | memoryview,
+    first_profile_order: Iterable[str],
+    first_metadata: Mapping[str, Mapping[str, Any]],
+    second_profile_order: Iterable[str],
+    second_metadata: Mapping[str, Mapping[str, Any]],
+) -> MotorSignalSetupResponse:
+    """Decode CMD 0x1C's two required marker-prefixed setup blocks."""
+    message = parse_info(info)
+    if message.command != 0x1C:
+        raise ValueError(f"expected CMD 0x1C, got 0x{message.command:02X}")
+    first = decode_profile_block(
+        message.data, MOTOR_SETUP_MARKER, first_profile_order, first_metadata
+    )
+    second = decode_profile_block(
+        message.data,
+        MOTOR_SIGNAL_SETUP_MARKER,
+        second_profile_order,
+        second_metadata,
+        offset=first.next_offset,
+    )
+    if second.next_offset != len(message.data):
+        raise SetupValueError("CMD 0x1C response has unexpected trailing DATA")
+    return MotorSignalSetupResponse(
+        first_block=first, second_block=second, secret_key_status=0, success=True
+    )
+
+
+def parse_topflow_setup_response(
+    info: bytes | bytearray | memoryview,
+    expected_command: int,
+    profile_order: Iterable[str],
+    metadata: Mapping[str, Mapping[str, Any]],
+) -> TopFlowSetupResponse:
+    """Decode CMD 0x3B/0x3C TopFlow block when its XML metadata is available."""
+    if expected_command not in (0x3B, 0x3C):
+        raise ValueError("TopFlow setup read responses use CMD 0x3B or 0x3C")
+    message = parse_info(info)
+    if message.command != expected_command:
+        raise ValueError(
+            f"expected CMD 0x{expected_command:02X}, got 0x{message.command:02X}"
+        )
+    block = decode_profile_block(
+        message.data, TOPFLOW_SETUP_MARKER, profile_order, metadata
+    )
+    if block.next_offset != len(message.data):
+        raise SetupValueError("TopFlow response has unexpected trailing DATA")
+    return TopFlowSetupResponse(block=block, secret_key_status=0, success=True)
