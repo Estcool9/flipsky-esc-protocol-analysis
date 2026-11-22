@@ -74,7 +74,7 @@ class CanControlEncoderTests(unittest.TestCase):
             (build_can_brake_current_percent_crc16(7, 12.5), 0x05, 6),
             (build_can_erpm_gear_crc16(7, -1234, 2), 0x12, 7),
             (build_can_position_gear_crc16(7, -0.5, 4), 0x13, 7),
-            (build_can_id_current_crc16(7, 0.5), 0x14, 7),
+            (build_can_id_current_crc16(7, 0.5), 0x14, 6),
         ]
         for frame, command, length in cases:
             self.assertEqual(frame.identifier.command, command)
