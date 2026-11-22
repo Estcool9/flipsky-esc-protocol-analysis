@@ -55,6 +55,15 @@ class RealtimeDataV16:
 
 
 @dataclass(frozen=True, slots=True)
+class RealtimeDataV17Extension:
+    """V1.7 values occupying the 16-byte extension to CMD 0x00 DATA."""
+    angular_value_1_degrees: float
+    angular_value_2_degrees: float
+    angular_value_3_degrees: float
+    pas_rpm: int
+
+
+@dataclass(frozen=True, slots=True)
 class MotorTelemetryV16:
     error_code: int
     battery_voltage_v: float
@@ -162,6 +171,34 @@ def parse_realtime_data_00_v17_angular_extension(
     return tuple(
         math.degrees(_signed(d, offset, 4) / 1_000_000.0)
         for offset in (28, 32, 36)
+    )
+
+
+def parse_realtime_data_00_v17_extension(
+    info: bytes | bytearray | memoryview,
+) -> RealtimeDataV17Extension:
+    """Decode the 16-byte V1.7 extension of CMD 0x00 DATA.
+
+    Native V1.7 response code reads three signed 32-bit big-endian values
+    scaled from microradians to degrees, followed by one signed 32-bit
+    big-endian PAS-RPM value. The three angular values' semantic labels
+    are not identified by the executable's UI/API metadata yet.
+    """
+    message = parse_info(info)
+    if message.command != CommandId.OBTAIN_DATA_ONCE:
+        raise ValueError(f"expected CMD 0x00, got 0x{message.command:02X}")
+    d = message.data
+    if len(d) != 44:
+        raise ValueError(f"V1.7 CMD 0x00 extension requires 44 DATA bytes, got {len(d)}")
+    angles = tuple(
+        math.degrees(_signed(d, offset, 4) / 1_000_000.0)
+        for offset in (28, 32, 36)
+    )
+    return RealtimeDataV17Extension(
+        angular_value_1_degrees=angles[0],
+        angular_value_2_degrees=angles[1],
+        angular_value_3_degrees=angles[2],
+        pas_rpm=_signed(d, 40, 4),
     )
 
 
