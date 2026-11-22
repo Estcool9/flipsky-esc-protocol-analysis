@@ -107,3 +107,16 @@ A separate offline decoder is implemented in `scripts/ftesc_can.py`; see [FTESC_
 ## 8. Older C reference cross-check
 
 The user's V1.4–V1.6 C reference declares `UART_CAN_FWARD=0x10` but does not implement the CAN-forward wrapper. This confirms the command's existence but does not reveal the payload envelope. The V1.7 wrapper insertion and slave response routing remain unresolved; see [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
+
+
+## 9. Official FTESC Gateway product cross-check
+
+Flipsky's official FTESC Gateway product page describes:
+- firmware V1.6 or above;
+- USB, CAN, UART, PPM and ADC ports;
+- USB passthrough that lets the host directly access, identify and configure a specific ESC by CAN ID;
+- unique CAN IDs for multiple ESCs and a uniform CAN baud rate.
+
+Source: [Flipsky FTESC Gateway Interface Module](https://flipsky.net/collections/new-arrival/products/flipsky-ftesc-gateway-interface-module-multi-esc-networked-cooperative-control-for-ftesc-series).
+
+This confirms the product-level USB-to-CAN passthrough use case and explains why the V1.7 application stores a selected CAN ID. It does **not** reveal the exact CMD 0x10 envelope or prove that the V1.7 desktop binary emits CMD 0x10. The wire-level wrapper remains unresolved.
