@@ -89,3 +89,12 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Current overall project estimate: **46%**.
 - V1.6 Windows executables are inventoried in Nextcloud but are not staged on REA.
 - V1.7 command-ID to Qt-response mapping remains the next major reverse-engineering target.
+
+
+## V1.7 Qt API names — 2026-11-22
+
+- New report: [V1_7_QT_API_STRING_MAP.md](V1_7_QT_API_STRING_MAP.md).
+- Found high-level API names for duty/current/brake/D-axis current/speed/position, automatic telemetry, CAN ID/identification, firmware version/update and encryption-related flows.
+- The low-level uartPackData class remains distinct from the high-level FtescLowLevelFace façade.
+- Candidate V1.6 opcode relationships remain unconfirmed until call sites and payload bytes are traced.
+- Overall progress estimate: **48%**.
