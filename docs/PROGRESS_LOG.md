@@ -762,3 +762,5 @@
 
 - Actualisé `docs/STATUS.md` (commit `e121fc759dbe05d79e2707b5f293dfde46becc79`) : supprimé l'affirmation obsolète que les PE V1.6 n'étaient pas sur REA, ajouté les résultats marker-level et maintenu le score 72.6%.
 - Actualisé `docs/V1_7_BINARY_CROSS_REFERENCE.md` (commit `1baf8ac3b6d661759667216c37e45464b46bd4ab`) : inventaire REA corrigé, lien vers la comparaison et étapes restantes reformulées vers le diff fonctionnel.
+
+- Actualisé `docs/ROADMAP.md` (commit `68f1c61b2e2dbe8be63803c75d7dceacd68a8b95`) : nouvelle étape cochée pour la recherche de marqueurs sur les quatre PE et les stubs Qt, avec tâches restantes explicites pour le vrai chemin fonctionnel.
