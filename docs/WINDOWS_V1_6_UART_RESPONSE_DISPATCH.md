@@ -31,7 +31,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | INFO CMD | Parser/branch action observed | Qt signal or follow-up | Confidence / remaining question |
 |---:|---|---|---|
 | `0x00` | Reads a telemetry block: status/byte fields, scaled numeric fields and angular values; builds a structured set of values | `FUN_004b59a0`, index 11 `ftescGetRealtimeDataOnce` | Wrapper link confirmed; exact field-name/unit mapping should be cross-checked against the existing CMD00 schema |
-| `0x01` | Parses an ESC-ID/list response and manages the list object | `FUN_004b5b40`, index 17 `ftescGetIDResAck`; also `FUN_004b5630`, index 13 `ftescSamplesPrint` for a text/sample output path | Signal links confirmed; full list element layout and duplicate/termination rules still need documentation |
+| `0x01` | Parses an ESC-ID/list response and manages the list object | `FUN_004b5b40`, index 17 `ftescGetIDResAck` | Signal link confirmed; full list element layout and duplicate/termination rules still need documentation |
 | `0x09` | Parses a motor-signal-read response path | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Two-argument signal wrapper confirmed; payload schema not yet fully written |
 | `0x0A` | Parses another motor/signal-read response path and emits the same ACK signal | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Shared signal is confirmed; semantic distinction from 0x09 remains open |
 | `0x0D` | Parses PPM signal response, resets throttle at `this+0x30` | `FUN_004b5a10`, index 14 `signalPPMRecAck` | Wrapper method index 14 confirmed |
@@ -44,7 +44,7 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 | `0x1A` | Auto-realtime status response | `FUN_004b55c0`, index 9 `ftescAutoGetRealtimeDataAck` | No-argument wrapper index 9 confirmed |
 | `0x1B` | Parses motor-signal/setup read response, including multiple values | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Shared signal index 7 confirmed; the branch's marker and field semantics need fuller annotation |
 | `0x1C` | Checks setup/secret-key acknowledgement path and produces an integer-like result; resets motor-signal related cooldown at `this+0x24` | `FUN_004b5910`, index 8 `ftescMotorSignalSecretKeyCheckAck` | Wrapper index 8 confirmed; do not infer cryptographic algorithm or key material from the ACK handler |
-| `0x1E` | Parses a second ESC-ID/list response variant; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck`; may also print diagnostic sample text through index 13 | Signal link confirmed; exact relation to CMD01 and target-ID correlation remains open |
+| `0x1E` | Parses a second ESC-ID/list response variant; resets CAN/ID cooldown at `this+0x38` | `FUN_004b5b40`, index 17 `ftescGetIDResAck` | Signal link confirmed; exact relation to CMD01 and target-ID correlation remains open |
 | `0x21` | Parses UUID bytes; resets UUID throttle at `this+0x28` | `FUN_004b5670`, index 1 `ftescGetUuidAck` | Wrapper index 1 confirmed; exact UUID normalization/validation not asserted here |
 | `0x22` | Reads an encryption/write-success status byte; resets encryption throttle at `this+0x2c` | `FUN_004b56b0`, index 2 `writeEncryptSuccess` | Wrapper index 2 confirmed; no key or challenge bytes are exposed |
 | `0x24` | Converts a byte sequence to a textual/sample output | `FUN_004b5630`, index 13 `ftescSamplesPrint` | Wrapper index 13 directly confirmed; this is a sample/diagnostic output, not proven control telemetry |
