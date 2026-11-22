@@ -573,3 +573,13 @@
 - Correct normalized score: 79.4 / 110 × 100 = **72.1818%**, shown as **72.2% unrounded / 72% rounded**.
 - The previous **72.4%** unrounded figure was incorrect because the denominator was treated as 100 despite 110 relative points. Updated README, STATUS, ROADMAP and the BLE report to correct this.
 - This correction does not change any workstream's implementation progress. BLE static reverse-engineering coverage is 55%; the desktop UI/live transport package remains 20%.
+
+
+## 2026-11-22 — BLE byte-array ingress connected to application receiver
+
+- Inspected FtescLowLevelFace constructor assembly at native address 0x00483910.
+- Confirmed Qt connection at 0x0048456D: 1bleDataRx(QByteArray) at string address 0x0052DF35 to 2dataRx(QByteArray) at string address 0x0052DF4C.
+- This establishes that the BleUart RX byte array is wired to an application-level receiver. It does not yet establish the receiver body, UART parser handoff, or stream buffering behavior.
+- BLE reverse-engineering sub-workstream rises 55% to 60%. Whole-product weighted score remains 72.2% unrounded / 72% rounded.
+- Updated README/STATUS/ROADMAP/BLE report. No transport interface or device was used.
+- Evidence: assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21; signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f; slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962; string inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
