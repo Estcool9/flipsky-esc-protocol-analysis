@@ -82,3 +82,15 @@ Artifact provenance:
 - APK SHA-256: `26404ff6467971ff7c0fedbe1f326c6b0ccb5722571b7309d9913818960b4d7e`.
 - Android ARM64 application library SHA-256: `7fba6a69f3719b70dfb7eee87c97e41aad2d8f48d1feec7058a0e5975a5ea2fc`.
 - Android static reverse-engineering report: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md).
+
+
+## ARMv7 Android cross-check
+
+The ARMv7 app library `libFilpsky_ESC_Tool_V1.6_20251014_armeabi-v7a.so` (SHA-256 `8ba92821d1310762ae582a9cbb07918e7e1d416238ac8110be6a04063d8b0562`) confirms the same key behavior as ARM64:
+
+- `BleUart::writeData` (`0x000C6FAC`) sets chunk size 20 at `0x000C6FD0` and calls `QByteArray::mid` at `0x000C701C`.
+- `BleUart::sendNextPacket` (`0x000C70BC`) sets C++ `WriteMode=1` at `0x000C71C8` and calls Qt `writeCharacteristic` at `0x000C71F0`: `WriteWithoutResponse`.
+- `BleUart::serviceStateChanged` (`0x000C8694`) constructs UUID `0x2902`, calls `QByteArray::fromHex` at `0x000C89FC`, then `writeDescriptor` at `0x000C8A10`. The ELF contains a unique `0100` literal at `0x0026F7D9`, but a direct literal xref was not recovered; treat exact ARMv7 CCCD bytes as a high-confidence cross-check, while the ARM64 `01 00` value remains the direct proof.
+- `FtescLowLevelFace::bleDataRx` (`0x00202DC8`) resolves first to the QByteArray copy constructor (GOT `0x00809294`) and then to `uartPackData::uartPackDataHandle(QByteArray)` (GOT `0x0080E13C`).
+
+Thus both Android ABIs share 20-byte chunking, WriteWithoutResponse and the common FTESC stream parser. This still does not prove the Windows V1.7 protected indirect call target, the signal-slot connection site, negotiated ATT MTU or live behavior.
