@@ -57,7 +57,7 @@ class CanRealtimeData2:
 
 def decode_can_identifier(identifier: int) -> CanIdentifier:
     """Decode the 29-bit extended ID documented by FTESC CAN V1.4."""
-    if not isinstance(identifier, int) or not 0 <= identifier <= CAN_EID_MASK:
+    if isinstance(identifier, bool) or not isinstance(identifier, int) or not 0 <= identifier <= CAN_EID_MASK:
         raise ValueError("CAN identifier must be an unsigned 29-bit integer")
     if identifier & CAN_FIXED_MASK != CAN_FIXED_VALUE:
         raise ValueError("CAN identifier does not match the FTESC extended-ID prefix")
@@ -70,9 +70,9 @@ def decode_can_identifier(identifier: int) -> CanIdentifier:
 
 def encode_can_identifier(esc_id: int, command: int) -> int:
     """Build an FTESC extended ID; this does not transmit anything."""
-    if not 0 <= esc_id <= 0xFF:
+    if isinstance(esc_id, bool) or not isinstance(esc_id, int) or not 0 <= esc_id <= 0xFF:
         raise ValueError("ESC ID must fit in one byte")
-    if not 0 <= command <= 0xFF:
+    if isinstance(command, bool) or not isinstance(command, int) or not 0 <= command <= 0xFF:
         raise ValueError("CAN command must fit in one byte")
     return CAN_FIXED_VALUE | (esc_id << 8) | command
 
@@ -80,7 +80,11 @@ def encode_can_identifier(esc_id: int, command: int) -> int:
 def parse_can_frame(identifier: int, data: bytes | bytearray | memoryview) -> CanFrame:
     """Decode the ID and validate the payload CRC where V1.4 defines one."""
     ident = decode_can_identifier(identifier)
+    if not isinstance(data, (bytes, bytearray, memoryview)):
+        raise ValueError("CAN data must be bytes-like")
     payload = bytes(data)
+    if len(payload) > 8:
+        raise ValueError("classic CAN data payload cannot exceed 8 bytes")
     # V1.4 defines CRC-bearing commands 00-05, 0B-0D and 12-14.
     has_crc = (
         0x00 <= ident.command <= 0x05
