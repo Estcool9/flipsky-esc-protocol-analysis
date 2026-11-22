@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 60%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 62%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -18,13 +18,13 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | Receive-buffer and resynchronization analysis | 90% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 protocol comparison | 90% |
-| V1.7 command-ID and payload cross-reference | 75% |
+| V1.7 command-ID and payload cross-reference | 80% |
 | Offline frame and protocol codecs/tests | 100% |
 | Firmware update and TEA relationship | 75% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **60%** |
+| **Overall estimate** | **62%** |
 
 ## Confirmed evidence
 
@@ -71,7 +71,7 @@ See FTESC_UART_PROTOCOL_V1.6.md, V1_4_TO_V1_6_PROTOCOL_CHANGES.md, V1_7_BINARY_C
 - scripts/ftesc_frame.py: frame codec.
 - scripts/ftesc_protocol.py: V1.6 command/telemetry helpers.
 - tests/test_ftesc_frame.py, tests/test_ftesc_protocol.py and tests/test_ftesc_stream.py.
-- Executed on REA against the published GitHub copies: **36 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
+- Executed on REA against the published GitHub copies: **46 tests passed, 0 failed** (26 frame/protocol tests plus 10 incremental-stream tests).
 
 ## Open technical questions
 - Map V1.7 outbound command builders and response handlers to numeric command IDs.
