@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 83%**  
+**Overall estimated progress: 84%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -300,3 +300,14 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Native helpers `0x0049D150` and `0x0049D1E0` implement round-half-away-from-zero; 0.5 epsilon at 0x005312C0.
 - Added two tests; fresh clone **91 passed, 0 failed**.
 - Overall estimate: **83%**.
+
+
+## V1.7 response decoders — 2026-11-22
+
+- CMD 0x0D one signed int32 ÷1e6.
+- CMD 0x0E six signed int32 values with scales [1e6,1e6,1,1,1,1e6].
+- CMD 0x16/0x18/0x22 one-byte boolean ACK; CMD 0x1A no-data ACK.
+- CMD 0x29 nine signed int32 values ÷1e6.
+- CMD 0x01 and 0x1E share ESC ID vector parser.
+- Added `scripts/ftesc_responses.py`; fresh clone **99 tests passed, 0 failed**.
+- Overall estimate: **84%**.
