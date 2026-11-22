@@ -88,7 +88,7 @@ The native implementation `0x00499180` is the request method `ftescIdentifyMotor
 - Slave response routing and how the returned CAN ID is correlated with pending request callbacks.
 - The full timing unit and timeout/retry policy for all CAN-target requests.
 
-The public V1.6 UART document describes CMD 0x10 as the CAN-forward envelope, and the third-party FT85BD implementation independently contains a CAN wrapper. Those references are useful cross-checks, but they do not replace tracing the V1.7 call path. See [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md) and [FTESC_UART_PROTOCOL_V1.6.md](FTESC_UART_PROTOCOL_V1.6.md).
+The public V1.6 UART document describes CMD 0x10 as the CAN-forward envelope. The offline client now implements `build_can_forward_info()` and `parse_can_forward_response()`, and the direct-CAN layer has its own ID/CRC/telemetry/control codec. The third-party FT85BD implementation independently contains a CAN wrapper. These references define the protocol expected by an independent client, but they do not replace tracing the V1.7 desktop call path. See [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [FTESC_UART_PROTOCOL_V1.6.md](FTESC_UART_PROTOCOL_V1.6.md) and [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md).
 
 ## 6. Safety and validation
 
