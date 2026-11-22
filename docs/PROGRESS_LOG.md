@@ -599,3 +599,14 @@
 - Updated: [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md), [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md), STATUS, ROADMAP, README and TOOLING_AUDIT.
 - No BLE scan, pairing, BLE connection, GATT read/write, UART/CAN operation, ESC command or firmware update was performed.
 - Evidence: `ev_0b96fa9d9daca6528da735c37d6a4fa85f5cede2be619f08d07cfa494e6da22b`, `ev_0863f4b9c9cbaa26854a9389f1d2d4f01af0cd11963bc5043a68b1b315c57def`, `ev_26f4ad2230070fd6a96d3322a1e2c2fb5985d8d1c5709c228825789f669a36d1`, `ev_14bbb5c07a7e3c24e7f64e40abe36d4c543e0a8939b2ffd966061e649720f728`, `ev_64791b4adf0065ca2f544059fa314ba5862bbfd4c675fb96244f53cd84e50c5e`.
+
+
+## 2026-11-22 — VESC stream resynchronization and CI green
+
+- Reviewed the newly added VESC stream decoder against GitHub Actions. The first CI run reached 159 tests and isolated one failure: `test_bad_crc_recovers_to_following_frame`. A corrupt short-frame terminator (`0x03`) could be interpreted as a medium-frame start and declare a length spanning the next valid frame.
+- Updated `scripts/vesc_stream.py` with a bounded-in-buffer look-ahead for a later candidate, but only resynchronizes when that later candidate's declared length is complete and its CRC and end marker validate. Otherwise the current incomplete input remains buffered.
+- The earlier CI obstacle in ordered profile generation was also corrected: the old checked-in `analysis-data/profile-order-summary.json` was a stale derived snapshot. CI now validates the newly generated summary's key totals (19 profiles, 1,135 ordered values, 17 omitted values) while continuing exact file comparisons for the canonical profile CSV/JSON exports. The stale snapshot was removed.
+- GitHub Actions run [#156](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45012582295) is green: 25/25 payloads restored, parameter catalog regenerated, profile data regenerated, **159 tests passed, 0 failed**, and `compileall` passed.
+- Reproducibility/tests/CI package: 95% → 100%. Weighted project score: **79.9 / 110 = 72.64% ≈ 72.6%**, displayed as 73%. UI/live transport remains 20%; hardware validation remains 0%.
+- Commits in this CI correction: workflow change `b32a9803dbb250211566fdac5c29ccb0a4859079`, stale summary removal `e12fe4bb43ac84d9b309857ad60f0db39dc12136`, stream recovery `1e11a0d86585e58c64cfa7f89e32df17a2414b05`.
+- No hardware, BLE, UART or CAN transport was used.
