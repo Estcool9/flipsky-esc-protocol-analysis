@@ -385,3 +385,16 @@
 - Fresh public clone: payload restoration succeeded, **89 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **80% to 82%**. Request payload builders are 85%; CMD 0x0F, CMD 0x02, CAN wrapper 0x10 and TopFlow schema remain open.
 - No request was transmitted.
+
+
+## 2026-11-22 — CMD 0x0F field order and native rounding verified
+
+- Disassembled `FUN_00499180` instruction by instruction.
+- Confirmed payload order: CMD 0x0F, arg2 byte, low byte of arg1, signed int16 arg4, signed int16 arg3×100, arg5 byte.
+- Added `build_identify_motor_over_can_info()` using generic argument names because semantic labels/units are not identified.
+- Disassembled `FUN_0049D150` (signed int32 scaling) and `FUN_0049D1E0` (signed int16 scaling): both use a 0.5 epsilon, direction-dependent x87 rounding mode and truncate-to-integer conversion, implementing round-half-away-from-zero.
+- Verified the epsilon constant at VA `0x005312C0` is float32 0.5.
+- Added tests for CMD 0x0F byte order and positive/negative half ties. Updated request schema/dispatch docs.
+- Fresh public clone: **91 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **82% to 83%**. CMD 0x0F byte layout is resolved; semantic field labels and UART CMD 0x10 wrapping remain open.
+- No motor-identification command was sent.
