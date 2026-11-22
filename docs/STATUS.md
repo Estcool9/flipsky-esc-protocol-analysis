@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, marker pass and UART frame/parser role diff; full function diff pending) | 45% |
+| V1.6 executable comparison (PE identity, markers, UART frame/parser and UartComm method/firmware-dispatch mapping; full PE diff pending) | 55% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -440,3 +440,11 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Confirmed matching function roles with V1.7 `0x0049C5C0`, `0x0049C830` and `0x0049CA30`. See [WINDOWS_V1_6_UART_FRAME_PARSER.md](WINDOWS_V1_6_UART_FRAME_PARSER.md).
 - Python decoder now checks the terminal byte before CRC to match native validation precedence; a regression test was added. The actual wire acceptance behavior was already aligned.
 - The V1.6 per-instance max-payload initializer and exact Qt method-index/string-table mapping remain open. No transport or hardware test was performed; overall weighted progress remains **72.6%**.
+
+
+## Windows V1.6 UartComm metadata and firmware dispatch — 2026-11-22
+
+- Decoded the full V1.6 `UartComm` Qt metadata table: 50 methods, 19 signals and 31 slots/invokable methods, including exact firmware/CAN method names and handler indexes.
+- Linked firmware request wrappers to the common `sendDataToESC(QByteArray&)` signal. Erase builds a four-byte big-endian argument; boot-mode sends an empty QByteArray; firmware-write passes the original QByteArray after a debug trace (observed XOR is not an in-place payload transform).
+- Mapped firmware response/ACK signal names, but numeric command IDs, full ACK layouts, retry/timeouts and the downstream bootloader state machine remain open. See [WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md](WINDOWS_V1_6_UARTCOMM_QTMETAOBJECT.md).
+- V1.6 comparison sub-workstream advances from 45% to 55%; whole-product weighted progress remains **72.6% (79.9 / 110)**.
