@@ -32,8 +32,8 @@ The signal index is resolved against the V1.6 `UartComm` QMetaObject at `0x00519
 |---:|---|---|---|
 | `0x00` | Reads a telemetry block: status/byte fields, scaled numeric fields and angular values; builds a structured set of values | `FUN_004b59a0`, index 11 `ftescGetRealtimeDataOnce` | Wrapper link confirmed; exact field-name/unit mapping should be cross-checked against the existing CMD00 schema |
 | `0x01` | Parses an ESC-ID/list response and manages the list object | `FUN_004b5b40`, index 17 `ftescGetIDResAck` | Signal link confirmed; full list element layout and duplicate/termination rules still need documentation |
-| `0x09` | Parses a motor-signal-read response path | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Two-argument signal wrapper confirmed; payload schema not yet fully written |
-| `0x0A` | Parses another motor/signal-read response path and emits the same ACK signal | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck` | Shared signal is confirmed; semantic distinction from 0x09 remains open |
+| `0x09` | Validates marker `0xD2C6EF10`; on match iterates the configured profile's ValueSeque and decodes each property through `FUN_0049a5c0`; increments the setup progress counter by 1 | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck(QString, bool)` | One-block V1.6 motor-setup response; marker mismatch logs `Invalid SecretKey` and returns false. Offline decoder now added |
+| `0x0A` | Validates marker `0x4879187D`; on match iterates the configured profile's ValueSeque and decodes each property through `FUN_0049a5c0`; increments the setup progress counter by 2 | `FUN_004b5830`, index 7 `ftescMotorSignalReadAck(QString, bool)` | One-block V1.6 motor-signal-setup response; marker mismatch logs `Invalid SecretKey` and returns false. Offline decoder now added |
 | `0x0D` | Parses PPM signal response, resets throttle at `this+0x30` | `FUN_004b5a10`, index 14 `signalPPMRecAck` | Wrapper method index 14 confirmed |
 | `0x0E` | Parses ADC signal response, resets throttle at `this+0x34`; recovers six values for the signal arguments | `FUN_004b5a60`, index 15 `signalADCRecAck` | Wrapper index 15 directly confirmed in the tail of the function; exact units still need review |
 | `0x0F` | Parses motor-identification response and forwards result values | `FUN_004b5950`, index 16 `motorIdentifyResAck` | Wrapper index 16 confirmed; full response payload schema not yet recovered |
@@ -101,6 +101,10 @@ Already represented elsewhere in the repository:
 - Firmware ACK signal surface and partial firmware-flow analysis.
 - CMD0F motor-identification request builder, with the native signed-conversion rules corrected and tests passing.
 
+Now implemented for V1.6 as profile-block decoders (marker + metadata-driven ValueSeque parsing):
+- CMD `0x09` / marker `0xD2C6EF10` → `parse_v16_motor_setup_response()`.
+- CMD `0x0A` / marker `0x4879187D` → `parse_v16_motor_signal_setup_response()`.
+
 Still requiring full field-level reconstruction before implementation:
 - CMD01 / CMD1E ESC ID list formats and target correlation.
 - CMD09 / CMD0A / CMD1B shared motor-signal response layouts and distinctions.
@@ -121,3 +125,14 @@ Do not implement a field schema from method names alone. Keep undecoded response
 - No firmware was flashed.
 - Cryptographic key material, protected lookup tables and secret provisioning values are intentionally excluded.
 - Ghidra decompiler output is derived pseudocode, not the original source code.
+
+
+## 7. V1.6 single-profile response decoding
+
+The V1.6 response handler separates two profile responses which the V1.7 path later presents through the combined CMD `0x1C` response:
+
+- CMD `0x09` validates the 32-bit marker `0xD2C6EF10`, then walks the configured profile's ordered values and calls `FUN_0049a5c0` for each value. The setup progress counter advances by one.
+- CMD `0x0A` validates marker `0x4879187D`, performs the same metadata-driven value walk, and advances the progress counter by two.
+- Both success paths activate `ftescMotorSignalReadAck(QString,bool)` (UartComm signal index 7). If the expected marker/control value does not match, `FUN_0049ab10` emits the diagnostic `Invalid SecretKey` and returns false.
+
+The per-value parser `FUN_0049a5c0` reads the same native value families supported by `decode_profile_block`: scaled 16-/32-bit integers and float32 for floating entries; unsigned/signed 8-, 16- and 32-bit integers for integer entries; and signed byte values for the remaining enum/boolean-like classes. The offline V1.6 functions reuse `decode_profile_block()` with the correct marker and caller-supplied profile order/metadata. Unconsumed tail bytes are preserved as `trailing_data` rather than silently discarded.
