@@ -122,7 +122,7 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Confirmed the shared lower-level sender routes the same framed byte array into the BLE branch when BLE is connected.
 - [x] Recovered the BLE branch's fixed 20-byte application chunk stride and asynchronous queue pump.
 - [ ] Resolve the final `writeCharacteristic` call, exact write mode, CCCD value, negotiated ATT MTU and passive trace.
-- Static BLE workstream: 60% → 75%; whole-product score remains 72.2%.
+- Static BLE workstream: 60% → 80%; whole-product score remains 72.6%.
 
 
 ## 2026-11-22 — CI closure and VESC stream resynchronization
@@ -132,3 +132,10 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Pass GitHub Actions run #156: 159 unit tests, deterministic source restores/catalog/profile generation and compileall.
 - [x] Raise reproducibility/tests/CI work package from 95% to 100%.
 - New weighted progress: **79.9 / 110 = 72.64% ≈ 72.6% (73% rounded)**.
+
+
+### BLE final-write narrowing — 2026-11-22
+
+- [x] Identify an indirect call candidate at `0x00404FEC` with arguments shaped like `QLowEnergyService::writeCharacteristic(characteristic, QByteArray, WriteMode)`.
+- [ ] Prove the computed target `0x00B5A1D0` in the Enigma-protected region maps to the Qt symbol, and decode the observed third argument `1` to its actual WriteMode.
+- Static BLE workstream: 75% → 80%; this does not increase the whole-product score because no live transport or desktop feature was implemented.
