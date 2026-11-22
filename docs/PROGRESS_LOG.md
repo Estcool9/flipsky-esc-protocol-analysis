@@ -463,3 +463,21 @@
 - Fresh public clone: **107 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **88% to 89%**. Variable-text response paths are now 90%; the CMD 0x11 string boundary/encoding and suffix semantics remain unvalidated without a live capture.
 - No hardware response was captured.
+
+
+## 2026-11-22 — Setup response signals and high-level decoders
+
+- Read Qt signal wrapper machine code and decoded the UartComm meta-object indexes:
+  - index 7 `ftescMotorSignalReadAck(QString,bool)`;
+  - index 8 `ftescMotorSignalSecretKeyCheckAck(int)`;
+  - index 9 `ftescTopFlowSetupReadAck(QString,bool)`;
+  - index 10 `ftescTopFlowSecretKeyCheckAck(int)`.
+- Corrected response mapping: CMD 0x1B no-DATA status → index7; CMD 0x1C two marker blocks → indexes8 and7; CMD 0x1D/0x3A/0x3D no-DATA status → index9; CMD 0x3B/0x3C TopFlow marker block → indexes10 and9.
+- CMD 0x1C checks both markers (0xD2C6EF10 and 0x4879187D) and expected vs actual payload length; emits secret-key status 0 on success, -1 on failure.
+- CMD 0x3B/0x3C checks marker 0x54464346 and payload length; emits TopFlow secret-key status 0 or -1.
+- Added `parse_setup_write_ack()`, `parse_motor_signal_setup_response()` and generic `parse_topflow_setup_response()`.
+- Added three tests for two-block motor-signal response, generic TopFlow response and no-DATA ACKs.
+- Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) and [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
+- Fresh public clone: **110 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **89% to 90%**. Motor-signal response decoding is covered; TopFlow metadata, SKU mapping and live validation remain open.
+- No hardware traffic was generated.
