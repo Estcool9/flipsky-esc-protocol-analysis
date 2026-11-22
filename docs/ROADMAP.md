@@ -1,6 +1,6 @@
 # Technical roadmap
 
-**Overall estimated progress: 68% (2026-11-22).**
+**Overall estimated progress: 70% (2026-11-22).**
 
 ## Phase A — Static application mapping
 
@@ -25,7 +25,7 @@
 - [x] Extract public V1.6 command IDs and main payload layouts.
 - [x] Compare public V1.4 and V1.6 protocol revisions.
 - [x] Build offline frame and selected command/telemetry codecs.
-- [x] Run synthetic test vectors (36 passed).
+- [x] Run synthetic test vectors (51 passed, 0 failed on a fresh public clone).
 - [x] Map most V1.7 outbound command IDs to UartComm request builders; full payload schemas remain open.
 - [ ] Map all V1.7 numeric response IDs to Qt acknowledgements and parsers (0x00, 0x01, 0x0F, 0x11, 0x16, 0x18, 0x1A, 0x1E, 0x29 and setup-family IDs are now correlated).
 - [ ] Trace the separate CMD 0x02 one-shot request path and confirm V1.7 offsets against V1.6.
@@ -53,6 +53,8 @@
 
 - [x] Implement parser and encoder for confirmed outer frame layout.
 - [x] Implement selected V1.6 command and telemetry decoders.
+- [x] Decode V1.7 CMD 0x00 extended angular fields and PAS RPM offline.
+- [x] Cross-check short-frame bytes against a separately maintained FTESC UART implementation.
 - [x] Create synthetic test vectors and unit tests.
 - [x] Add offline stream-chunking, partial-frame retention and resynchronization tests (synthetic data only).
 - [ ] Add offline capture replay using authorized passive captures.
