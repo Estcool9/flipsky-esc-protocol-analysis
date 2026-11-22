@@ -725,3 +725,5 @@
 - Inventorié `/` puis `/root` en lecture seule, sans suivre les liens symboliques.
 - Lu `/root/infrastructure-helper-skill.md` (SHA-256 `fe43566ffb397cb45f7a08fb54c3742b4f98e94710087cc58119094ac439b69b`). Le helper identifie le CT REA 107 à `192.168.10.107:22`, SSH public-key only, service `rea-mcp`, MCP `:8765` réservé à MCPHub. Connexion SSH prescrite : `ssh -o BatchMode=yes -o ConnectTimeout=5 root@192.168.10.107 'hostname; systemctl is-active rea-mcp'`.
 - Prochaine action : exécuter uniquement cette vérification SSH passive, puis réutiliser REA pour analyser les fonctions existantes. Aucun binaire Flipsky, firmware ou ESC n'a été exécuté/commandé.
+
+- Vérification SSH depuis Open Terminal vers CT107 réussie : `hostname=rea-mcp`, `systemctl is-active rea-mcp=active`, exit code 0. La connexion a utilisé la clé SSH existante en mode BatchMode ; aucun secret n'a été lu ni transmis.
