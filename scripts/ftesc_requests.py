@@ -69,6 +69,17 @@ def _scaled_i16(value: int | float, scale: int, label: str) -> bytes:
     return scaled.to_bytes(2, "big", signed=True)
 
 
+def _truncated_i16(value: int | float, label: str) -> bytes:
+    """Encode a finite numeric value as signed int16, truncating toward zero."""
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise SetupValueError(f"{label} must be finite")
+    truncated = int(numeric)
+    if not -(1 << 15) <= truncated < (1 << 15):
+        raise SetupValueError(f"{label} does not fit signed int16 after truncation")
+    return truncated.to_bytes(2, "big", signed=True)
+
+
 def _u16(value: int, label: str) -> bytes:
     if not isinstance(value, int) or not 0 <= value <= 0xFFFF:
         raise SetupValueError(f"{label} must fit unsigned 16-bit")
@@ -174,13 +185,16 @@ def build_identify_motor_over_can_info(
 ) -> bytes:
     """Build CMD 0x0F using the native argument order and field widths.
 
-    The native method serializes arg2, low byte of arg1, rounded arg4,
-    rounded arg3*100, then arg5. Semantic field names are not established.
+    The native method serializes arg2, low byte of arg1, arg4 truncated
+    toward zero to int16, arg3*100 rounded half-away-from-zero to int16,
+    then arg5. Semantic field names/units are not established. The
+    historical parameter name arg4_rounded_int16 is retained for API
+    compatibility, although the native conversion truncates rather than rounds.
     """
     data = (
         _u8(arg2_byte, "arg2_byte")
         + _u8(arg1_byte, "arg1_byte")
-        + _scaled_i16(arg4_rounded_int16, 1, "arg4_rounded_int16")
+        + _truncated_i16(arg4_rounded_int16, "arg4_rounded_int16")
         + _scaled_i16(arg3_scaled_100, 100, "arg3_scaled_100")
         + _u8(arg5_byte, "arg5_byte")
     )
