@@ -33,6 +33,13 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 - V1.7 BLE GATT service/TX/RX UUIDs statically identified; controller/service signal flow and CCCD 0x2902 lookup mapped. Live BLE remains unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
+## Source intake and tooling
+
+- Scanned /Projet Perso/Revolt-Engine/Software in Nextcloud: 92 entries, tree not truncated.
+- Found three V1.6 Windows builds (2025-10-14, 2026-08-06, 2026-09-12), a V1.6 macOS DMG, and the V1.6 Android BLE APK. These binaries are inventoried but not staged on the REA host; see [NEXTCLOUD_SOFTWARE_INVENTORY.md](NEXTCLOUD_SOFTWARE_INVENTORY.md).
+- Ghidra 12.2 is available and sufficient for the current PE32 analysis. Hopper is missing, IDA is not configured, and Kuna is not configured/does not admit PE in the current provider.
+- Android APK deep analysis needs a local APK plus JADX MCP JAR/JDK; Apktool and ADB are not configured. Other optional provider gaps are listed in [TOOLING_AUDIT.md](TOOLING_AUDIT.md).
+
 ## Workstream progress
 
 | Workstream | Progress |
