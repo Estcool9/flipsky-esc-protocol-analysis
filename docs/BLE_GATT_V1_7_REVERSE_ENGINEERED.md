@@ -50,7 +50,7 @@ The controller setup contains a timer call with literal argument `70000`; its ex
 
 ## Transport direction and current unknowns
 
-The class metadata includes the method names `writeData` and `sendNextPacket`, plus the signal names `dataRx(QByteArray)` and `unintentionalDisconnect()`. The FtescLowLevelFace constructor FUN_00483910 explicitly connects BleUart::bleDataRx(QByteArray) (string at 0x0052DF35) to dataRx(QByteArray) (string at 0x0052DF4C) around call-site 0x0048456D. This establishes the BLE byte-array ingress handoff to an application-level receiver. The receiver body and downstream handoff to the shared UART frame/stream parser are still not proven. The UI/runtime path that invokes the write methods is not yet fully mapped.
+The class metadata includes the method names `writeData` and `sendNextPacket`, plus the signal names `dataRx(QByteArray)` and `unintentionalDisconnect()`. The FtescLowLevelFace constructor FUN_00483910 explicitly connects BleUart::bleDataRx(QByteArray) (string at 0x0052DF35) to dataRx(QByteArray) (string at 0x0052DF4C) around call-site 0x0048456D. This establishes the BLE byte-array ingress handoff to an application-level receiver. The constructor-level `dataRx(QByteArray)` receiver body remains unresolved. Separately, the recovered Qt meta-call table maps `bleDataRx` to native `FUN_004828D0`; this callback is now proven to forward its QByteArray to the shared UART frame/stream handler `FUN_0049CA30` (see below). These are two distinct static observations and should not be conflated. The UI/runtime path that invokes the write methods is not yet fully mapped.
 
 Still unresolved:
 
@@ -64,7 +64,7 @@ Still unresolved:
 
 ## Progress update
 
-The BLE reverse-engineering sub-workstream is raised from **40% to 60%**: the service and both characteristic UUIDs are identified, the controller/service signal flow is mapped, and the notification descriptor lookup is located. The transmit implementation, write mode, chunk/MTU behavior and hardware capture remain unresolved.
+The BLE reverse-engineering sub-workstream is now **75%**: service/TX/RX UUIDs, controller/service signal flow and CCCD lookup are mapped; the BLE receive callback is proven to enter the shared AA/BB stream parser, and the shared transmit path uses 20-byte application chunks. The exact GATT write mode, CCCD value, negotiated MTU and live behavior remain unknown. The final GATT API call/write mode, CCCD value, negotiated MTU, retry policy and passive hardware capture remain unresolved; the 20-byte application chunk stride is now statically established.
 
 The whole-product score remains **72.2% (displayed 72%)**. This static reverse-engineering milestone does not create a desktop application, implement a live BLE transport, or validate a real controller, so it does not increase the weighted product-completion score.
 
@@ -91,3 +91,15 @@ All conclusions here are static observations from the named V1.7 executable. No 
 - This closes the static byte-array ingress handoff from the BleUart object into the application receiver, but not the parser handoff or receive buffering semantics.
 - BLE sub-workstream estimate: 55% to 60%; whole-product progress unchanged at 72.2% because there is still no live transport implementation or hardware validation.
 - Additional REA evidence: constructor assembly ev_48b77f16a200f240b408090beb0e346d37a46411cd19201282043055d8cc9e21, signal xref ev_9c95801b699f876f5f04a72012ccdab2c9a91c1aeafbdd3f494b31e38eb6fd9f, slot xref ev_499d842f955f91515d02843ae36178e872668e44098d657a6a0a195b717f9962, string inventory ev_63e64d98826b5c804fe70b6c398031928f0f6295d8c6b7c3d8c17038747f8103.
+
+
+## Shared BLE/UART parser and transmit chunking — 2026-11-22
+
+- The Qt meta-call map identifies `bleDataRx` (index 24) at native `FUN_004828D0` / `0x004828D0`.
+- Its decompilation forwards the incoming `QByteArray` directly to `FUN_0049CA30`, the same incremental AA/BB frame-stream handler used by the UART receive path. BLE RX therefore reuses the common application-level framed-stream parser.
+- The shared low-level send slot `FUN_00481850` checks the BLE-connected flag and, when active, passes the same framed byte array to `FUN_004050C0`.
+- `FUN_004050C0` slices the byte array at successive offsets with stride `0x14` (20 bytes), and feeds an asynchronous queue pump `FUN_00404E80`.
+- This is a fixed application-level chunk stride, not proof of a negotiated 20-byte ATT MTU. The exact final `writeCharacteristic` call, its `WriteMode`, CCCD value and MTU negotiation are unresolved. The PE import-table inspection is partial because descriptor RVA `0xB9F000` has ambiguous/non-contiguous mapping.
+- Evidence: `ev_0b96fa9d9daca6528da735c37d6a4fa85f5cede2be619f08d07cfa494e6da22b`, `ev_0863f4b9c9cbaa26854a9389f1d2d4f01af0cd11963bc5043a68b1b315c57def`, `ev_26f4ad2230070fd6a96d3322a1e2c2fb5985d8d1c5709c228825789f669a36d1`, `ev_14bbb5c07a7e3c24e7f64e40abe36d4c543e0a8939b2ffd966061e649720f728` and `ev_64791b4adf0065ca2f544059fa314ba5862bbfd4c675fb96244f53cd84e50c5e`.
+- Detailed call-path report: [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
+- No BLE scan, pairing, connection, characteristic read/write or ESC command was performed.
