@@ -120,6 +120,12 @@ The BLE path is now linked to the same application framing layer used by UART.
 
 **Conclusion:** the shared outbound path sends the already-framed byte array into a fixed 20-byte application-chunk queue for BLE. This is not proof that the negotiated ATT MTU is 20 bytes or that the chunk size is dynamically negotiated.
 
+### Likely write call site (not yet proven)
+
+The queue pump `FUN_00404E80` has an indirect call at `0x00404FEC` with the BLE service object in ECX, a characteristic-like object, a queued `QByteArray`, and integer `1` as the third argument. Ghidra resolves its computed reference to protected target `0x00B5A1D0`. This argument shape strongly resembles `QLowEnergyService::writeCharacteristic(characteristic, QByteArray, WriteMode)`, and the matching mangled Qt symbol string is present in the executable. The target decompiles as invalid Enigma-protected code, so the final target-to-symbol mapping is not proven and the semantic meaning of argument `1` is unknown.
+
+Evidence: `ev_c6c574f4a7ccf94925be53eafce0df3c280bdcd98d789a023f7cbfe863da9949`, `ev_090dc82edec65beddd376fa5846a60d42657cb3321d854ee86984a3165050b51`, `ev_7a13690a90241ef5b49b36e0b1b571472b9aa6f90edb1f4d180a109a5eaaf10b`.
+
 ### Exact GATT write boundary still unresolved
 
 The executable contains the mangled symbol string for `QLowEnergyService::writeCharacteristic(const QLowEnergyCharacteristic&, const QByteArray&, QLowEnergyService::WriteMode)`. However, the PE import descriptor at RVA `0xB9F000` has ambiguous/non-contiguous virtual mapping, and the protected indirect-dispatch path has not yielded a proven call-site-to-import edge. Therefore the exact API call, write-with-response versus write-without-response mode, and descriptor value remain unknown. The already observed lookup of descriptor UUID `0x2902` is not enough to infer its value.
