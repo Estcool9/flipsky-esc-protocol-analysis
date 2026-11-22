@@ -1,7 +1,7 @@
 # Technical roadmap — open-source Flipsky client
 
 **Reference date:** 2026-11-22  
-**Overall project progress: 72.2% unrounded (72% rounded)** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); 79.4 / 110 = 72.18%).
+**Overall project progress: 72.6% unrounded (73% rounded)** (weighted whole-product estimate; scoring table in [STATUS.md](STATUS.md); 79.9 / 110 = 72.64%).
 
 ## Phase A — Artifact intake and static reverse engineering
 
@@ -87,7 +87,8 @@
 - [x] Regenerate parameter and profile catalogs deterministically.
 - [x] Add GitHub Actions for artifact restore, regeneration compare, unit tests and compileall.
 - [x] Maintain tests for FTESC framing, stream recovery, requests, responses, setup serializer, firmware blocks, direct CAN, generic XML scanning and VESC UART/CAN.
-- [x] Fresh REA clone test run: **148 passed, 0 failed**.
+- [x] Fresh REA clone test run: **148 passed, 0 failed** (earlier baseline).
+- [x] GitHub Actions run #156: **159 passed, 0 failed**, 25/25 research payloads restored, parameter catalog/profile exports regenerated deterministically, and Python compileall passed.
 - [ ] Add protocol capture replay fixtures from authorized passive traces.
 - [ ] Build a benign fake-ESC simulator for read-only responses.
 - [ ] Perform a staged bench test with a known ESC model, firmware and mechanically safe configuration.
@@ -122,3 +123,12 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Recovered the BLE branch's fixed 20-byte application chunk stride and asynchronous queue pump.
 - [ ] Resolve the final `writeCharacteristic` call, exact write mode, CCCD value, negotiated ATT MTU and passive trace.
 - Static BLE workstream: 60% → 75%; whole-product score remains 72.2%.
+
+
+## 2026-11-22 — CI closure and VESC stream resynchronization
+
+- [x] Fix the ambiguous-prefix case where a corrupted frame terminator `0x03` can be parsed as a medium-frame start and mask the following valid frame.
+- [x] Validate later candidate frames only after full declared length, CRC and end-marker checks; retain incomplete input when no later valid candidate exists.
+- [x] Pass GitHub Actions run #156: 159 unit tests, deterministic source restores/catalog/profile generation and compileall.
+- [x] Raise reproducibility/tests/CI work package from 95% to 100%.
+- New weighted progress: **79.9 / 110 = 72.64% ≈ 72.6% (73% rounded)**.
