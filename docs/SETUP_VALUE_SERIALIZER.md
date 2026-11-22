@@ -78,18 +78,26 @@ The XML contains no observed `valType=1,valueTET=8` records, but the native func
 ## 5. Offline implementation
 
 Added:
-- `scripts/ftesc_setup_serializer.py`: scalar encoder and marker-prefixed ordered block builder;
-- `tests/test_ftesc_setup_serializer.py`: tests for float32, scaled 16/32-bit values, integer widths, byte types, marker order, unsupported types and range failures.
+- `scripts/ftesc_setup_serializer.py`: scalar encoder, marker-prefixed block builder, and `encode_profile_block()` using explicit XML sequence IDs;
+- `scripts/ftesc_profiles.py`: validates and extracts `ValueSeque` order and omitted values from each XML resource;
+- `tests/test_ftesc_setup_serializer.py`: tests for float32, scaled 16/32-bit values, integer widths, byte types, marker order, explicit profile order, unsupported types and range failures;
+- `tests/test_ftesc_profiles.py`: tests for sequence ordering, omissions, duplicate IDs and unknown IDs.
 
 The implementation is intentionally strict about numeric range and finite values. It does not connect to USB, serial, CAN or BLE and does not send data to a controller.
 
-The exact parameter ordering and selection rules for every complete profile remain a separate task. This module only reproduces the primitive encoding and observed marker/block structure.
+The exact wire order is now recovered from each XML resource's `ValueSeque` element. It differs from the `Values` element order in all 13 resources. `scripts/ftesc_profiles.py` extracts this sequence and records values present in `Values` but omitted from `ValueSeque`; `encode_profile_block()` uses the explicit sequence rather than dictionary/XML `Values` order. Product/hardware selection logic and conditional second-block selection remain separate tasks.
 
-## 6. Verification
+## 6. Profile order extraction
 
-The published GitHub tree was cloned afresh on REA and tested:
+Across the 13 XML resources, `Values` contains 736 entries while `ValueSeque` contains 721 entries. There are 15 omitted values, no duplicate sequence entries, and no sequence IDs missing from `Values`. The exact ordered artifacts are stored as `analysis-data/profile-order.json.gz.b64` and `analysis-data/profile-order.csv.gz.b64`; `scripts/restore_payloads.py` restores them automatically. The small per-resource summary is `analysis-data/profile-order-summary.json`.
 
-- **46 tests passed, 0 failed**;
+See [V1_7_PROFILE_SERIALIZATION_ORDER.md](V1_7_PROFILE_SERIALIZATION_ORDER.md).
+
+## 7. Verification
+
+The published GitHub tree was cloned afresh on REA, the compressed XML/catalog/profile-order artifacts were restored, and the scripts were tested:
+
+- **77 tests passed, 0 failed**;
 - Python `compileall` completed successfully;
 - tests include the existing frame parser, command codec, streaming decoder and new typed setup serializer.
 
