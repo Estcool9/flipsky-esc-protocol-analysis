@@ -653,3 +653,16 @@
 - Whole-product weighted score unchanged at **72.6%** (79.9 / 110). Negotiated ATT MTU, live outcomes, retries/reconnect and hardware validation remain open.
 - Updated [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_GATT_V1_7_REVERSE_ENGINEERED.md](BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md), STATUS and ROADMAP.
 - No APK/EXE execution, ADB handset access, BLE scan/connection/GATT operation, UART/CAN transmission or ESC command was performed.
+
+
+## 2026-11-22 — ARMv7 Android V1.6 BLE cross-ABI verification
+
+- Analyzed `/data/analysis/extracted/v1.6_ble_native/lib/armeabi-v7a/libFilpsky_ESC_Tool_V1.6_20251014_armeabi-v7a.so`, SHA-256 `8ba92821d1310762ae582a9cbb07918e7e1d416238ac8110be6a04063d8b0562`, using targeted Rizin 0.9.1 disassembly and ELF relocation inspection.
+- `BleUart::writeData` at `0x000C6FAC` loads `0x14` at `0x000C6FD0`, and calls `QByteArray::mid` at `0x000C701C` in the loop: 20-byte application chunks.
+- `BleUart::sendNextPacket` at `0x000C70BC` loads 1 at `0x000C71C8`, stores the WriteMode argument, places it in the stack argument slot at `0x000C71E0`, and directly calls `QLowEnergyService::writeCharacteristic(..., WriteMode)` at `0x000C71F0`. Qt 5.15 enum value 1 = `WriteWithoutResponse`.
+- `BleUart::serviceStateChanged` at `0x000C8694` uses CCCD UUID `0x2902` (`0x000C8950`), calls `QByteArray::fromHex` (`0x000C89FC`) and `QLowEnergyService::writeDescriptor` (`0x000C8A10`). The ARMv7 image contains a unique `0100` literal at VA `0x0026F7D9`; Rizin did not recover a direct cross-reference from that literal to this method, so the exact ARMv7 CCCD bytes are a strong match to the ARM64-proven `01 00`, but this one literal-to-call edge remains unproven.
+- `BleUart::updateData` at `0x000C8C38` and `BleUart::dataRx` signal thunk at `0x0022AF34` establish the receive event path. `FtescLowLevelFace::bleDataRx` at `0x00202DC8` calls PLT `0x000B159C` via GOT `0x00809294` (`QByteArray` copy constructor), then PLT `0x000C0194` via GOT `0x0080E13C` (`uartPackData::uartPackDataHandle(QByteArray)`). This independently confirms that ARMv7 BLE RX uses the common FTESC stream parser.
+- Cross-ABI conclusion: ARM64 and ARMv7 confirm identical application-level 20-byte chunks, direct Qt WriteWithoutResponse and common RX parser. ARM64 independently provides the direct CCCD `0100` literal-to-write proof; ARMv7 matches the same method/literal but direct xref was not recovered.
+- Android/BLE static sub-workstream: 90% → 95%. Qt signal/slot connection edge, negotiated ATT MTU, runtime queue/notification behavior, and Windows V1.7 protected call target remain unresolved. Whole-product weighted score unchanged at **72.6%** (79.9 / 110).
+- Updated [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), STATUS and ROADMAP.
+- No Android device, BLE, GATT, UART, CAN or ESC operation was performed.
