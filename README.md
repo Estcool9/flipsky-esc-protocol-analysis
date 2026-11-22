@@ -25,9 +25,9 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **80%** |
+| **Overall estimate** | **82%** |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [docs/CAN_FORWARDING_STATE.md](docs/CAN_FORWARDING_STATE.md), [docs/FTESC_CAN_PROTOCOL_V1.4.md](docs/FTESC_CAN_PROTOCOL_V1.4.md), [docs/V1_7_ONE_SHOT_CMD_02_STATUS.md](docs/V1_7_ONE_SHOT_CMD_02_STATUS.md), [docs/V1_7_PROFILE_SERIALIZATION_ORDER.md](docs/V1_7_PROFILE_SERIALIZATION_ORDER.md), [docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md](docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md), [docs/V1_6_C_REFERENCE_CROSSCHECK.md](docs/V1_6_C_REFERENCE_CROSSCHECK.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
+See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), [docs/CAN_FORWARDING_STATE.md](docs/CAN_FORWARDING_STATE.md), [docs/FTESC_CAN_PROTOCOL_V1.4.md](docs/FTESC_CAN_PROTOCOL_V1.4.md), [docs/V1_7_ONE_SHOT_CMD_02_STATUS.md](docs/V1_7_ONE_SHOT_CMD_02_STATUS.md), [docs/V1_7_PROFILE_SERIALIZATION_ORDER.md](docs/V1_7_PROFILE_SERIALIZATION_ORDER.md), [docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md](docs/V1_7_FIRMWARE_CONFIG_DISCOVERY.md), [docs/V1_6_C_REFERENCE_CROSSCHECK.md](docs/V1_6_C_REFERENCE_CROSSCHECK.md), [docs/V1_7_REQUEST_PAYLOAD_SCHEMAS.md](docs/V1_7_REQUEST_PAYLOAD_SCHEMAS.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -101,6 +101,7 @@ The repository contains a standard-library-only Python implementation:
 - `scripts/ftesc_stream.py`: incremental decoder retaining incomplete frames across chunks and recovering after invalid candidates.
 - `scripts/ftesc_can.py`: read-only decoder for FTESC V1.4 29-bit CAN identifiers and three periodic telemetry messages.
 - `scripts/ftesc_firmware.py`: offline-only V1.7 firmware erase/write payload and 240-byte XOR block codec.
+- `scripts/ftesc_requests.py`: offline V1.7 control, setup, telemetry and reset INFO request builders.
 - `tests/test_ftesc_frame.py`: unit tests for checksum, both frame forms, boundary lengths, incomplete input, corruption and concatenated frames.
 
 Run the test suite from the repository root:
