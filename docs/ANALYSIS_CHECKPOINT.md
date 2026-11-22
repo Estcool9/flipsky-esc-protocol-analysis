@@ -1,7 +1,7 @@
 # Analysis checkpoint — 2026-11-22
 
 **Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall estimated progress: 70%**  
+**Overall estimated progress: 71%**  
 **Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
@@ -191,3 +191,13 @@ Overall progress is a milestone-weighted estimate toward an evidenced protocol s
 - Added [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md).
 - Fresh clone test suite: **51 passed, 0 failed**; compileall succeeded.
 - Overall estimate: **70%**.
+
+
+## CAN target state — 2026-11-22
+
+- UartComm +0x0C = CAN-forward enabled; +0x10 = selected target ID.
+- UI selection validates ID <255, stores target and requests motor-signal setup CMD 0x1C.
+- Automatic ID discovery sends CMD 0x01; per-target setup iteration and TopFlow CMD 0x3B mapped.
+- The V1.7 code path that inserts CMD 0x10 + CAN ID into the outgoing payload and routes slave responses remains unresolved.
+- See [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
+- Overall estimate: **71%**.
