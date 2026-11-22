@@ -93,3 +93,12 @@ The public V1.6 UART document describes CMD 0x10 as the CAN-forward envelope, an
 ## 6. Safety and validation
 
 No CAN or UART command was transmitted. No physical ESC was connected. Do not infer that a target ID, setup read, or generic control operation is safe merely because the UI offers it.
+
+
+## 7. Direct CAN protocol is a separate layer
+
+The user's Nextcloud contains the official Flipsky **FTESC CAN Communication Protocol V1.4** (document FT-CM-CAN-20250423-04, issue date 2025-04-23, 22 pages). It defines direct 29-bit extended CAN identifiers with ESC ID in bits 8–15 and CAN command in bits 0–7, separate from the UART INFO command byte.
+
+The V1.4 CAN command namespace includes direct-CAN current/duty/eRPM/position commands (0x00–0x05, 0x12–0x14), periodic telemetry commands (0x0B–0x0D), and non-CRC variants (0x15–0x1B). This is not the UART command namespace: direct CAN command 0x00 is current-with-gear, whereas UART INFO command 0x00 is realtime telemetry.
+
+A separate offline decoder is implemented in `scripts/ftesc_can.py`; see [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md). It decodes identifiers and read-only telemetry, but it does not prove where V1.7 inserts its UART CMD 0x10 forwarding envelope.
