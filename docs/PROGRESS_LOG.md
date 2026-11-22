@@ -748,3 +748,5 @@
 - Inspection Rizin du xref `0x4b74bc` : fonction auto-nommée `fcn.004b74bc` contient un chargement de `0xc1f630` (`uartPackData`), un appel à `fcn.004bc0dc` puis un saut indirect via `[0xc53474]`. Il s'agit d'un stub/chemin de dispatch à qualifier ; ce n'est pas encore le codec UART lui-même. Analyse Ghidra de cette adresse à suivre.
 
 - Tentative décompilation Ghidra de `0x4b74bc` refusée : ce point Rizin est un bloc/stub à l'intérieur du flot, pas une entrée de fonction Ghidra. REA renvoie `procedure_not_found` et rappelle que les seeds Ghidra doivent être explicitement configurés dans un nouveau processus pour les handlers non atteints par l'auto-analyse. Aucun seed n'a été ajouté ; la cible reste intacte. Prochaine étape : inventaire Ghidra complet des procédures puis sélectionner une entrée réellement observée.
+
+- Tentative de recherche globale des procédures avec `rea search --detail summary` refusée par le CLI (`Unknown flag: --detail` sur cette commande). La syntaxe summary/evidence_output est spécifique à d'autres opérations. Aucun fichier `/tmp/flipsky-v16-procedures.json` n'a été créé ; recherche non comptée comme résultat.
