@@ -12,13 +12,13 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | Setup metadata, ValueSeque ordering and typed serializer | 10% | 95% |
 | Direct CAN and V1.7 gateway/slave routing | 10% | 60% |
 | Firmware authorization, transfer and bootloader flow | 10% | 55% |
-| Separate VESC/FSESC profile and source comparison | 10% | 80% |
+| Separate VESC/FSESC profile and source comparison | 10% | 85% |
 | Open-source desktop UI and real serial/BLE integration | 15% | 20% |
 | Reproducible extraction, unit tests and CI | 10% | 95% |
 | Hardware validation | 5% | 0% |
 | **Weighted overall estimate** | **100%** | **72%** |
 
-The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. A 72% project score does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
+The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. The VESC UART profile now includes an incremental stream layer; the new stream tests are committed but await CI execution. A 72% project score does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
 See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for the scoring model, evidence and remaining blockers.
 
