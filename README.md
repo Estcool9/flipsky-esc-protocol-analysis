@@ -160,7 +160,11 @@ See [Flipsky VESC V1.0 analysis](docs/FLIPSKY_VESC_PROTOCOL_V1.0.md), [protocol-
 
 ## BLE GATT reconstruction
 
-Static analysis of V1.7 now confirms the BLE UART service UUID (`0000fff0-0000-1000-8000-00805f9b34fb`), TX characteristic UUID (`0000fff2-0000-1000-8000-00805f9b34fb`) and RX characteristic UUID (`0000fff1-0000-1000-8000-00805f9b34fb`). The controller/service state callbacks and the lookup of CCCD descriptor `0x2902` are mapped. This is static evidence only: the actual write mode, descriptor value, MTU/chunking, and live BLE behavior are not verified. See [BLE_GATT_V1_7_REVERSE_ENGINEERED](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md).
+Static analysis of V1.7 confirms the BLE UART service UUID (`0000fff0-0000-1000-8000-00805f9b34fb`), TX characteristic UUID (`0000fff2-0000-1000-8000-00805f9b34fb`) and RX characteristic UUID (`0000fff1-0000-1000-8000-00805f9b34fb`). Controller/service state callbacks and the CCCD descriptor lookup (`0x2902`) are mapped.
+
+The receive callback `FUN_004828D0` passes the incoming `QByteArray` to the shared AA/BB incremental frame-stream handler `FUN_0049CA30`, the same parser used by UART. On transmit, the shared lower-level send slot routes the already-framed byte array into a BLE branch which slices it into fixed 20-byte application chunks and processes them through an asynchronous queue. These are static code observations, not a live BLE capture; 20 bytes is not asserted to be the negotiated ATT MTU.
+
+The final `writeCharacteristic` call target, response/no-response mode, exact CCCD value, negotiated ATT MTU, retries and live BLE behavior remain unverified. See [BLE_GATT_V1_7_REVERSE_ENGINEERED](docs/BLE_GATT_V1_7_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING](docs/BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md) and [TRANSPORT_PIPELINE](docs/TRANSPORT_PIPELINE.md).
 
 ## What remains before 100%
 
@@ -169,7 +173,7 @@ Static analysis of V1.7 now confirms the BLE UART service UUID (`0000fff0-0000-1
 3. Complete the firmware-update state machine, retries, bootloader transitions and exact image format; obtain a legitimate firmware sample for offline validation.
 4. Compare against a V1.6 executable if one becomes available.
 5. Map the packed Qt/QML resource tree and the remaining dynamic UI/property behaviour.
-6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, MTU/chunk size, UART baud selection and timing units. The three V1.7 BLE GATT UUIDs are now statically identified.
+6. Validate protocol assumptions against captured UART/CAN/BLE traffic and hardware, including BLE write mode, descriptor value, negotiated ATT MTU, retransmission, UART baud selection and timing units. The BLE receive parser reuse and fixed 20-byte application chunk stride are now statically identified.
 
 Hardware validation is still **0%**. The 92% estimate means the static evidence and offline implementation are substantially complete; it does not mean the protocol is safe or verified on a live ESC.
 
