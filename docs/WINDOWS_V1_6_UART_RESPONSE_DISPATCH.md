@@ -158,9 +158,14 @@ The recovered V1.6 branches have the following existing or newly added offline d
 | `0x21` | `parse_uuid_response` | Raw UUID DATA preserved |
 | `0x29` | `parse_imu_calibration_response` | Nine signed int32 values, each scaled by 1e6 |
 
-CMD `0x1E` now has an offline decoder, `parse_esc_id_enumeration_response()`, which returns D0 as `master_id`, D1 onward as `slave_ids`, and preserves `raw_ids`. The native handler creates a QVector-like byte list and emits `ftescGetIDResAck(QVector<int>,bool)`; the secondary boolean is intentionally not inferred. CMD `0x01` follows a similar native byte-vector path but is not listed in the public V1.6 command table; no semantic interpretation is assigned to it yet.
+CMD `0x1E` now has an offline decoder, `parse_esc_id_enumeration_response()`, which returns D0 as `master_id`, D1 onward as `slave_ids`, and preserves `raw_ids`. The native handler creates a QVector-like byte list and emits `ftescGetIDResAck(QVector<int>,bool)`; the secondary boolean is intentionally not inferred. CMD `0x01` follows a similar native byte-vector path but is not listed in the public V1.6 command table; `parse_unclassified_id_vector_response()` now preserves its DATA as a tuple of U8 values without semantic interpretation.
 
 
 ## 9. CMD1E offline codec coverage
 
 Added `EscIdEnumerationResponse` and `parse_esc_id_enumeration_response()` to `scripts/ftesc_responses.py`. The function validates CMD `0x1E`, preserves the raw DATA bytes, exposes D0 as the master ID and D1 onward as the slave IDs, and leaves the additional Qt signal boolean unspecified. The native case01 parser is kept as a raw/unknown vector because it is not documented in the official V1.6 command list.
+
+
+## 10. CMD01 raw vector preservation
+
+The V1.6 Windows handler builds a QVector-like byte list for command `0x01`, but the official V1.6 command table does not assign a command name/layout to this opcode. The offline API therefore exposes only `parse_unclassified_id_vector_response()` → `tuple[int, ...]`. It validates the command byte, preserves all DATA values as unsigned bytes and does not infer master/slave roles or the Qt signal's secondary boolean.
