@@ -17,7 +17,7 @@ This report maps the byte returned by `FUN_0049D370` to the switch cases in the 
 | `0x0D` | Reads one signed 32-bit value scaled by 1,000,000; calls `0x004BC0D0`. | PPM response; offline decoder added. |
 | `0x0E` | Reads six signed 32-bit values with scales 1,000,000; 1,000,000; 1; 1; 1; 1,000,000; calls `0x004BC120`. | Six-value ADC response; semantic channel labels remain unknown. |
 | `0x0F` | Converts the payload's string field to QString, reads a trailing status byte, and calls `0x004BC010`. | Motor-identification response: UTF-8-like label plus boolean status; offline decoder added. |
-| `0x11` | Reads three leading bytes, converts the following byte array to QString, reads a trailing byte, and invokes `0x004BBE10` and `0x004BBDD0`. | Major, minor, separate firmware-type byte, label text and trailing suffix byte; offline raw-preserving decoder added. |
+| `0x11` | Reads three leading bytes, converts the following byte array to QString, reads a trailing byte, and invokes `0x004BBE10` and `0x004BBDD0`. | Major, minor, boot/app marker (0xAC/0xEF), ASCII hardware name and hardware serial number; offline raw-preserving decoder added. |
 | `0x14` | Converts response DATA to QString and calls `0x004BBF50`. | Terminal-print UTF-8 text; offline decoder added. |
 | `0x16` | Reads one byte as boolean and calls `0x004BBD30`. | Firmware erase acknowledgement; offline decoder added. |
 | `0x18` | Reads one byte as boolean and calls `0x004BBD80`. | Firmware write-block acknowledgement; offline decoder added. |
