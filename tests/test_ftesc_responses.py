@@ -7,6 +7,7 @@ from scripts.ftesc_responses import (
     parse_auto_realtime_ack,
     parse_can_forward_response,
     parse_esc_id_enumeration_response,
+    parse_unclassified_id_vector_response,
     parse_motor_signal_setup_response,
     parse_v16_motor_setup_response,
     parse_v16_motor_signal_setup_response,
@@ -59,6 +60,14 @@ class FTESCResponseDecoderTests(unittest.TestCase):
         result = parse_imu_calibration_response(info)
         self.assertIsInstance(result, ImuCalibrationResponse)
         self.assertEqual(result.values, tuple(float(n) for n in range(1, 10)))
+
+    def test_unclassified_id_vector_response_preserves_raw_values(self):
+        self.assertEqual(parse_unclassified_id_vector_response(bytes.fromhex("01 04 07")), (4, 7))
+        self.assertEqual(parse_unclassified_id_vector_response(b"\x01"), ())
+
+    def test_unclassified_id_vector_response_rejects_other_command(self):
+        with self.assertRaises(ValueError):
+            parse_unclassified_id_vector_response(b"\x1E\x04")
 
     def test_esc_id_enumeration_response_master_then_slave_ids(self):
         result = parse_esc_id_enumeration_response(bytes.fromhex("1E 02 05 07"))
