@@ -153,5 +153,17 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [ ] Decompile application-level Android BLE method bodies and compare ARM64/ARMv7 behavior.
 - [ ] Decode Qt `.rcc` QML resources and find the app's actual characteristic writes/CCCD/MTU arguments.
 - [ ] Complete function-level Windows V1.6/V1.7 diffs; PE import descriptors are currently unreadable in the import workflow.
-- BLE static sub-workstream: 80% → 85%; V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
+- BLE static sub-workstream: 80% → 90% (Android V1.6 exact mode/CCCD/parser); V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
 - Detailed reports: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
+
+
+## 2026-11-22 — Android V1.6 exact BLE mode and CCCD
+
+- [x] Recover 20-byte chunk stride in `BleUart::writeData`.
+- [x] Recover direct `QLowEnergyService::writeCharacteristic` call in `BleUart::sendNextPacket`; C++ `WriteMode=1` maps to Qt 5.15 `WriteWithoutResponse`.
+- [x] Recover literal CCCD payload `0100` written to descriptor UUID `0x2902`; it selects notifications, not indications.
+- [x] Resolve BLE receive event to `BleUart::dataRx` signal and the `FtescLowLevelFace::bleDataRx` slot body to `uartPackData::uartPackDataHandle`, the shared FTESC stream parser.
+- [ ] Resolve the exact QObject signal/slot connect call site.
+- [ ] Determine negotiated ATT MTU and runtime behavior from an authorized passive capture/device; no runtime BLE operation has been performed.
+- [ ] Confirm whether Windows V1.7's protected indirect target is the same Qt write mode. Android V1.6 strongly corroborates but does not prove the protected Windows edge.
+- Android/BLE static sub-workstream: 85% → 90%. Whole-project score remains 72.6%.
