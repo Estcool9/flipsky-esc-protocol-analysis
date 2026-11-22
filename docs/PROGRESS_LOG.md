@@ -398,3 +398,18 @@
 - Fresh public clone: **91 tests passed, 0 failed**, `compileall` succeeded.
 - Overall estimate updated from **82% to 83%**. CMD 0x0F byte layout is resolved; semantic field labels and UART CMD 0x10 wrapping remain open.
 - No motor-identification command was sent.
+
+
+## 2026-11-22 — V1.7 response decoders expanded
+
+- Decompiled response dispatcher `0x004997A0` and helper `0x0049D510` in detail.
+- Confirmed CMD 0x0D: one signed int32 scaled by 1,000,000.
+- Corrected an earlier note: CMD 0x0E reads **six** signed int32 values, scales [1e6, 1e6, 1, 1, 1, 1e6], and emits the six-argument ADC signal.
+- Confirmed CMD 0x29 reads nine signed int32 values, each scaled by 1,000,000.
+- Confirmed CMD 0x16, 0x18 and 0x22 each read one byte as boolean; CMD 0x1A is a no-DATA acknowledgement.
+- Extended ESC ID vector parser to accept both CMD 0x01 and 0x1E response paths, which share the same Qt callback.
+- Added `scripts/ftesc_responses.py` and `tests/test_ftesc_responses.py` (7 tests); added one ID-list test.
+- Updated [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md) with corrected six-value ADC layout and new decoders.
+- Fresh public clone: payload restoration succeeded, **99 tests passed, 0 failed**, `compileall` succeeded.
+- Overall estimate updated from **83% to 84%**. Basic numeric/boolean responses are 70%; firmware version, variable strings, setup payloads and UUID details remain open.
+- No response was captured from hardware.
