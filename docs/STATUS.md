@@ -1,7 +1,7 @@
 # Project status
 
 **Reference date:** 2026-11-22  
-**Overall estimated progress: 58%** toward an evidenced protocol specification and independently testable offline client.
+**Overall estimated progress: 60%** toward an evidenced protocol specification and independently testable offline client.
 
 Percentages are milestone-weighted estimates, not measurements of certainty or commercial application feature completion.
 
@@ -18,13 +18,13 @@ Percentages are milestone-weighted estimates, not measurements of certainty or c
 | Receive-buffer and resynchronization analysis | 90% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 protocol comparison | 90% |
-| V1.7 command-ID and payload cross-reference | 65% |
+| V1.7 command-ID and payload cross-reference | 75% |
 | Offline frame and protocol codecs/tests | 100% |
 | Firmware update and TEA relationship | 75% |
 | VESC compatibility assessment | 25% |
 | V1.6 executable binary comparison | 0% |
 | Hardware validation | 0% |
-| **Overall estimate** | **58%** |
+| **Overall estimate** | **60%** |
 
 ## Confirmed evidence
 
