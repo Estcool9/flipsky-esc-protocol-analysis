@@ -14,7 +14,9 @@
 - [x] Add a generic bounded Zlib/XML resource scanner and regression tests.
 - [ ] Finish QML resource tree and all remaining UI/property dynamic behaviour.
 - [x] Inventory the complete Nextcloud Software tree and identify three dated V1.6 Windows builds plus Android BLE and macOS V1.6 packages.
-- [ ] Stage and compare the V1.6 Windows executables with V1.7 (the Nextcloud binaries are not yet on the REA host).
+- [x] Stage the three V1.6 Windows EXEs and BLE APK; verify SHA-256 before/after transfer.
+- [x] Perform first-pass PE32 identity and BLE/FTESC marker comparison across all V1.6 EXEs and V1.7.
+- [ ] Complete function-level V1.6-to-V1.7 comparison; import tables are partial due Enigma/virtual-span mapping.
 
 ## Phase B — FTESC protocol reconstruction
 
@@ -109,7 +111,7 @@
 4. **Desktop application:** no serial/BLE UI or device integration has been implemented yet.
 5. **BLE:** service/TX/RX UUIDs and controller/service callbacks are statically mapped; write mode, CCCD value, negotiated ATT MTU, retries and live behavior remain unknown; the static application-level chunk stride is 20 bytes.
 6. **Hardware:** no live controller validation has occurred.
-7. **V1.6 binary comparison / Android BLE cross-check:** the V1.6 EXEs and BLE APK are inventoried in Nextcloud but not staged in the REA sample directory.
+7. **V1.6 binary comparison / Android BLE cross-check:** all four artifacts are staged and hash-verified; Android native BLE and Qt bridge are mapped, and Windows marker-level comparison is complete. Function-level diffs, QML resource decoding and app-selected GATT values remain open.
 
 ## Safety boundary
 
@@ -139,3 +141,17 @@ All current protocol encoders and decoders are offline. No UART, CAN or BLE inte
 - [x] Identify an indirect call candidate at `0x00404FEC` with arguments shaped like `QLowEnergyService::writeCharacteristic(characteristic, QByteArray, WriteMode)`.
 - [ ] Prove the computed target `0x00B5A1D0` in the Enigma-protected region maps to the Qt symbol, and decode the observed third argument `1` to its actual WriteMode.
 - Static BLE workstream: 75% → 80%; this does not increase the whole-product score because no live transport or desktop feature was implemented.
+
+
+## 2026-11-22 — V1.6 Android native BLE and Windows cross-version pass
+
+- [x] Stage V1.6 Android BLE APK and three V1.6 Windows EXEs through Gateway SSH into CT 107; verify identical pre-/post-transfer SHA-256; leave Nextcloud originals untouched.
+- [x] Inventory APK (149 occurrences / 148 nodes, no integrity contradictions) and extract Android ARM64/ARMv7 Flipsky native and Qt5Bluetooth libraries.
+- [x] Inspect Qt Android Bluetooth Java bridge: characteristic write-type mapping, async I/O queue, 3-second timeout, MTU 512 request with 23-byte fallback, and CCCD notification bit handling.
+- [x] Recover Flipsky ARM64 symbol map for BleUart, FtescLowLevelFace, UartComm, frameFwUpdate, ftescValueTable and firmware/CAN functions.
+- [x] Compare targeted PE32 identity/marker strings across V1.6 builds and V1.7.
+- [ ] Decompile application-level Android BLE method bodies and compare ARM64/ARMv7 behavior.
+- [ ] Decode Qt `.rcc` QML resources and find the app's actual characteristic writes/CCCD/MTU arguments.
+- [ ] Complete function-level Windows V1.6/V1.7 diffs; PE import descriptors are currently unreadable in the import workflow.
+- BLE static sub-workstream: 80% → 85%; V1.6 EXE marker comparison: 0% → 25%; whole-product score remains **72.6%**.
+- Detailed reports: [ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md](ANDROID_V1_6_NATIVE_BLE_REVERSE_ENGINEERED.md), [BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md](BLE_TRANSPORT_SHARED_PARSER_AND_CHUNKING.md).
