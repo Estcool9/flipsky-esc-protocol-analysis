@@ -38,6 +38,7 @@
 - [ ] Recover slave response correlation and error/time-out mapping.
 - [x] Recover the V1.7 BLE UART service, TX and RX UUIDs from the native `BleUart` constructor.
 - [x] Map BLE controller/service signal registration, service discovery, characteristic-change callback and missing-characteristic paths.
+- [x] Confirm constructor connection from BleUart::bleDataRx(QByteArray) to app-level dataRx(QByteArray) receiver.
 - [x] Locate the CCCD descriptor UUID `0x2902` lookup in the service-state handler.
 - [ ] Finish the native `writeData` / `sendNextPacket` → `QLowEnergyService::writeCharacteristic` chain and identify response/no-response mode.
 - [ ] Confirm the exact CCCD value, negotiated MTU, packet chunk size and receive reassembly from native code and passive captures.
