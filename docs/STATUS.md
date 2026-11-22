@@ -61,7 +61,7 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 | VESC/FTESC family separation and compatibility evidence | 95% |
 | Open-source GUI and live transport integration | 20% |
 | BLE GATT UUIDs, controller/service lifecycle, shared parser ingress, Android V1.6 cross-ABI write mode and parser mapping | 95% |
-| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm metadata, firmware/CAN requests and response command-to-signal mapping) | 65% |
+| V1.6 executable comparison (PE identity, markers, UART frame/parser, UartComm requests/ACKs and separate CMD09/CMD0A setup block codecs) | 70% |
 | Hardware validation | 0% |
 
 ## Confirmed evidence
@@ -466,3 +466,12 @@ Rizin 0.9.1 and Ghidra 12.2 are available on REA CT107. All three Windows V1.6 e
 - Confirmed firmware ACK links for version (`0x11`), erase (`0x16`), block-write (`0x18`), UUID (`0x21`) and MCU-encrypt status (`0x22`); CAN/ID-list responses (`0x01`, `0x1E`); motor-signal read/setup (`0x09`, `0x0A`, `0x1B`); PPM/ADC (`0x0D`, `0x0E`); motor-identification (`0x0F`); terminal/sample print (`0x14`, `0x24`); and IMU calibration (`0x29`).
 - Exact Qt signal indexes and remaining schema gaps are recorded in [WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md](WINDOWS_V1_6_UART_RESPONSE_DISPATCH.md). This is a command-to-signal map, not complete byte-level decoders for every response.
 - V1.6 comparison sub-workstream advances **60% → 65%**. Whole-product weighted progress remains **72.6% (79.9 / 110)**.
+
+
+## V1.6 separate motor/setup response codecs — 2026-11-22
+
+- Recovered the V1.6 CMD `0x09` single-profile response with marker `0xD2C6EF10` and CMD `0x0A` single-profile response with marker `0x4879187D`.
+- Confirmed both validate the expected marker, then traverse the configured ValueSeque and decode each property using the same native value families as the existing profile decoder; marker mismatch emits `Invalid SecretKey`.
+- Added offline decoders `parse_v16_motor_setup_response()` and `parse_v16_motor_signal_setup_response()` plus tests for both markers, typed values and mismatch handling. Trailing bytes are preserved.
+- GitHub Actions #266: **167 tests passed, 0 failed**, compileall and artifact/catalog/profile regeneration passed.
+- V1.6 comparison sub-workstream advances **65% → 70%**; overall weighted progress remains **72.6% (79.9 / 110)**.
