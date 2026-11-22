@@ -86,21 +86,21 @@ def scan_zlib_xml(
         if len(decoded) > max_output_size or not decoder.eof:
             continue
         completed_streams += 1
+        consumed = len(raw_data[offset:]) - len(decoder.unused_data)
+        if consumed <= 0:
+            continue
+        next_cursor = offset + consumed
         if not decoded or b"<!DOCTYPE" in decoded.upper() or b"<!ENTITY" in decoded.upper():
+            cursor = next_cursor
             continue
         try:
             root = ET.fromstring(decoded)
         except ET.ParseError:
+            cursor = next_cursor
             continue
         tag = str(root.tag)
         if root_tag is not None and tag != root_tag:
-            consumed = len(raw_data[offset:]) - len(decoder.unused_data)
-            if consumed > 0:
-                cursor = offset + consumed
-            continue
-
-        consumed = len(raw_data[offset:]) - len(decoder.unused_data)
-        if consumed <= 0:
+            cursor = next_cursor
             continue
         prefix = (
             int.from_bytes(raw_data[offset - 4:offset], "big")
