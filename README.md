@@ -2,7 +2,7 @@
 
 Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. This repository records observed application architecture, embedded parameter resources, UART framing, CRC behaviour, evidence, scripts and the roadmap toward an independently testable protocol implementation.
 
-> **Overall progress: 68% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
+> **Overall progress: 70% (estimated, as of 22 November 2026).** This is a milestone-weighted estimate toward a documented protocol and an offline client, not a scientific measure of certainty or a measure of the commercial app's feature completeness.
 
 ## Project status
 
@@ -15,7 +15,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | UART/Qt signal-slot and meta-object mapping | 100% |
 | Outer frame format and CRC reconstruction | 100% |
 | Receive-buffer and resynchronization analysis | 90% |
-| Inner command IDs and payload layouts | 82% |
+| Inner command IDs and payload layouts | 86% |
 | Public V1.6 UART protocol extraction | 100% |
 | V1.4-to-V1.6 documented comparison | 90% |
 | V1.6 Windows binary comparison | 0% |
@@ -23,9 +23,9 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 | VESC compatibility assessment | 25% |
 | Offline frame codec and tests | 100% |
 | Hardware validation | 0% |
-| **Overall estimate** | **68%** |
+| **Overall estimate** | **70% |
 
-See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
+See [docs/STATUS.md](docs/STATUS.md), [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md), [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ANALYSIS_CHECKPOINT.md](docs/ANALYSIS_CHECKPOINT.md), [docs/QT_METACALL_DISPATCH_MAP.md](docs/QT_METACALL_DISPATCH_MAP.md), [docs/V1_7_RESPONSE_DISPATCH_MAP.md](docs/V1_7_RESPONSE_DISPATCH_MAP.md), [docs/V1_7_REQUEST_DISPATCH_MAP.md](docs/V1_7_REQUEST_DISPATCH_MAP.md), [docs/SETUP_VALUE_SERIALIZER.md](docs/SETUP_VALUE_SERIALIZER.md), [docs/TRANSPORT_PIPELINE.md](docs/TRANSPORT_PIPELINE.md), [docs/FIRMWARE_UPDATE_FLOW.md](docs/FIRMWARE_UPDATE_FLOW.md), [docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](docs/EXTERNAL_IMPLEMENTATION_CROSSCHECK.md), and [docs/NEXTCLOUD_SOURCE_INVENTORY.md](docs/NEXTCLOUD_SOURCE_INVENTORY.md).
 
 ## Artifact under analysis
 
@@ -105,7 +105,7 @@ Run the test suite from the repository root:
 python -m unittest discover -s tests -v
 ```
 
-**Observed result on REA:** 36 tests passed, 0 failures, including incremental stream tests.
+**Observed result on REA:** 51 tests passed, 0 failures, including frame, telemetry, setup-serializer and incremental-stream tests.
 
 This codec handles only the outer frame layer. It does not yet interpret inner command IDs, parameter payloads, authentication, firmware-update payloads or BLE-specific wrappers.
 
