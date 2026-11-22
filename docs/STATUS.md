@@ -372,3 +372,18 @@ Rizin 0.9.1 and Ghidra 12.2 are already installed in REA. The three V1.6 Windows
 - ARMv7 `FtescLowLevelFace::bleDataRx` resolves to `QByteArray` copy then `uartPackData::uartPackDataHandle`, independently confirming the common parser route.
 - Android/BLE static workstream: 90% → 95%. Exact QObject signal/slot connection, runtime MTU/link outcomes, Windows V1.7 protected write edge, and hardware validation remain open.
 - Whole-product score remains **72.6%** (79.9 / 110).
+
+
+## V1.6 Android QML, ValueSetup and firmware resources — 2026-11-22
+
+- Recovered all four application-owned Qt RCC collections from ARM64 `qInitResources_*` tables: QML (28 files), FTESC XML (24 files), firmware (31 resource entries) and icons (18 files). All 101 direct files were extracted, with zero decode errors.
+- QML application map includes main BLE/connect, real-time telemetry, motor setup, signal input/calibration (UART/PPM/ADC/PAS), CAN master/slave and firmware update screens.
+- `main.qml` instantiates `UartComm` and separate motor, signal and firmware `ValueSetups`; after ESC ID ACK, motor setup is requested then signal setup with 500 ms ACK wait intervals. Custom XML load/save is supported.
+- `ValueSetters.qml` maps metadata types to double, integer, enum, long-enum and short-enum editor components.
+- FTESC control setup resource grows 24 → 69 sequence entries from version 1.0 to 1.6. V1.6 motor official table has 94 metadata values but 93 ordered serialized values; `motor_rated_current` is not in `ValueSeque`. Do not serialize metadata-only fields automatically.
+- Firmware resource group has 31 entries / 17 unique images, each 165,880 bytes. All 17 have a first vector word in SRAM and a reset vector `0x08009019`, consistent with a Cortex-M flash image near `0x08009000`; exact MCU/model and protection format remain unknown.
+- Static firmware UI/API map: `qmlfirmwareList`, `qmlfirmwareData`, master-only update restriction, bootloader warning, erase-before-write call, custom-file 150 KiB limit and result codes -1..-8. The 150 KiB note is on the custom-file UI path; embedded images are larger and use a separate bundled path.
+- Android static UI/resource reconstruction sub-workstream: **80%**. Remaining: resolve every QML/native binding, runtime editor behavior, full firmware image mapping/protection, Qt signal-slot edge and compare against Windows desktop.
+- Overall weighted product estimate unchanged: **72.6%** (79.9 / 110). No desktop UI implementation or hardware validation is claimed.
+- Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
+- No APK/native code execution, handset access, BLE/GATT operation, UART/CAN transmission or firmware flashing was performed.
