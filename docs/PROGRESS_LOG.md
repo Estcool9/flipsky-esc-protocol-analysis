@@ -688,3 +688,13 @@
 - Android static UI/resource sub-workstream: 0% → 80%. Overall score remains **72.6%** (79.9 / 110); no desktop UI implementation or live hardware validation is claimed.
 - Detailed report: [ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md](ANDROID_V1_6_QML_VALUESETUPS_AND_FIRMWARE_RESOURCES.md).
 - No APK/native execution, Android device query, BLE/GATT operation, UART/CAN transmission or ESC command occurred.
+
+
+## 2026-11-22 — V1.6 ValueSetup metadata compatibility check
+
+- Compared source-embedded FTESC V1.6 ControlSetup/MotorSetup official XML with the current offline setup serializer's supported type branches.
+- All 69 control and 93 serialized motor records have valid required `valType` and `valueTET` combinations; no unsupported pair or missing scaling metadata was found in the serialized records.
+- Control pair counts: `(2,1)=7, (4,1)=19, (1,9)=33, (2,3)=1, (1,7)=3, (6,1)=3, (7,1)=3`.
+- Motor official pair counts: `(4,1)=9, (1,9)=61, (2,5)=1, (1,7)=13, (2,1)=9`.
+- The Values XML child order differs from ValueSeque in both profiles. The serializer must use ValueSeque; Values order is not a substitute. This independently validates the current vector-order approach and the metadata-only omission for `motor_rated_current`.
+- Whole-product progress remains **72.6%**; setup serializer work package remains 95% pending TopFlow metadata and live protocol validation.
