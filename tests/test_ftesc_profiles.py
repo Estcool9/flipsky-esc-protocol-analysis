@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.ftesc_profiles import ProfileError, build_profile_catalog, parse_profile
+from scripts.ftesc_profiles import ProfileError, build_profile_catalog, classify_family, parse_profile
 
 
 class ProfileOrderTests(unittest.TestCase):
@@ -10,6 +10,15 @@ class ProfileOrderTests(unittest.TestCase):
         path = Path(directory) / "resource_01_test.xml"
         path.write_text(text, encoding="utf-8")
         return path
+
+    def test_classifies_control_setup_family(self):
+        self.assertEqual(classify_family({"a": {"valName": "Input Signal Type"}}), "control_setup")
+
+    def test_classifies_motor_setup_family(self):
+        self.assertEqual(classify_family({"a": {"valName": "Motor Current(A)"}}), "motor_setup")
+
+    def test_classifies_motor_signal_setup_family(self):
+        self.assertEqual(classify_family({"a": {"valName": "FOC Current Kp"}}), "motor_signal_setup")
 
     def test_value_sequence_controls_order_not_values_order(self):
         xml = """<ValueSetups>
