@@ -764,3 +764,6 @@
 - Actualisé `docs/V1_7_BINARY_CROSS_REFERENCE.md` (commit `1baf8ac3b6d661759667216c37e45464b46bd4ab`) : inventaire REA corrigé, lien vers la comparaison et étapes restantes reformulées vers le diff fonctionnel.
 
 - Actualisé `docs/ROADMAP.md` (commit `68f1c61b2e2dbe8be63803c75d7dceacd68a8b95`) : nouvelle étape cochée pour la recherche de marqueurs sur les quatre PE et les stubs Qt, avec tâches restantes explicites pour le vrai chemin fonctionnel.
+
+- GitHub Actions run #225 (`45040895498`, head `68f1c61b2e2dbe8be63803c75d7dceacd68a8b95`) vérifiée via l'API et les logs du job `verify` : **162 tests passed, 0 failed** ; restauration des artefacts, régénération du catalogue de paramètres, régénération des profils ordonnés et `python -m compileall -q scripts tests` ont réussi.
+- Actualisé `docs/STATUS.md` (commit `daf1b3db9ef112aac3fef4af1ca8806a420882ba`) : les sept tests VESC stream sont maintenant inclus dans le décompte CI confirmé; lien vers le run #225 ajouté.
