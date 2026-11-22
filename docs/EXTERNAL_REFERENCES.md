@@ -55,3 +55,16 @@ Research checked on 2026-11-22. External references are used for product-family 
 9. **Flipsky FT110120A WP product page**  
    https://flipsky.net/collections/non-vesc/products/flipsky-ft110120a-wp-ip68-waterproof-110v-120a-brushless-esc-speed-controller-for-e-foil-electric-surfboard-underwater-thruster-rc-boat-e-skateboard-e-bike  
    Lists firmware V1.7 and above, Flipsky ESC Tool, and USB/CAN/UART/PPM/ADC communication ports. This is a product-specific example, not evidence that all FTESC SKUs use identical parameter tables.
+
+
+## Pinned VESC source comparison snapshots
+
+10. **VESC Tool source repository, pinned commit**  
+    https://github.com/vedderb/vesc_tool/commit/04614bf50909b78f23716af694bf19ab9745e7df  
+    Inspected `packet.cpp`, `commands.cpp`, `datatypes.h`, `bleuart.cpp` and `LICENSE` at the pinned revision. This revision is dated 2026-11-21 and declares GPL-3.0.
+
+11. **VESC firmware repository, pinned commit**  
+    https://github.com/vedderb/bldc/commit/6fda11c299a475d5e6a6d1c5f5efd2539643d70b  
+    Inspected firmware `datatypes.h`, `comm/comm_can.c`, `comm/commands.c`, and `documentation/comm_can.md` for CAN IDs, command payloads, extended identifier composition and COMM_FORWARD_CAN behavior. This revision is dated 2026-11-21.
+
+Machine-readable source/file digests are recorded in [vesc-reference-manifest.json](../analysis-data/vesc-reference-manifest.json). The full comparison is in [VESC_COMPARISON.md](VESC_COMPARISON.md).
