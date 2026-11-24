@@ -193,3 +193,7 @@ Hardware validation is still **0%**. The 72.6% weighted estimate reflects static
 ## Safety and scope
 
 No serial, CAN or BLE command was transmitted. No physical ESC was connected and no firmware was flashed. The builders are offline byte encoders, not hardware-control tools. Do not use parameter values, current limits, motor-control commands or firmware images from this research as operating recommendations without Flipsky documentation and controlled hardware validation.
+
+## Maintainer and related work
+
+This research is maintained by **Esteban Bueno**. For the maintainer’s portfolio and other engineering projects, see [est1.dev](https://est1.dev/). For practical electric-scooter electronics, controller diagnostics and preparation work in Réunion, see [Esteban’s profile at REVOLT ENGINE](https://revolt-engine.com/fr/equipe/esteban).
