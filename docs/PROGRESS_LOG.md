@@ -1,5 +1,45 @@
 # Progress log
 
+## 2026-11-25 — V1.7 TopFlow read selector and CAN-forward TX helper traced
+
+**Binary:** V1.7 2026-10-29 (`dba48a24…`), REA 6.10.1 / Ghidra 12.2.
+
+### Artifact and preservation
+
+- V1.7 source at CT107 `/data/samples/Flipsky_ESC_Tool_V1.7_20261029.exe`: 50,611,200 bytes; SHA-256 `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- Read-only working copy staged at `/data/analysis/pe/v1.7_20261029/Flipsky_ESC_Tool_V1.7_20261029.exe`; hash/size verified, original preserved.
+- V1.6 retained Evidence exported to `/data/analysis/reports/evidence-v1.6-pre-v1.7-20261125.json` (232 records, 19,440,198 bytes), then V1.6 was closed normally before opening V1.7.
+
+### TopFlow selection and request
+
+- String inventory confirms `ftesc/1.7/TopFlowSetupValueTable.xml` at `0x52ed00`; `FUN_00488010` selects this path when its selector argument is 1. Other values select the combined Motor/Control setup table path.
+- `FUN_00487fc0` maps selector 1 to `TopFlowMainController`.
+- `FUN_0048c700` is the Read Setup event path; it reads object offset `+0x40`. Value 1 selects manual setup; other values use the automatic realtime-data ACK path.
+- `FUN_004891d0` dispatches automatic setup reads using the same selector: 1 -> `FUN_004972f0`; other -> `FUN_00496bf0`.
+- `FUN_004972f0` logs `Send TopFlow setup read command`, calls the command factory with `0x3B`, applies a pending-response/factory-restore guard, and sends through `FUN_00495910`.
+- The exact product/SKU meaning of selector 1 and the actual TopFlow XML bytes remain unknown.
+
+### V1.7 CAN-forward correction
+
+- `FUN_00495910` reads the command byte from the QByteArray. When UartComm `+0x0C` (canForward) is active, it calls protected helper `PTR_FUN_00f591c0` with UartComm `+0x10` (canId), then with literal `0x10`, before forwarding through `FUN_004bbc20`.
+- The TopFlow 0x3B request explicitly uses this shared helper; 0x3B is in the diagnostic setup-command range 0x3A–0x3D.
+- This supersedes the earlier negative conclusion that V1.7 `FUN_00495910` simply forwarded the QByteArray unchanged. The two helper invocations are directly observed; the helper target is Enigma-protected (`0x00b5aadc`) and the lower send target (`0x00b5ac7c`) is also undecodable, so the emitted byte sequence is not yet proven by disassembly or capture.
+
+### Evidence IDs
+
+- TopFlow string search: `ev_8af1e4554c4ea676dc76a0ef18e14f0ef77a04d6c76e5242cb4802ee51b2d4f3`.
+- Selector-to-table helper: `ev_235d3fba5a5d3ea3a0063220e75e6dcf0ce439b7948bf7a6c176853bae419996`.
+- Read Setup handler: `ev_3c9d8b16b9747ab4221f94a6c1b0a053881cc6edb97777dc54e20dea8c07b554`.
+- TopFlow send command: `ev_3459543a9785d2fb17b4791c0aa3d262101352745b8df0e697175642abe9b634`.
+- Shared TX helper: `ev_5577ccc5290ab681440823555f6ab93ba5406f09896f8c684001c6f96e6b6b4b`.
+
+### Progress
+
+- Overall weighted estimate unchanged: **72.6% (73% rounded)**. This is a new reverse-engineering finding, not implementation or hardware validation.
+- No test suite was run and no ESC hardware was contacted; no UART/CAN/BLE command was transmitted.
+
+---
+
 ## 2026-11-25 — V1.6 CMD 0x10 CAN-forward wrapper confirmed in TX helper
 
 **Binary:** V1.6 2026-09-12 (`051d57a7…`), Ghidra 12.2 via REA 6.10.1, checkpoint active.
