@@ -15,7 +15,7 @@
 
 - A harmless direct Ollama API tool-call probe succeeded with `think:false` in 1.35 seconds.
 - With a tool-first system prompt and default thinking, the same probe succeeded in 5.62 seconds (62 generated tokens). This is a direct Ollama probe, not a full OpenWebUI delegation test.
-- Latest `ollama ps` showed LFM3 using 100% CPU, context 4096; GPU acceleration was not observed. No GPU/LXC passthrough changes were made.
+- Latest `ollama ps` showed LFM3 using 100% CPU, context 4096. Ollama runs in Proxmox CT 102; the Proxmox host has no NVIDIA device nodes or `nvidia-smi`, and CT 102's optional GPU bind mounts resolve to mode-000 device nodes (`nvidia-smi`: GPU access blocked by OS). The connected Ollama endpoint is CPU-only in practice, so the RTX 2060 is not available to this OpenWebUI connection. No GPU/LXC passthrough changes were made.
 - OpenWebUI logs contain repeated `InvalidToken. Stored OAuth client data is invalid` errors for MCP OAuth clients. Affected connectors need reauthorization; no secret key or tokens were changed.
 
 ### Project score
@@ -27,6 +27,7 @@
 
 - `21d9cb3c1b943a2332fff717783f4a229e0b8bdd` — added [OPENWEBUI_SUBAGENT_SETUP](OPENWEBUI_SUBAGENT_SETUP.md).
 - `7977e3c9c32fb1e98c875d964c59fc94482d5834` — linked the setup guide from README.
+- `586d5b1757cddefa3cffd0167588f05e11683235` — clarified the CPU-only Ollama/GPU access diagnosis.
 
 ---
 
