@@ -2,7 +2,7 @@
 
 **Binary:** `Flipsky_ESC_Tool_V1.7_20261029.exe`  
 **SHA-256:** `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`  
-**Analysis date:** 2026-11-22
+**Analysis date:** 2026-11-22 → updated 2026-11-25
 
 ## 1. UartComm CAN state fields
 
@@ -137,3 +137,45 @@ The Qt meta-object and transmit path are now mapped end-to-end:
 This is a strong negative finding for the normal send route, not proof that no alternate BLE, firmware-directory, gateway-specific or hidden route exists. It is also not proof that the published V1.6 CAN-over protocol is wrong. The offline `build_can_forward_info()` remains a separate implementation of the published envelope and is not a reproduction of the V1.7 binary's normal transmit chain.
 
 See [V1_7_OUTBOUND_TRANSMIT_CHAIN.md](V1_7_OUTBOUND_TRANSMIT_CHAIN.md) for exact QMetaObject addresses, method indexes, native function addresses and REA evidence anchors.
+
+## 11. V1.6 TX helper — CMD 0x10 insertion confirmed in-band (2026-11-25)
+
+**Binary:** V1.6 2026-09-12 (`051d57a7…`)  
+**Function:** `FUN_00492ab0`  
+**Evidence:** `ev_8bdacaa9c6eb4c4e31b3c9da89f2389f5dd77756f2f86b4b36a1d7f7cd97ca07` (search_strings), `ev_9407521b152a83ed0c9eb9e261cdfff4faea8a455c2c11d9a5c1fbe5020ed0ca` (analyze_function summary)
+
+The V1.6 common TX send helper `FUN_00492ab0` was decompiled via REA/Ghidra 12.2. Its pseudocode shows:
+
+```c
+void FUN_00492ab0(undefined4 param_1)  // param_1 = QByteArray* payload
+{
+  // in_ECX = 'this' pointer (UartComm object)
+  if (*(char *)(in_ECX + 0x0C) != '\0') {       // canForward enable at +0x0C
+    PTR_FUN_00c53314((int)*(char *)(in_ECX + 0x10));  // push CAN slave ID (+0x10)
+    PTR_FUN_00c53314(0x10);                           // push CMD 0x10 wrapper byte
+  }
+  // ... Qt-locked log "Sending to ESC:" ...
+  PTR_FUN_00c535b0(param_1);    // frame builder: wraps payload → UART INFO frame
+  // ... cleanup ...
+  FUN_004b55f0(param_1);
+}
+```
+
+**Confirmed facts (DIRECT CODE EVIDENCE):**
+- UartComm offset `+0x0C` = CAN-forward enable flag (byte, non-zero = active). REA evidence ev_9407521b.
+- UartComm offset `+0x10` = CAN slave target ID (byte/char). REA evidence ev_9407521b.
+- When canForward is active, V1.6 calls the UUID helper (`PTR_FUN_00c53314`) twice:
+  1. With the slave target ID from `+0x10`.
+  2. With the literal value `0x10` (CMD byte for CAN-forward wrapper).
+- The standard UART frame builder (`PTR_FUN_00c535b0`) is called with the original payload afterward.
+- String `"Sending to ESC:"` is embedded in this function (address in V1.6 2026-09-12 string table, found by procedure_pseudo_code).
+- 25 callers, 11 direct callees, 14 computed call sites.
+
+**Architectural difference V1.6 vs V1.7 (CONFIRMED):**
+- **V1.6:** CMD 0x10 wrapper inserted inline in the common TX send helper `FUN_00492ab0` by calling the UUID helper with the slave ID then with `0x10`.
+- **V1.7:** The equivalent send logger `FUN_00495910` does **not** insert any CAN envelope; it passes the QByteArray unmodified to the frame builder signal. The CAN fields (`+0x0C`, `+0x10`) are stored in V1.7's UartComm but not observed being used to prepend CMD 0x10 in the normal transmit chain.
+
+**Remaining unknowns:**
+- The exact byte-level sequence produced by the two `PTR_FUN_00c53314` calls (Enigma-protected, Ghidra reports 1-byte body, unresolvable).
+- Whether V1.7 performs the CMD 0x10 insertion in a separate path not yet traced (e.g., through a different signal or BLE transport).
+- Slave response routing in both versions.
