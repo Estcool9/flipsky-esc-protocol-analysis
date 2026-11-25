@@ -31,7 +31,7 @@
 - A bounded scan of .rdata for common zlib headers found 41 complete streams (36 unique payloads), of which 19 parsed as XML. They are the existing ValueSetups resources; no TopFlow table payload was recovered.
 - The same scan of other PE regions found 2,648 candidate header positions but no complete zlib streams. Three raw `<?xml` candidates in .enigma1 are garbled and not parseable; they remain unclassified.
 - qResourceFeatureZlib and qRegisterResourceData name strings occur in .idata, but their Ghidra xref lists are empty; they are not proof of a live registration call.
-- Full V1.7 Evidence export: `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json`, 305 records, 32,660,175 bytes, 0 unknowns, SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`.
+- Full V1.7 Evidence export: `/data/analysis/reports/evidence-v1.7-topflow-can-20261125-final.json`, 308 records, 32,692,246 bytes, 0 unknowns, SHA-256 `3b94f6ae5e3ab59b9031c517ab33c4e642f876e612490bc7c23aa1f0fce25413`.
 
 ### Progress
 
