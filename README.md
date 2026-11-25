@@ -20,7 +20,7 @@ Static reverse engineering and protocol research for **Flipsky ESC Tool V1.7**. 
 
 The project goal is a maintainable open-source client with an FTESC adapter and a separate VESC/FSESC adapter. GitHub Actions [run #301](https://github.com/Estcool9/flipsky-esc-protocol-analysis/actions/runs/45066338144) validates the current **177-test** offline suite; research-artifact restoration, catalog/profile regeneration and Python compilation also pass. The 72.6% project score (73% rounded) does not mean it is ready to control an ESC: no hardware session has been validated and all encoders are offline-only.
 
-See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
+See [STATUS](docs/STATUS.md), [ROADMAP](docs/ROADMAP.md), [PROGRESS_LOG](docs/PROGRESS_LOG.md), [OPENWEBUI_SUBAGENT_SETUP](docs/OPENWEBUI_SUBAGENT_SETUP.md), [NEXTCLOUD_SOFTWARE_INVENTORY](docs/NEXTCLOUD_SOFTWARE_INVENTORY.md), [TOOLING_AUDIT](docs/TOOLING_AUDIT.md) and [ANALYSIS_CHECKPOINT](docs/ANALYSIS_CHECKPOINT.md) for scoring, source inventory, tooling and blockers.
 
 ## Artifact under analysis
 
