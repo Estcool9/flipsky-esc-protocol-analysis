@@ -1,6 +1,6 @@
 # Artifact inventory and integrity record
 
-Reference date: **22 November 2026**
+Reference date: **25 November 2026**
 
 ## Primary executable examined
 
@@ -8,7 +8,9 @@ Reference date: **22 November 2026**
 |---|---:|---|---|
 | `Flipsky_ESC_Tool_V1.7_20261029.exe` | 50,611,200 bytes | `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38` | Kept in REA at `/data/samples/Flipsky_ESC_Tool_V1.7_20261029.exe`; not currently mirrored into GitHub |
 
-The executable hash was checked on the analysis host and remained unchanged after the Rizin analysis commands. Its format is PE32 x86; no CLR/.NET header was identified.
+The executable hash was checked on the analysis host and remained unchanged after the Rizin analysis commands.
+
+The original sample remains at `/data/samples/Flipsky_ESC_Tool_V1.7_20261029.exe`. A read-only working copy is now staged for Ghidra at `/data/analysis/pe/v1.7_20261029/Flipsky_ESC_Tool_V1.7_20261029.exe` (50,611,200 bytes, SHA-256 identical to the value in the table). The working-copy file is root-owned and mode 0444; the analysis directory is owned by `rea` and mode 0750. The original was not overwritten. Its format is PE32 x86; no CLR/.NET header was identified.
 
 The GitHub API transfer available in this session did not provide a practical single-object path for this 50.6 MB executable. The artifact identity and analysis evidence are recorded here rather than silently substituting a partial file.
 
