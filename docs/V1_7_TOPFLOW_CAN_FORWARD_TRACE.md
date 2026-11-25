@@ -86,7 +86,7 @@ A scan of the remaining PE file regions found 2,648 candidate signatures and no 
 
 Rizin string output includes qResourceFeatureZlib and qRegisterResourceData names at VAs 0xF5A81A and 0xF5A836. Ghidra xrefs for those addresses are empty, so no runtime resource-registration conclusion is drawn from the names alone.
 
-A full V1.7 Evidence bundle is retained on CT107 at `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json` (305 records, 32,660,175 bytes, 0 unknowns; SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`).
+A full V1.7 Evidence bundle is retained on CT107 at `/data/analysis/reports/evidence-v1.7-topflow-can-20261125-final.json` (308 records, 32,692,246 bytes, 0 unknowns; SHA-256 `3b94f6ae5e3ab59b9031c517ab33c4e642f876e612490bc7c23aa1f0fce25413`).
 
 The TopFlow payload remains unresolved. The scan only excludes common zlib streams in the inspected regions; it does not exclude Enigma-transformed resource bytes or another serialization format.
 
