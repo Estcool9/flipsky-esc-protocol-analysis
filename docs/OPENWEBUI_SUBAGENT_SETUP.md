@@ -99,7 +99,7 @@ Official reference: [OpenWebUI Sub-agents](https://docs.openwebui.com/features/c
 
 ## Hardware and connector caveats
 
-- The latest `ollama ps` showed `lfm3:latest` running **100% CPU**, context 4096. The Ollama host has NVIDIA device nodes, but the model was not using the GPU in that observation. This likely contributes to latency; GPU/LXC access has not been changed.
+- The OpenWebUI-connected Ollama endpoint is CT 102 (`ollama`) on Proxmox host `192.168.10.18`, exposed as `192.168.10.86:11434`. Latest `ollama ps` showed `lfm3:latest` at **100% CPU**, context 4096. Read-only Proxmox inspection found no `/dev/nvidia*` device nodes or `nvidia-smi` on the host; CT 102 has optional NVIDIA bind-mount entries, but its device nodes are mode `000` and `nvidia-smi` reports `GPU access blocked by the operating system`. Therefore this connected Ollama is CPU-only in practice; the RTX 2060 is not available to it. No Proxmox/GPU configuration was changed. To use the 2060, OpenWebUI must connect to an Ollama endpoint running on the machine where that GPU is accessible, or the GPU must be correctly installed/assigned to the Proxmox host and passed through to CT 102 (a separate infrastructure change requiring approval).
 - OpenWebUI logs show repeated `InvalidToken. Stored OAuth client data is invalid` errors for connected MCP OAuth clients. A sub-agent inherits those same tools, so affected connectors need reauthorization in OpenWebUI **Settings → Connections**. No secret key was rotated and no OAuth tokens were modified.
 - The end-to-end OpenWebUI background delegation has not yet been verified from an authenticated chat. The configuration and model-level tool call are verified separately.
 
