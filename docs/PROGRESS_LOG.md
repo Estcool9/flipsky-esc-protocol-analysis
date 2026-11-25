@@ -25,6 +25,18 @@
 - The TopFlow 0x3B request explicitly uses this shared helper; 0x3B is in the diagnostic setup-command range 0x3A–0x3D.
 - This supersedes the earlier negative conclusion that V1.7 `FUN_00495910` simply forwarded the QByteArray unchanged. The two helper invocations are directly observed; the helper target is Enigma-protected (`0x00b5aadc`) and the lower send target (`0x00b5ac7c`) is also undecodable, so the emitted byte sequence is not yet proven by disassembly or capture.
 
+### Bounded Qt/RCC scan
+
+- Rizin PE inspection found no standard PE resource entries (`rz-bin -U` empty). The parsed .rdata file-offset range is 0x11DA00–0xB28E00.
+- A bounded scan of .rdata for common zlib headers found 41 complete streams (36 unique payloads), of which 19 parsed as XML. They are the existing ValueSetups resources; no TopFlow table payload was recovered.
+- The same scan of other PE regions found 2,648 candidate header positions but no complete zlib streams. Three raw `<?xml` candidates in .enigma1 are garbled and not parseable; they remain unclassified.
+- qResourceFeatureZlib and qRegisterResourceData name strings occur in .idata, but their Ghidra xref lists are empty; they are not proof of a live registration call.
+- Full V1.7 Evidence export: `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json`, 305 records, 32,660,175 bytes, 0 unknowns, SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`.
+
+### Progress
+
+- Overall project estimate remains 72.6% (73% rounded); this scan did not recover the TopFlow payload or implement new functionality.
+
 ### Evidence IDs
 
 - TopFlow string search: `ev_8af1e4554c4ea676dc76a0ef18e14f0ef77a04d6c76e5242cb4802ee51b2d4f3`.
