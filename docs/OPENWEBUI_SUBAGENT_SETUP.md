@@ -103,6 +103,10 @@ Official reference: [OpenWebUI Sub-agents](https://docs.openwebui.com/features/c
 - OpenWebUI logs show repeated `InvalidToken. Stored OAuth client data is invalid` errors for connected MCP OAuth clients. A sub-agent inherits those same tools, so affected connectors need reauthorization in OpenWebUI **Settings → Connections**. No secret key was rotated and no OAuth tokens were modified.
 - The end-to-end OpenWebUI background delegation has not yet been verified from an authenticated chat. The configuration and model-level tool call are verified separately.
 
+## Persistence and model revision history
+
+The sub-agent configuration is persisted in OpenWebUI's database. The Qwen parent-model metadata/system-prompt edits were applied directly to the model rows, so they do **not** create a new Workspace model-history revision. The live model rows were verified; the snapshots below provide rollback. A future edit saved through Workspace → Models will create a normal model revision.
+
 ## Backups
 
 Database snapshots were saved inside the OpenWebUI data directory before configuration/model metadata changes, including:
