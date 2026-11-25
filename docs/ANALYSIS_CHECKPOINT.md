@@ -52,7 +52,7 @@ This is the authoritative hand-off note. Update it at every significant mileston
 - The same signature scan over the remaining file regions found 2,648 candidate headers and zero complete streams. This only rules out the tested zlib signatures in those regions; it does not rule out Enigma-protected, transformed or differently encoded resources.
 - Raw byte search finds additional XML-declaration candidates at file offsets 0xD8E14A, 0xDA0A20 and 0x22A50CF. Their surrounding bytes are garbled/non-UTF-8 and do not parse as XML; treat them as protected or otherwise undecoded candidates, not extracted resources.
 - Rizin strings include qResourceFeatureZlib and qRegisterResourceData at VAs 0xF5A81A and 0xF5A836. Ghidra reports no xrefs for those strings, so their presence alone does not prove the resource-registration routine or specific table bytes.
-- V1.7 Evidence bundle exported to `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json`: 305 records, 32,660,175 bytes, 0 unknowns, SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`.
+- V1.7 Evidence bundle exported to `/data/analysis/reports/evidence-v1.7-topflow-can-20261125-final.json`: 308 records, 32,692,246 bytes, 0 unknowns, SHA-256 `3b94f6ae5e3ab59b9031c517ab33c4e642f876e612490bc7c23aa1f0fce25413`.
 
 ### Evidence anchors
 
