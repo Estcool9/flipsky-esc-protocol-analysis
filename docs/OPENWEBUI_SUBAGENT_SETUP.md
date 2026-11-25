@@ -32,11 +32,11 @@ Each saved Qwen parent has exactly one sub-agent target, `local.lfm3:latest`, an
 - `pc-est.qwen3.6:35b-a3b`
 - `pc-est.qwen3.6:35b`
 
-The parent model prompts were updated to use the explicit target and background mode for useful independent tasks. This matters because OpenWebUI uses the current parent model when `delegate_task` omits `model_id`, even when another target is configured.
+The parent model prompts use `model_id` set to the single model ID exposed by that parent model's Sub-agents list, with `background=true`. This is deliberately dynamic: replacing the one target in the list does not require editing the prompt. OpenWebUI uses the parent model itself when `delegate_task` omits `model_id`, even if a different sub-agent target is configured.
 
 Parent delegation instruction:
 
-> For an independent, bounded subtask that benefits from a separate context, use the builtin `delegate_task` with `model_id="local.lfm3:latest"` and `background=true` so the LFM3 worker can run while you continue. Delegate only focused read-only research, extraction, summarization, or evidence gathering—not the whole project and not overlapping edits to shared files. Give the worker the exact goal, relevant function addresses/file paths, and required evidence format. Use at most one worker at a time. Review its result and verify important claims yourself; do not trust unsupported conclusions. Skip delegation for trivial work.
+> For an independent, bounded subtask that benefits from a separate context, use the builtin `delegate_task` with `model_id` set to the single model ID exposed by this parent model's Sub-agents list and `background=true` so the configured worker can run while you continue. Delegate only focused read-only research, extraction, summarization, or evidence gathering—not the whole project and not overlapping edits to shared files. Give the worker the exact goal, relevant function addresses/file paths, and required evidence format. Use at most one worker at a time. Review its result and verify important claims yourself; do not trust unsupported conclusions. Skip delegation for trivial work. This prompt does not hard-code LFM3, so swapping the one target model requires only changing the Sub-agents list.
 
 ## Worker system prompt
 
@@ -74,7 +74,7 @@ The current direct model has no saved Workspace preset, so its Ollama `think` se
    - `temperature`: **0.1**
    - `keep_alive`: **10m**
 5. Save and note the new model ID.
-6. In each parent model's **Sub-agents** list, replace the single `local.lfm3:latest` target with that saved worker ID.
+6. In each parent model's **Sub-agents** list, replace the single current target with that saved worker ID. The parent prompt already reads the single configured ID from the tool schema, so no prompt edit is needed.
 
 Ollama's `think:false` is an API request parameter. It is not a supported Modelfile `PARAMETER` in the installed Ollama generation; use OpenWebUI's per-model Advanced Params instead. Official docs: [OpenWebUI model editor](https://docs.openwebui.com/features/workspace/models/) and [Ollama thinking API](https://ollama.com/blog/thinking).
 
