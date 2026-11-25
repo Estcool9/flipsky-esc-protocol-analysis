@@ -1,6 +1,6 @@
 # Project status
 
-**Reference date:** 2026-11-23  
+**Reference date:** 2026-11-25  
 **Overall project progress: 72.6% unrounded (73% rounded)** toward a reusable open-source Flipsky client with explicitly separated FTESC and VESC/FSESC protocol adapters.
 
 This is a weighted estimate for the complete desktop replacement, not an offline-codec-only score. The previous 90–92% figures overstated readiness because the desktop UI, serial/BLE integration and hardware validation remain incomplete.
@@ -23,13 +23,16 @@ The score does not mean safe or hardware-validated operation. All encoders are o
 
 ## Current evidence and status
 
-- FTESC V1.7 executable SHA-256 verified: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`.
+- FTESC V1.7 executable SHA-256 verified: `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`; the original sample is preserved at CT107 `/data/samples/`, and a read-only working copy is staged at `/data/analysis/pe/v1.7_20261029/` and opened in Ghidra 12.2.
 - 19 unique compressed `ValueSetups` XML resources from 20 candidate offsets (one duplicate).
 - 1,152 metadata rows, 286 distinct XML IDs, 1,135 `ValueSeque` entries and 17 values omitted from transmission sequences.
 - Profile families: 7 control, 6 motor, 5 motor-signal/FOC and 1 encoder.
 - Only 1 of 19 profiles has the same order in `Values` and `ValueSeque`; use the explicit sequence.
 - Earlier REA baseline before the VESC stream addition: **148 tests passed, 0 failed**; `compileall` passed.
 - Latest GitHub Actions run #301 verifies the complete suite: **177 tests passed, 0 failed**; research-payload restoration, catalog/profile regeneration and `compileall` passed. Run #301 is a docs-only follow-on to the tested #298 code head.
+- V1.7 TopFlow selection traced: selector at object offset `+0x40`, value 1 selects `TopFlowMainController` and `ftesc/1.7/TopFlowSetupValueTable.xml`; the Read Setup manual path and TopFlow read command `0x3B` are mapped. SKU meaning and raw XML payload remain unresolved.
+- V1.7 CAN-forward helper re-analysis: `FUN_00495910` invokes the protected helper with `canId` then `0x10` when `canForward` is active, before the common send signal. This supersedes the earlier no-wrapper negative finding; emitted bytes remain unverified because the helper target is Enigma-protected.
+- The generic PE resource parser rejects V1.7 with `PE section raw bytes overlap headers`; Ghidra loads the PE successfully. TopFlow raw Qt resource extraction still requires a bounded alternate parser.
 - V1.7 BLE GATT service/TX/RX UUIDs and controller/service lifecycle statically identified; the native bleDataRx callback forwards its QByteArray to the shared AA/BB stream parser, and the outbound shared send path segments the framed byte array into 20-byte application chunks. Exact GATT write mode, CCCD value, negotiated MTU and live BLE behavior remain unverified.
 - No physical controller connected and no serial, BLE or CAN command transmitted.
 
