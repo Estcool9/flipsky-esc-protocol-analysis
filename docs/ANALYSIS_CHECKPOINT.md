@@ -45,6 +45,15 @@ This is the authoritative hand-off note. Update it at every significant mileston
 - The previous conclusion that V1.7 FUN_00495910 simply passed the QByteArray unchanged was too broad and is superseded by this direct re-analysis. The helper calls are visible in pseudocode; do not keep the old “no CAN wrapper in the V1.7 common helper” conclusion.
 - Exact byte-level output is not yet established: PTR_FUN_00f591c0 resolves to 0x00b5aadc and the lower send pointer PTR_FUN_00f591f0 resolves to 0x00b5ac7c, both in the Enigma-protected region where Ghidra reports invalid/truncated instructions. The order of helper calls (canId, then 0x10) is observed, but the actual resulting byte sequence and wire capture remain unknown.
 
+### Bounded Qt/RCC and raw-resource scan (2026-11-25)
+
+- Rizin recognizes the V1.7 file as PE32 x86. Its parsed .rdata section maps raw file offsets 0x11DA00–0xB28E00 (size 0xA0B200); no .rsrc section is listed and `rz-bin -U` returns an empty standard PE resource list.
+- A bounded read-only zlib scan of .rdata tested signatures 78 01, 78 5E, 78 9C and 78 DA: 1,197 candidate headers, 41 complete streams, 36 unique decompressed payloads, and 19 valid XML roots. Those 19 XML documents are ValueSetups resources; none contains TopFlowSetupValueTable.
+- The same signature scan over the remaining file regions found 2,648 candidate headers and zero complete streams. This only rules out the tested zlib signatures in those regions; it does not rule out Enigma-protected, transformed or differently encoded resources.
+- Raw byte search finds additional XML-declaration candidates at file offsets 0xD8E14A, 0xDA0A20 and 0x22A50CF. Their surrounding bytes are garbled/non-UTF-8 and do not parse as XML; treat them as protected or otherwise undecoded candidates, not extracted resources.
+- Rizin strings include qResourceFeatureZlib and qRegisterResourceData at VAs 0xF5A81A and 0xF5A836. Ghidra reports no xrefs for those strings, so their presence alone does not prove the resource-registration routine or specific table bytes.
+- V1.7 Evidence bundle exported to `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json`: 305 records, 32,660,175 bytes, 0 unknowns, SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`.
+
 ### Evidence anchors
 
 - TopFlow string search: ev_8af1e4554c4ea676dc76a0ef18e14f0ef77a04d6c76e5242cb4802ee51b2d4f3.
