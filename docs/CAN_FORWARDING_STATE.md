@@ -2,7 +2,7 @@
 
 **Binary:** `Flipsky_ESC_Tool_V1.7_20261029.exe`  
 **SHA-256:** `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`  
-**Analysis date:** 2026-11-22 → updated 2026-11-25
+**Analysis date:** 2026-11-25
 
 ## 1. UartComm CAN state fields
 
@@ -83,8 +83,8 @@ The native implementation `0x00499180` is the request method `ftescIdentifyMotor
 - The shared send logger reports the active CAN state and ID.
 
 **Not yet established from V1.7 code:**
-- The exact native instruction path that inserts the public protocol's CAN wrapper (CMD 0x10 + CAN ID + nested command/data) into the outgoing INFO payload.
-- Whether all generic UartComm requests are wrapped when the flag is enabled, or only selected operations.
+- The exact bytes produced by the Enigma-protected CAN helper and the slave response correlation path.
+- Whether send routes that bypass FUN_00495910 (for example already-framed low-level paths) use the same CAN helper.
 - Slave response routing and how the returned CAN ID is correlated with pending request callbacks.
 - The full timing unit and timeout/retry policy for all CAN-target requests.
 
@@ -122,22 +122,34 @@ Source: [Flipsky FTESC Gateway Interface Module](https://flipsky.net/collections
 This confirms the product-level USB-to-CAN passthrough use case and explains why the V1.7 application stores a selected CAN ID. It does **not** reveal the exact CMD 0x10 envelope or prove that the V1.7 desktop binary emits CMD 0x10. The wire-level wrapper remains unresolved.
 
 
-## 10. V1.7 normal transmit path traced — no CMD 0x10 prepend observed
+## 10. V1.7 common TX helper re-analysis — CAN helper calls confirmed (2026-11-25)
 
-The Qt meta-object and transmit path are now mapped end-to-end:
-- `UartComm` meta-object method 0 is signal `sendDataToESC(QByteArray&)`.
-- `FtescLowLevelFace` meta-object method 17 is slot `uartCommSendToFtesc(QByteArray&)`; its native body `FUN_004819C0` calls the UART frame builder `FUN_0049C5C0`.
-- The frame builder emits the `uartPackData::sendDataToESC` signal (meta-object method 0).
-- `FtescLowLevelFace` method 15 slot `lowLevelSendDataToFtesc(QByteArray&)` receives the already-framed bytes and forwards them through `FUN_004050C0` to the transport.
-- The common request logger `FUN_00495910` has 29 request-method callers. It logs the CAN flag, target ID, payload length and payload bytes, then passes the same QByteArray to `FUN_004BBC20` (UartComm signal index 0). It does not mutate the supplied QByteArray.
-- Example CMD 0x1C, 0x01 and 0x0F request builders produce only their INFO command/data fields before entering the common logger.
+The earlier negative conclusion that FUN_00495910 forwarded the QByteArray unchanged was too broad and is superseded by a direct re-analysis of its full pseudocode.
 
-**Static conclusion:** no generic `0x10 | SlaveID | SlaveCMD | SlaveDATA` envelope is inserted in the normal V1.7 UartComm transmit chain examined. The CAN enable/target fields are present in UartComm and used by UI/diagnostic paths, but are not present in the transmitted INFO bytes in this chain.
+FUN_00495910 reads the first INFO byte from the supplied QByteArray. When UartComm canForward at offset +0x0C is non-zero, it invokes PTR_FUN_00f591c0 twice before sending:
 
-This is a strong negative finding for the normal send route, not proof that no alternate BLE, firmware-directory, gateway-specific or hidden route exists. It is also not proof that the published V1.6 CAN-over protocol is wrong. The offline `build_can_forward_info()` remains a separate implementation of the published envelope and is not a reproduction of the V1.7 binary's normal transmit chain.
+1. First with the selected CAN ID read from UartComm offset +0x10.
+2. Then with literal 0x10.
 
-See [V1_7_OUTBOUND_TRANSMIT_CHAIN.md](V1_7_OUTBOUND_TRANSMIT_CHAIN.md) for exact QMetaObject addresses, method indexes, native function addresses and REA evidence anchors.
+It then reaches FUN_004bbc20(param_1), whose body dispatches through PTR_FUN_00f591f0. The helper has 29 callers in the active V1.7 Ghidra inventory. The calls are present in the common TX function, not only in a UI diagnostic.
 
+For non-empty payloads, the function contains a separate diagnostic path for first-byte commands 0x1B–0x1D and 0x3A–0x3D. The TopFlow read command 0x3B is in that range. The CAN helper invocations also exist on the common path outside that diagnostic range when canForward is enabled.
+
+### TopFlow path into the helper
+
+- FUN_004972f0 is explicitly labelled by the embedded log string “Send TopFlow setup read command”.
+- It calls the command factory helper FUN_0049ce30 with value 0x3B, logs canForward and canId from the UartComm object, then calls FUN_00495910.
+- Thus the TopFlow 0x3B read request reaches the V1.7 CAN helper when forwarding is enabled.
+
+### What is confirmed and what remains unknown
+
+**Confirmed from decompiled code:** the common V1.7 TX helper calls a protected function pointer with canId followed by 0x10 before the common send signal whenever canForward is enabled. This supersedes the earlier statement that FUN_00495910 did not insert any CAN wrapper operation.
+
+**Not yet confirmed:** the exact resulting byte sequence. The pointer at 0x00F591C0 resolves to 0x00B5AADC; Ghidra sees invalid/truncated instructions in this Enigma-protected area. The lower send pointer at 0x00F591F0 resolves to 0x00B5AC7C and is similarly undecodable. The order of calls is observed, but do not infer a final literal byte layout from those calls alone. No passive USB/UART capture has been made.
+
+REA evidence: FUN_00495910 parent `ev_5577ccc5290ab681440823555f6ab93ba5406f09896f8c684001c6f96e6b6b4b`; TopFlow request FUN_004972f0 parent `ev_3459543a9785d2fb17b4791c0aa3d262101352745b8df0e697175642abe9b634`; pointer target analysis `ev_f1e0c84aed38e694a28b7b208a1650f038ce257411ee5d7d2b28186525799143`.
+
+---
 ## 11. V1.6 TX helper — CMD 0x10 insertion confirmed in-band (2026-11-25)
 
 **Binary:** V1.6 2026-09-12 (`051d57a7…`)  
@@ -179,3 +191,11 @@ void FUN_00492ab0(undefined4 param_1)  // param_1 = QByteArray* payload
 - The exact byte-level sequence produced by the two `PTR_FUN_00c53314` calls (Enigma-protected, Ghidra reports 1-byte body, unresolvable).
 - Whether V1.7 performs the CMD 0x10 insertion in a separate path not yet traced (e.g., through a different signal or BLE transport).
 - Slave response routing in both versions.
+
+## 12. V1.7 TopFlow table/controller selection (2026-11-25)
+
+- Selector object offset +0x40 is passed to FUN_00488010 and FUN_00487FC0. Selector value 1 selects `ftesc/1.7/TopFlowSetupValueTable.xml` and controller name `TopFlowMainController`; other values select the combined Motor/Control setup table route.
+- Read Setup handler FUN_0048c700 reads +0x40. Value 1 follows the manual setup path; the automatic setup dispatcher FUN_004891D0 sends selector 1 to FUN_004972F0 and other values to FUN_00496BF0.
+- FUN_004972F0 creates the TopFlow setup read command using 0x3B, guards pending response/factory-restore state, logs CAN state, and forwards through FUN_00495910.
+- This establishes TopFlow request selection and that CMD 0x3B uses the shared CAN-forward helper when enabled. The exact model/SKU represented by selector 1 and the XML bytes remain unknown.
+- The file is staged and open in REA at `/data/analysis/pe/v1.7_20261029/`; SHA-256 matches the inventory. The V1.6 Evidence bundle was exported and its checkpoint saved before switching targets.
