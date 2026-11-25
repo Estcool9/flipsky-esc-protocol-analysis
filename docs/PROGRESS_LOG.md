@@ -9,6 +9,7 @@
 - Limits: 16 tool-call rounds per worker and 6,000 characters returned to the parent.
 - Configured one LFM3 target (`local.lfm3:latest`) on the saved Qwen3.8/Qwen3.6 parent models. Enabled the Sub-agents builtin category.
 - Added parent instructions to explicitly use `delegate_task(model_id="local.lfm3:latest", background=true)` for independent, read-only work. The worker prompt requires tool-first behavior, evidence and no recursive delegation, hardware writes or GitHub commits.
+- Qwen parent metadata/system prompts were persisted directly in OpenWebUI's model rows; this does not create a Workspace model-history revision. Exact state and database backups are documented.
 - Database backups were taken before configuration changes; paths and exact settings are documented in [OPENWEBUI_SUBAGENT_SETUP](OPENWEBUI_SUBAGENT_SETUP.md).
 
 ### LFM3 tool-call check and caveats
@@ -28,6 +29,7 @@
 - `21d9cb3c1b943a2332fff717783f4a229e0b8bdd` — added [OPENWEBUI_SUBAGENT_SETUP](OPENWEBUI_SUBAGENT_SETUP.md).
 - `7977e3c9c32fb1e98c875d964c59fc94482d5834` — linked the setup guide from README.
 - `586d5b1757cddefa3cffd0167588f05e11683235` — clarified the CPU-only Ollama/GPU access diagnosis.
+- `aff4809de835b54f83539d4c6f028e1016d92614` — documented the model-history caveat.
 
 ---
 
