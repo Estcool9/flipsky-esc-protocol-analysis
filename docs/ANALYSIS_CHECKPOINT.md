@@ -56,6 +56,8 @@ This is the authoritative hand-off note. Update it at every significant mileston
 - V1.7 TX helper FUN_00495910: ev_5577ccc5290ab681440823555f6ab93ba5406f09896f8c684001c6f96e6b6b4b.
 - Protected pointer target at 0x00b5aadc: ev_f1e0c84aed38e694a28b7b208a1650f038ce257411ee5d7d2b28186525799143; lower send target at 0x00b5ac7c: ev_8accd59be9997c704d43f6deae64be031d3ad4dec78ae3a9964b4ab8ef4cc14a.
 
+Detailed report: [V1.7 TopFlow selection and CAN-forward trace](V1_7_TOPFLOW_CAN_FORWARD_TRACE.md).
+
 ### Next probes
 
 1. Determine the Enigma-protected helper semantics and exact serialized CAN envelope without assuming the two calls equal a particular byte layout.
