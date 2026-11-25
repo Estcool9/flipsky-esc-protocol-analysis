@@ -76,6 +76,22 @@ The helper has a diagnostic branch for first-byte command ranges `0x1B–0x1D` a
 
 PTR_FUN_00F591C0 points to `0x00B5AADC`; Ghidra reports invalid/truncated instructions at that location. The lower send pointer PTR_FUN_00F591F0 points to `0x00B5AC7C`, which is similarly undecodable. Thus the function-call order is confirmed, but the actual bytes appended/emitted by the protected function and the exact wire envelope remain unknown. Do not claim the final byte sequence without resolving the helper or obtaining an authorized passive capture.
 
+## Bounded Qt/RCC and raw-resource scan
+
+Rizin recognizes the V1.7 file as PE32 x86. Its parsed .rdata section spans raw file offsets 0x11DA00–0xB28E00. The standard PE resource listing (`rz-bin -U`) is empty, and there is no .rsrc section in the Rizin section table.
+
+A read-only bounded scan of .rdata tested zlib signatures 78 01, 78 5E, 78 9C and 78 DA. It found 1,197 candidate headers, 41 complete streams, 36 unique decompressed payloads and 19 valid XML documents. Those 19 documents are ValueSetups tables already represented by the existing extraction offsets; none contains TopFlowSetupValueTable.
+
+A scan of the remaining PE file regions found 2,648 candidate signatures and no complete zlib streams. Three raw XML-declaration candidates at file offsets 0xD8E14A, 0xDA0A20 and 0x22A50CF are garbled/non-UTF-8 and do not parse as XML. They remain protected/undecoded candidates, not extracted files.
+
+Rizin string output includes qResourceFeatureZlib and qRegisterResourceData names at VAs 0xF5A81A and 0xF5A836. Ghidra xrefs for those addresses are empty, so no runtime resource-registration conclusion is drawn from the names alone.
+
+A full V1.7 Evidence bundle is retained on CT107 at `/data/analysis/reports/evidence-v1.7-topflow-can-20261125.json` (305 records, 32,660,175 bytes, 0 unknowns; SHA-256 `2f156465f304a49ccad15b94e5e4eac7f83bd8759690b0410ac84f647a353f8a`).
+
+The TopFlow payload remains unresolved. The scan only excludes common zlib streams in the inspected regions; it does not exclude Enigma-transformed resource bytes or another serialization format.
+
+## Facts, inferences and unknowns
+
 ## Facts, inferences and unknowns
 
 **Confirmed:** selector 1 selects TopFlowMainController and the TopFlow XML resource name; the Read Setup handler chooses the manual path for selector 1; the automatic dispatcher routes selector 1 to FUN_004972F0; FUN_004972F0 requests command 0x3B and calls FUN_00495910; the shared TX helper calls the CAN helper with canId then 0x10 when canForward is set.
