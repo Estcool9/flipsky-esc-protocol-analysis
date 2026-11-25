@@ -1,45 +1,58 @@
-# Analysis checkpoint — 2026-11-22
+# Analysis checkpoint — 2026-11-25
 
-**Repository:** \`Estcool9/flipsky-esc-protocol-analysis\`  
-**Overall project progress: 72%** (weighted full open-source desktop replacement; scoring model in README and STATUS).  
-**Executable SHA-256:** \`dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38\`
+**Repository:** `Estcool9/flipsky-esc-protocol-analysis`  
+**Overall project progress: 73%** (weighted full open-source desktop replacement; scoring model in README and STATUS).  
+**Executable SHA-256 (V1.7):** `dba48a24cf8a65c16e752037ffa93407c0ebf9fa39883d03180db35bce557b38`  
+**Executable SHA-256 (V1.6 2026-09-12 active):** `051d57a776782ae8daaeaa45179f9b568f7e89b4a78ab8dd8e558ecd3e53b968`
 
 This is the authoritative hand-off note. Update it at every significant milestone.
 
-## Latest confirmed milestone: 148 passing tests, separate FTESC/VESC profiles and 19 extracted profiles
+## Latest confirmed milestone: V1.6 CMD 0x10 CAN wrapper confirmed in TX helper (2026-11-25)
 
-- Fresh REA clone: 148 tests passed, zero failures; compileall passed.
-- Flipsky VESC V1.0 UART/CAN English and Chinese PDFs analyzed and checked against pinned VESC Tool/firmware source; separate VESC offline codecs are present.
+- REA/Ghidra 12.2 decompiled `FUN_00492ab0` (V1.6 2026-09-12 common TX send helper).
+- **CONFIRMED:** UartComm offset `+0x0C` = CAN-forward enable (byte). UartComm offset `+0x10` = CAN slave target ID (byte).
+- **CONFIRMED:** When canForward active, V1.6 TX helper calls UUID helper `PTR_FUN_00c53314` twice — first with the slave ID (from `+0x10`), then with the value `0x10` (CMD byte). This is the inline CAN-forward wrapper insertion.
+- **CONFIRMED ARCHITECTURAL DIFFERENCE:** V1.6 inserts CMD 0x10 inline in its TX helper. V1.7's equivalent (`FUN_00495910`) does NOT insert any CAN envelope in the normal transmit chain.
+- 229 evidence records, 148 MB retained in Ghidra checkpoint.
+- Evidence IDs: `ev_9407521b152a83ed0c9eb9e261cdfff4faea8a455c2c11d9a5c1fbe5020ed0ca` (analyze_function summary), pseudocode in `ev_8bdacaa9c6eb4c4e31b3c9da89f2389f5dd77756f2f86b4b36a1d7f7cd97ca07` context.
+- Commit: `7464055983d5de47cf25ea54f1e884b118c0e2fe`
+
+## Previous milestone: 177 passing tests, V1.6/V1.7 cross-build comparison
+
+- Fresh REA clone: 177 tests passed, zero failures; compileall passed. CI run #301.
+- Flipsky VESC V1.0 UART/CAN codecs added and tested.
 - Full bounded XML scan found 19 unique ValueSetup resources; catalog now has 1,152 rows, 286 distinct XML IDs, 1,135 ValueSeque entries and 17 omissions.
 - The normal V1.7 UartComm transmit chain has been traced end-to-end; it does not prepend the public V1.6 CMD 0x10 wrapper at the standard insertion points examined.
-- TopFlow metadata, exact native gateway route, full firmware state machine, BLE transport and the desktop client remain incomplete.
+- V1.6/V1.7 static marker comparison published, three-build UUID helper trace, VirtualProtect call mapping.
+- TopFlow metadata, full firmware state machine, BLE transport V1.7 and desktop client remain incomplete.
 
-## Latest confirmed milestone: outer framing and CRC
+## Outer framing and CRC
 
-- Short: \`AA | LEN8 | PAYLOAD | CRC16_BE | DD\`.
-- Extended: \`BB | LEN16_BE | PAYLOAD | CRC16_BE | DD\`.
+- Short: `AA | LEN8 | PAYLOAD | CRC16_BE | DD`.
+- Extended: `BB | LEN16_BE | PAYLOAD | CRC16_BE | DD`.
 - Sender uses AA for payload lengths 1–255, BB above 255.
 - Receiver rejects empty AA payloads and BB lengths <=254.
-- Constructor at \`0x0049C460\` initializes max payload at \`this+0x20\` to \`0x2710\` = 10,000.
+- Constructor at `0x0049C460` initializes max payload at `this+0x20` to `0x2710` = 10,000.
 - CRC-16/MODBUS: reflected polynomial A001, init FFFF, xorout 0000; payload only; serialized big-endian.
-- Tables at \`0x005310C0\` and \`0x005311C0\` match generated split MODBUS tables; standard vector 123456789 gives 4B37.
+- Tables at `0x005310C0` and `0x005311C0` match generated split MODBUS tables; standard vector 123456789 gives 4B37.
 
-## Code path
+## Code path (V1.6)
 
-- Receive: \`0x00481030\` → \`0x0049CA30\` (\`uartPackDataHandle\`) → \`0x0049C830\` (frame parser), call at \`0x0049CC8D\`.
-- Transmit: wrapper \`0x004819C0\` → \`0x0049C5C0\` (frame builder).
-- Numeric readers: 16-bit big-endian at \`0x0049D3B0\`; 32-bit big-endian at \`0x0049D450\`.
+- Receive: `0x00481030` → `0x0049CA30` (`uartPackDataHandle`) → `0x0049C830` (frame parser), call at `0x0049CC8D`.
+- Transmit: wrapper `0x004819C0` → `0x0049C5C0` (frame builder).
+- Common TX send helper: `FUN_00492ab0` (25 callers). Checks `+0x0C`, inserts CMD 0x10 wrapper when active, then calls frame builder.
+- Numeric readers: 16-bit big-endian at `0x0049D3B0`; 32-bit big-endian at `0x0049D450`.
 
-## Component ownership correction
+## Component ownership
 
-The meta-object string table near \`0x00F24080\` names the helper object \`uartPackData\` and lists:
+The meta-object string table near `0x00F24080` names the helper object `uartPackData` and lists:
 
-0. \`sendDataToESC\`
-1. \`uartPackDataFromESC\`
-2. \`uartPackDataHandle\`
-3. \`uartPackDataTimerSl\`
+0. `sendDataToESC`
+1. `uartPackDataFromESC`
+2. `uartPackDataHandle`
+3. `uartPackDataTimerSl`
 
-The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes tentatively labelled a second component as UartComm; refine that interpretation: the framing/parser helper is the \`uartPackData\` object. Keep \`UartComm\` distinct.
+The handler dispatch is `0x0049CA30`; it calls `0x0049C830`. The framing/parser helper is the `uartPackData` object. Keep `UartComm` distinct.
 
 ## Whole-product workstream estimate
 
@@ -49,321 +62,31 @@ The handler dispatch is \`0x0049CA30\`; it calls \`0x0049C830\`. Earlier notes t
 | FTESC UART framing, parser and stream handling | 10% | 100% |
 | V1.7 request/response command coverage | 20% | 87% |
 | Setup metadata, ValueSeque ordering and typed serializer | 10% | 95% |
-| Direct CAN and V1.7 gateway/slave routing | 10% | 60% |
+| Direct CAN and V1.7 gateway/slave routing | 10% | 65% |
 | Firmware authorization, transfer and bootloader flow | 10% | 55% |
-| Separate VESC/FSESC profile and source comparison | 10% | 80% |
+| Separate VESC/FSESC profile and source comparison | 10% | 85% |
 | Open-source desktop UI and real serial/BLE integration | 15% | 20% |
 | Reproducible extraction, tests and CI | 10% | 95% |
 | Hardware validation | 5% | 0% |
-| **Weighted overall estimate** | **100%** | **72%** |
+| **Weighted overall estimate** | **100%** | **73%** |
 
-This is an estimate toward a working open-source desktop replacement, not only static protocol reconstruction. Offline codecs are substantially ahead of the desktop application and hardware validation.
+Note: CAN/gateway workstream progressed from 60% to 65% due to V1.6 CMD 0x10 TX helper confirmation.
 
 ## Next tasks
 
-1. Recover and map the V1.7 TopFlow XML/profile to exact ESC SKUs.
-2. Resolve the selected CAN target path against the external FTESC Gateway and complete slave response routing.
+1. Load V1.7 binary into REA (download from Nextcloud to CT107 `/data/analysis/pe/v1.7_20261029/`) and search for `TopFlowSetupValueTable` string.
+2. Resolve the V1.7 CAN wrapper insertion path (may be in a Qt slot not in the normal transmit chain).
 3. Complete firmware image/container, retries, bootloader transitions and recovery state machine.
 4. Implement the desktop UI shell and safe read-only serial session/telemetry workflow.
 5. Recover FTESC BLE UUIDs, MTU/chunk and write/notify behaviour; then implement transport.
-6. Compare the available V1.6 binary against V1.7 using the same artifact-hash and function-diff process.
-7. Add authorized passive capture replay and controlled bench validation before enabling any writes or firmware operations.
+6. Add authorized passive capture replay and controlled bench validation before enabling any writes or firmware operations.
 
 ## Tooling and constraints
 
-- Rizin 0.9.1 and Ghidra 12.2 are already available in REA; no install needed for static work.
-- Original EXE remains on REA (50,611,200 bytes); its identity is recorded in \`docs/ARTIFACT_INVENTORY.md\`.
-- All 19 unique XML resources and derived catalogs are published as gzip/base64; restore with \`python scripts/restore_payloads.py --root .\`.
+- Ghidra 12.2 available in REA; checkpoint active on V1.6 2026-09-12.
+- V1.7 binary NOT yet loaded in REA (path `/data/analysis/pe/v1.7_20261029/` does not exist on CT107 yet). Nextcloud source: `https://nextcloud.est1.dev/s/TijZe4XHNjkw4FQ` (public link, view only).
+- Original EXE remains on REA (50,611,200 bytes); its identity is recorded in `docs/ARTIFACT_INVENTORY.md`.
+- All 19 unique XML resources and derived catalogs are published as gzip/base64; restore with `python scripts/restore_payloads.py --root .`.
 - No firmware image or passive serial capture was obtained in this session.
 - No packets were sent to physical ESC hardware.
-
-
-## Receive-buffer and test update — 2026-11-22
-
-- Added [RECEIVE_BUFFER_STATE.md](RECEIVE_BUFFER_STATE.md), the outer-frame codec and unit tests.
-- The receive handler distinguishes parser results -1, -2 and positive consumed length. -1 triggers one-byte cursor advance; positive values advance by frame length and the loop continues.
-- Test command: \`python3 -m unittest discover -s tests -v\`.
-- Result on REA using the published GitHub versions: **13 passed, 0 failures**.
-- Historical milestone estimate: 40% at that point in time.
-
-
-## Official V1.6 reference milestone — 2026-11-22
-
-- Added the official V1.6 UART protocol digest, V1.4/V1.6 delta, V1.7 cross-reference, manual notes and Nextcloud source inventory.
-- Preserved the ECU-side example C source under reference/.
-- Added a protocol helper module and tests. Combined test suite on REA: 26 passed, 0 failed.
-- V1.6 changes CMD 00 automatic telemetry, moves CMD 02 current request from D0-D1 to D2-D3 and adds the PAS-mode alias for CMD 02.
-- Outer frame, CRC and big-endian conventions remain unchanged from V1.4 to V1.6 and match the private V1.7 parser/builder.
-- Current overall project estimate: **46%**.
-- V1.6 Windows executables are inventoried in Nextcloud but are not staged on REA.
-- V1.7 command-ID to Qt-response mapping remains the next major reverse-engineering target.
-
-
-## V1.7 Qt API names — 2026-11-22
-
-- New report: [V1_7_QT_API_STRING_MAP.md](V1_7_QT_API_STRING_MAP.md).
-- Found high-level API names for duty/current/brake/D-axis current/speed/position, automatic telemetry, CAN ID/identification, firmware version/update and encryption-related flows.
-- The low-level uartPackData class remains distinct from the high-level FtescLowLevelFace façade.
-- Candidate V1.6 opcode relationships remain unconfirmed until call sites and payload bytes are traced.
-- Overall progress estimate: **48%**.
-
-
-## V1.7 receive-path deep dive — 2026-11-22
-
-- Detailed Ghidra pseudocode reviewed for parser `0x0049C830`, receive handler `0x0049CA30`, builder `0x0049C5C0`, and CRC helper `0x0049C7A0`.
-- Receive handler's countdown at object offset +0x1C is set by parser output on -2 and decremented for incoming bytes before retrying parse.
-- Invalid candidates advance one byte; complete frames advance by the returned consumed length; the loop can emit multiple frames per serial read callback.
-- Buffer compaction preserves the unconsumed suffix and is distinct from invalid-candidate resynchronization.
-- New report: [RECEIVE_PATH_DEEP_DIVE.md](RECEIVE_PATH_DEEP_DIVE.md).
-- New code: `scripts/ftesc_stream.py`; new tests: `tests/test_ftesc_stream.py`.
-- Published repository re-cloned and tested on REA: **36 passed, 0 failed**.
-- Overall estimate: **50%**. Receive-buffer analysis 90%; stream codec and tests 100%; V1.7 command-ID mapping 20%.
-- A memoryview lifetime issue discovered by negative tests was fixed by decoding from an immutable snapshot before mutating the receive buffer.
-- No hardware interaction or frame transmission.
-
-
-## Qt dispatch and response command map — 2026-11-22
-
-- Decoded all 64 Qt method records in the FtescLowLevelFace meta-object and matched them to the switch cases in `0x004B98D0`.
-- New report: [QT_METACALL_DISPATCH_MAP.md](QT_METACALL_DISPATCH_MAP.md).
-- Resolved TEA method indexes and direct firmware-update caller; encryption use in ordinary UART frames remains unproven.
-- Decompiled response dispatcher `0x004997A0`; high-confidence response correlations: CMD 0x00 telemetry, 0x11 firmware identity, 0x1A periodic telemetry ack, 0x1E ESC ID list.
-- CMD 0x00 V1.7 reads the 44-byte extended telemetry DATA layout, including three extra 32-bit angular values and PAS RPM.
-- New report: [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md).
-- Overall estimated progress: **54%**. FtescLowLevelFace Qt meta-call map 100%; V1.7 command cross-reference 35%.
-
-
-## UartComm outbound command map — 2026-11-22
-
-- Decoded UartComm static meta-object at `0x0051F248`: 58 methods, including 21 signals and 37 slots/invokable methods.
-- Static meta-call at `0x004BC2B0` maps request methods to native implementations; slot index 21 `uartPackHandle` calls response dispatcher `0x004997A0`.
-- New report: [V1_7_REQUEST_DISPATCH_MAP.md](V1_7_REQUEST_DISPATCH_MAP.md).
-- Confirmed motor control opcodes: duty 0x03, current 0x04, brake current 0x06, D-axis current 0x25, position 0x26, speed 0x27; all values encoded as scaled, rounded 32-bit big-endian integers.
-- Confirmed firmware/setup/sensor/CAN request command values and telemetry CMD 0x1A layout. Details and caveats are in the request map.
-- Setup payload marker constants recovered but not semantically named.
-- Overall estimated progress: **58%**. V1.7 command/payload mapping 65%; firmware update/TEA 75%.
-- No physical ESC interaction.
-
-
-## Response callback mapping — 2026-11-22
-
-- Native callback wrappers now mapped to exact Qt signal indexes through their immediate arguments and UartComm meta-object pointer.
-- See [V1_7_RESPONSE_DISPATCH_MAP.md](V1_7_RESPONSE_DISPATCH_MAP.md), section 8.
-- Overall estimated progress: **60%**.
-
-
-## Typed setup serializer — 2026-11-22
-
-- Static code path `0x004A0B00 → 0x004A0790` recovered; marker + ordered typed values.
-- XML `valType`/`valueTET`/ `evalScl` correlation documented.
-- Offline serializer and 10 tests added; full published suite: **46 passed, 0 failed**.
-- See [SETUP_VALUE_SERIALIZER.md](SETUP_VALUE_SERIALIZER.md).
-- Overall estimate: **62%**.
-
-
-## End-to-end transport pipeline — 2026-11-22
-
-- Identified FtescLowLevelFace, ToolLib, UartComm and uartPackData Qt meta-objects.
-- Linked UartComm raw INFO signal → FtescLowLevelFace frame builder → uartPackData framed signal → serial write slot.
-- Linked serial read handler → stream buffer/parser → uartPackData payload signal → response dispatcher.
-- Exact QObject connect argument order is still being checked; see [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
-- Added V1.7 telemetry extension decoder and two tests.
-- Full published test suite: **48 passed, 0 failed**.
-- Overall progress: **64%**.
-
-
-## Firmware authorization flow — 2026-11-22
-
-- `firmwareUpdatePro` requests UUID (CMD 0x21), waits 2 s, TEA-encrypts a 16-byte local buffer with the UUID pointer, sends CMD 0x22, then waits 2 s for write-encrypt acknowledgement.
-- Separate update methods: boot mode 0x13, erase 0x16, block write 0x18; CMD 0x18 has a separate XOR transform.
-- Image validator `0x00485130` checks 0xE9 magic and structured segments; exact firmware format remains unidentified.
-- Added [FIRMWARE_UPDATE_FLOW.md](FIRMWARE_UPDATE_FLOW.md).
-- Overall estimate: **66%**.
-
-
-## BLE transport — 2026-11-22
-
-- BLE receive callback feeds the same stream parser as UART.
-- BLE transmit fragments the same framed packet into 20-byte writes and waits for asynchronous completion.
-- Qt Bluetooth imports include `QLowEnergyService::writeCharacteristic`; characteristic UUIDs/write mode not yet mapped.
-- See [TRANSPORT_PIPELINE.md](TRANSPORT_PIPELINE.md).
-- Overall estimate: **68%**.
-
-
-## Independent frame and telemetry cross-check — 2026-11-22
-
-- Inspected third-party `adamivie/flipsky-ft85bd` pinned commit `49989ac0cde531a68799284d1de9efdd7ba14c7f`. It is a community implementation, not Flipsky source.
-- Short frame and CRC independently agree; exact example `AA 01 11 4C 7F DD` reproduced by our codec.
-- Standard CRC vector `123456789` → `0x4B37`.
-- Added `parse_realtime_data_00_v17_extension`: 3 signed 32-bit micro-radian values converted to degrees, plus signed 32-bit PAS RPM.
-- Added [EXTERNAL_IMPLEMENTATION_CROSSCHECK.md](EXTERNAL_IMPLEMENTATION_CROSSCHECK.md).
-- Fresh clone test suite: **51 passed, 0 failed**; compileall succeeded.
-- Overall estimate: **70%**.
-
-
-## CAN target state — 2026-11-22
-
-- UartComm +0x0C = CAN-forward enabled; +0x10 = selected target ID.
-- UI selection validates ID <255, stores target and requests motor-signal setup CMD 0x1C.
-- Automatic ID discovery sends CMD 0x01; per-target setup iteration and TopFlow CMD 0x3B mapped.
-- The V1.7 code path that inserts CMD 0x10 + CAN ID into the outgoing payload and routes slave responses remains unresolved.
-- See [CAN_FORWARDING_STATE.md](CAN_FORWARDING_STATE.md).
-- Overall estimate: **71%**.
-
-
-## Direct CAN V1.4 decoder — 2026-11-22
-
-- Read the official Flipsky FTESC CAN Protocol V1.4 PDF from Nextcloud.
-- Added read-only parser for 29-bit extended IDs, CRC-16/MODBUS and periodic telemetry commands 0x0B/0x0C/0x0D.
-- Signed 24-bit current/eRPM fields, signed 16-bit temperatures and voltage are decoded with documented scales.
-- Direct CAN command IDs are a separate namespace from UART INFO command IDs.
-- Added [FTESC_CAN_PROTOCOL_V1.4.md](FTESC_CAN_PROTOCOL_V1.4.md) and [scripts/ftesc_can.py](../scripts/ftesc_can.py).
-- Fresh clone test suite: **60 passed, 0 failed**.
-- Overall estimate: **73%**.
-
-
-## CMD 0x02 gap — 2026-11-22
-
-- Public V1.6 CMD 0x02 request layout is 14 DATA bytes; V1.6 moved current request to DATA offsets 2–3.
-- V1.7 response dispatcher `0x004997A0` contains no CMD 0x02 case.
-- UartComm request table has no direct CMD 0x02 builder.
-- Signal index 13 `ftescGetRealtimeDataOnce(FTESC_REALTIME_DATA)` exists, but it is response-side Qt signal evidence, not a request builder.
-- See [V1_7_ONE_SHOT_CMD_02_STATUS.md](V1_7_ONE_SHOT_CMD_02_STATUS.md).
-- Overall estimate remains **73%**.
-
-
-## V1.7 firmware update pipeline — 2026-11-22
-
-- `firmwareUpdatePro` at 0x00486570: built-in/custom file selection, 0x30F98 native size bound, UUID CMD 0x21, TEA challenge and CMD 0x22 authorization.
-- `FUN_00485130`: erase, then sequential 240-byte chunks.
-- Erase CMD 0x16 contains uint32 BE image size; wait for `ftescFirmwareEraseRespenseFlag`.
-- Write CMD 0x18 applies XOR sequence per block: first mask 0xD0, then 239-byte table at 0x00530F61; waits for `ftescFirmwareWriteBlockSuccessFalg`.
-- Each block waits 2 s and retries up to 3 times on timeout.
-- Implemented offline codec `scripts/ftesc_firmware.py`; 11 new tests.
-- Earlier claim of an 0xE9 firmware magic check at 0x00485130 withdrawn; that function is the flash loop.
-- Fresh clone test suite: **71 passed, 0 failed**.
-- Overall estimate: **75%**.
-
-
-## ValueSeque order — 2026-11-22
-
-- All 13 XML resources restored and parsed.
-- 736 values, 721 ordered entries, 15 omitted values; no duplicate/unknown sequence IDs.
-- ValueSeque order differs from Values order in all 13 resources.
-- Added profile order extractor, profile-aware setup block encoder, compressed full CSV/JSON artifacts and summary.
-- Fresh clone restore + generation succeeded; **77 tests passed, 0 failed**.
-- Overall estimate: **77%**.
-
-
-## CMD 0x00 telemetry signal correlation — 2026-11-22
-
-- `0x004BC060` copies `FTESC_REALTIME_DATA` and emits UartComm signal index 13 `ftescGetRealtimeDataOnce(...)`.
-- The CMD 0x00 response branch calls this wrapper.
-- This signal is response-side, not a CMD 0x02 request builder.
-- CMD 0x02 remains unresolved; progress remains **77%**.
-
-
-## Firmware config table discovery — 2026-11-22
-
-- `0x00488010` selects embedded V1.7 default table paths.
-- `0x00492570` scans firmware directories and loads four named XML tables, matching two numeric selectors.
-- 13 ValueSetups resources classify into 4 control, 6 motor, 3 motor-signal/FOC groups.
-- 736 Values entries, 721 ValueSeque entries, 15 omissions.
-- Updated family classifier and compressed order artifacts.
-- Fresh clone: **80 tests passed, 0 failed**.
-- Overall estimate: **78%**.
-
-
-## Firmware config version selection — 2026-11-22
-
-- `FUN_00492570` is called by `FUN_0047F530` and `FUN_0048E570`, both with parameters `(1,7)`.
-- This matches `ftesc/1.7` and resolves the selector as firmware major/minor.
-- Hardware/SKU mapping of the 13 ValueSetups resources remains open.
-- Overall estimate: **79%**.
-
-
-## V1.6 C source cross-check — 2026-11-22
-
-- Source confirms UART AA/BB framing, CRC16-MODBUS, CRC high/low order and DD terminator.
-- Command enum includes CMD 0x02 and CMD 0x10; sample only sends/parses CMD 0x00 telemetry.
-- Confirms base telemetry field order/scales.
-- Added [V1_6_C_REFERENCE_CROSSCHECK.md](V1_6_C_REFERENCE_CROSSCHECK.md).
-- Overall estimate: **80%**.
-
-
-## V1.7 request payload builders — 2026-11-22
-
-- Added offline INFO builders for control scalars, auto telemetry CMD 0x1A, setup marker blocks 0x07/0x1B/0x3A, reset variants 0x1D and IMU calibration 0x29.
-- Native auto telemetry method index 32 → `FUN_004993F0`: enable byte + uint16 BE interval.
-- Optional second CMD 0x1B marker is emitted only when second vector exists.
-- Added [V1_7_REQUEST_PAYLOAD_SCHEMAS.md](V1_7_REQUEST_PAYLOAD_SCHEMAS.md) and `scripts/ftesc_requests.py`.
-- Fresh clone: **89 tests passed, 0 failed**.
-- Overall estimate: **82%**.
-
-
-## CMD 0x0F and rounding — 2026-11-22
-
-- Native function `0x00499180` payload order: 0F, arg2, low8(arg1), signed16(arg4), signed16(arg3×100), arg5.
-- Semantic argument labels remain unknown; offline builder uses generic names.
-- Native helpers `0x0049D150` and `0x0049D1E0` implement round-half-away-from-zero; 0.5 epsilon at 0x005312C0.
-- Added two tests; fresh clone **91 passed, 0 failed**.
-- Overall estimate: **83%**.
-
-
-## V1.7 response decoders — 2026-11-22
-
-- CMD 0x0D one signed int32 ÷1e6.
-- CMD 0x0E six signed int32 values with scales [1e6,1e6,1,1,1,1e6].
-- CMD 0x16/0x18/0x22 one-byte boolean ACK; CMD 0x1A no-data ACK.
-- CMD 0x29 nine signed int32 values ÷1e6.
-- CMD 0x01 and 0x1E share ESC ID vector parser.
-- Added `scripts/ftesc_responses.py`; fresh clone **99 tests passed, 0 failed**.
-- Overall estimate: **84%**.
-
-
-## UUID response — 2026-11-22
-
-- CMD 0x21 copies response DATA into QByteArray; firmware TEA preflight consumes 16 bytes.
-- Native response branch does not visibly enforce length; decoder preserves raw length.
-- Added `parse_uuid_response()` and test.
-- Fresh clone: **100 tests passed, 0 failed**.
-- Overall estimate: **85%**.
-
-
-## Setup response decoding — 2026-11-22
-
-- `FUN_004A10C0` validates setup marker; `FUN_004A0B70` decodes each typed value using ValueSeque metadata.
-- Added `decode_profile_block()` with sequential `next_offset` for two-marker responses.
-- Supports observed numeric, float and byte types; TopFlow schema still unavailable.
-- Added [V1_7_SETUP_RESPONSE_DECODER.md](V1_7_SETUP_RESPONSE_DECODER.md).
-- Fresh clone: **104 tests passed, 0 failed**.
-- Overall estimate: **87%**.
-
-
-## CI and external cross-checks — 2026-11-22
-
-- Added GitHub Actions workflow for payload restoration, catalog/profile regeneration, byte-for-byte comparison, unit tests and compileall.
-- Refreshed catalog payloads after detecting whitespace normalization drift.
-- REA workflow-equivalent verification: all comparisons passed, **104 tests passed**, compileall passed.
-- Repo verified public, main branch, admin/push access.
-- Official FTESC Gateway page confirms USB passthrough via CAN ID; official V1.6 update guide confirms separate master/slave USB flashing procedure.
-- Overall estimate: **88%**.
-
-
-## Variable-text response decoders — 2026-11-22
-
-- CMD 0x0F string + bool status.
-- CMD 0x11 major/minor/type + QString field + trailing byte; raw label bytes preserved.
-- CMD 0x14 terminal text; CMD 0x24 samples text.
-- Added `parse_firmware_version_response()`, `parse_motor_identify_response()`, `parse_text_response()`.
-- Fresh clone: **107 tests passed, 0 failed**.
-- Overall estimate: **89%**.
-
-
-## Setup response signal mapping — 2026-11-22
-
-- Qt signal indexes 7/8/9/10 mapped to motor read, motor key status, TopFlow read and TopFlow key status.
-- CMD 0x1C validates both markers and length; CMD 0x3B/3C validates TopFlow marker and length.
-- Added high-level decoders and no-DATA setup ACK validator.
-- Fresh clone: **110 tests passed, 0 failed**.
-- Overall estimate: **90%**.
+- REA regex risk: `case_sensitive: false` on `rea-search_strings` for large PE causes Ghidra timeout. Always use `case_sensitive: true` and `mode: "literal"` on large PEs.
