@@ -1,5 +1,35 @@
 # Progress log
 
+## 2026-11-25 — OpenWebUI single LFM3 background sub-agent configured
+
+### OpenWebUI configuration
+
+- OpenWebUI 0.13.5 on Docker host 192.168.10.52; container returned healthy after the configuration restart.
+- Enabled background sub-agents and constrained the deployment to one foreground and one background worker at a time.
+- Limits: 16 tool-call rounds per worker and 6,000 characters returned to the parent.
+- Configured one LFM3 target (`local.lfm3:latest`) on the saved Qwen3.8/Qwen3.6 parent models. Enabled the Sub-agents builtin category.
+- Added parent instructions to explicitly use `delegate_task(model_id="local.lfm3:latest", background=true)` for independent, read-only work. The worker prompt requires tool-first behavior, evidence and no recursive delegation, hardware writes or GitHub commits.
+- Database backups were taken before configuration changes; paths and exact settings are documented in [OPENWEBUI_SUBAGENT_SETUP](OPENWEBUI_SUBAGENT_SETUP.md).
+
+### LFM3 tool-call check and caveats
+
+- A harmless direct Ollama API tool-call probe succeeded with `think:false` in 1.35 seconds.
+- With a tool-first system prompt and default thinking, the same probe succeeded in 5.62 seconds (62 generated tokens). This is a direct Ollama probe, not a full OpenWebUI delegation test.
+- Latest `ollama ps` showed LFM3 using 100% CPU, context 4096; GPU acceleration was not observed. No GPU/LXC passthrough changes were made.
+- OpenWebUI logs contain repeated `InvalidToken. Stored OAuth client data is invalid` errors for MCP OAuth clients. Affected connectors need reauthorization; no secret key or tokens were changed.
+
+### Project score
+
+- Overall reverse-engineering project score remains **72.6% (73% rounded)**. This infrastructure configuration adds no protocol coverage and does not change the score.
+- No ESC hardware was contacted; no firmware was flashed.
+
+### Commits
+
+- `21d9cb3c1b943a2332fff717783f4a229e0b8bdd` — added [OPENWEBUI_SUBAGENT_SETUP](OPENWEBUI_SUBAGENT_SETUP.md).
+- `7977e3c9c32fb1e98c875d964c59fc94482d5834` — linked the setup guide from README.
+
+---
+
 ## 2026-11-25 — V1.7 TopFlow read selector and CAN-forward TX helper traced
 
 **Binary:** V1.7 2026-10-29 (`dba48a24…`), REA 6.10.1 / Ghidra 12.2.
